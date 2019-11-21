@@ -5,9 +5,9 @@ import setTokenToAuthHeader from '../../utils/setTokenToAuthHeader';
 
 // Login user
 export const loginUser = (userCredentials, history) => async dispatch => {
-    const res = await axios.post('/users/login.json', userCredentials)
+    const res = await axios.post('/api/auth/login', userCredentials)
 
-    const token = res.data.data;
+    const { token } = res.data.data;
     localStorage.setItem("jwtToken", token);
     setTokenToAuthHeader(token);
     const decoded = jwtDecode(token);
@@ -16,7 +16,7 @@ export const loginUser = (userCredentials, history) => async dispatch => {
 }
 
 export const registerUser = (user, history) => async dispatch => {
-    await axios.post('/users/register.json', user)
+    await axios.post('/api/auth/register', user)
 }
 
 export const setCurrentUser = decoded => {

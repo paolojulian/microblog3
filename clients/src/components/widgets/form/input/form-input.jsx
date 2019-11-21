@@ -1,7 +1,10 @@
-import React from 'react';
-import styles from './form-input.module.css';
+import React, { useState, useEffect } from 'react';
 import classnames from 'classnames';
 import PropTypes from 'prop-types';
+import styles from '../form-component.module.css';
+
+/** Components */
+import ErrorMsg from '../error';
 
 const FormInput = ({
     name,
@@ -14,32 +17,38 @@ const FormInput = ({
     theme,
     ...props
 }) => {
+
+    const [stateError, setError] = useState(error);
+
+    useEffect(() => {
+        setError(error)
+    }, [error]);
+
+    const handleKeyPress = e => {
+        if (stateError) {
+            setError(false);
+        }
+    }
+
     return (
         <div className={styles.form_input}>
             <input
                 className={classnames(styles.input, {
-                    'is-invalid': error,
-                    [styles.theme_default]: theme === 'default' && !error,
-                    [styles.theme_primary]: theme === 'primary' && !error,
-                    [styles.theme_secondary]: theme === 'secondary' && !error,
+                    'is-invalid': stateError,
+                    [styles.theme_default]: theme === 'default' && !stateError,
+                    [styles.theme_primary]: theme === 'primary' && !stateError,
+                    [styles.theme_secondary]: theme === 'secondary' && !stateError,
                 })}
                 type={type}
                 name={name}
                 placeholder={placeholder}
                 ref={refs}
                 disabled={disabled}
+                onKeyPress={handleKeyPress}
                 {...props}
                 />
             {info && <div className={styles.formInfo}>{info}</div>}
-            {error && <div className="invalid-feedback">
-                {
-                    typeof error === 'string'
-                        ? `* ${error}`
-                        : typeof error[0] === 'string'
-                            ? `* ${error[0]}`
-                            : ``
-                }
-            </div>}
+            <ErrorMsg error={stateError}/>
         </div>
     )
 }
@@ -58,7 +67,8 @@ FormInput.propTypes = {
 FormInput.defaultProps = {
     type: 'text',
     theme: 'default',
-    refs: null
+    refs: null,
+    disabled: false
 }
 
 export default FormInput;

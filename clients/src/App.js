@@ -47,6 +47,7 @@ if (localStorage.jwtToken) {
     }
 }
 
+axios.defaults.headers.common['Accept'] = 'application/json'
 axios.defaults.headers.common['Content-Type'] = 'application/json'
 axios.interceptors.response.use(config => {
     return config;
@@ -66,7 +67,7 @@ axios.interceptors.response.use(config => {
         case 422:
             store.dispatch({
                 type: GET_ERRORS,
-                payload: err.response.data.data.errors
+                payload: err.response.data.data
             });
             break;
         default:

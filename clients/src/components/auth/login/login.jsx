@@ -49,9 +49,9 @@ const Login = ({
         try {
             await loginUser(User, history);
         } catch (e) {
-            if (e.hasOwnProperty('response') && e.response.status === 400) {
+            if (e.hasOwnProperty('response') && e.response.status === 422) {
                 return setErrors({
-                    form: e.response.data.message,
+                    form: e.response.data.data,
                     username: true,
                     password: true
                 })

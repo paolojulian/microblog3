@@ -2,6 +2,7 @@ import React, { useEffect, useState, useRef, useContext } from 'react'
 import { Link } from 'react-router-dom'
 import { connect, useSelector, useDispatch } from 'react-redux'
 import { withRouter } from 'react-router-dom';
+import styles from './register.module.css';
 
 /** Redux Actions */
 import { registerUser } from '../../../store/actions/authActions'
@@ -74,6 +75,7 @@ const Register = ({
             confirm_password: confirm_password.current.value,
         }
         try {
+            dispatch({ type: CLEAR_ERRORS })
             setLoading(true);
             await registerUser(User, history)
             context.notify.success(
@@ -101,7 +103,7 @@ const Register = ({
     }
 
     return (
-        <div className="center-absolute">
+        <div className={styles.wrapper}>
             <PCard size="sm"
                 header="Create an account"
             >
@@ -143,6 +145,7 @@ const Register = ({
                         name="sex"
                         value={sex}
                         error={errors.sex}
+                        defaultValue='M'
                         onChangeValue={value => setSex(value)}
                     />
 

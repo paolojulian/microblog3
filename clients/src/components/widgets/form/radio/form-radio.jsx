@@ -1,8 +1,8 @@
 import React, { useRef } from 'react';
-import styles from './form-radio.module.css';
 import classnames from 'classnames';
 import PropTypes from 'prop-types';
-
+import ErrorMsg from '../error';
+import styles from '../form-component.module.css';
 
 const RadioItem = ({
     name,
@@ -55,30 +55,19 @@ const FormRadio = ({
     return (
         <div className={styles.form_input}>
             <div className={classnames(styles.radioContainer, {
-                    'is-invalid': error,
-                    [styles.theme_default]: theme === 'default' && !error,
-                    [styles.theme_primary]: theme === 'primary' && !error,
-                    [styles.theme_secondary]: theme === 'secondary' && !error,
+                    'is-invalid': error
                 })}>
                 {renderChoices()}
             </div>
             {info && <div className={styles.formInfo}>{info}</div>}
-            {error && <div className="invalid-feedback">
-                {
-                    typeof error === 'string'
-                        ? `* ${error}`
-                        : typeof error[0] === 'string'
-                            ? `* ${error[0]}`
-                            : ``
-                }
-            </div>}
+            <ErrorMsg error={error}/>
         </div>
     )
 }
 
 FormRadio.propTypes = {
     choices: PropTypes.array.isRequired,
-    defaultValue: PropTypes.any.isRequired,
+    defaultValue: PropTypes.any,
     name: PropTypes.string.isRequired,
     value: PropTypes.any.isRequired,
     info: PropTypes.string,
