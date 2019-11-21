@@ -1,6 +1,6 @@
-import React, { useEffect, createRef } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
-import styles from './v-notification.module.css'
+import React, { useEffect, createRef } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import styles from './v-notification.module.css';
 
 /** Redux */
 import {
