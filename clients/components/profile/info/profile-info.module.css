@@ -1,0 +1,101 @@
+.profileInfo {
+    text-align: center;
+    color: var(--black-light);
+}
+
+.wrapper {
+    display: flex;
+    flex-direction: column-reverse;
+    justify-content: center;
+    align-items: center;
+    padding: 1rem;
+}
+
+.profileCredentials {
+    text-align: center;
+}
+
+.profileDetails {
+    flex: 1;
+    text-align: left;
+}
+
+.followerLink {
+    cursor: pointer;
+    color: var(--secondary);
+    font-size: 1.5rem;
+    font-weight: 600;
+    user-select: none;
+    -webkit-user-drag: none;
+    -khtml-user-drag: none;
+    -moz-user-drag: none;
+    -o-user-drag: none;
+}
+
+.followBtn {
+    text-align: center;
+    margin-top: 1rem;
+}
+
+.followBtn i {
+    cursor: pointer;
+}
+
+.followBtn.active i {
+    color: var(--secondary);
+}
+
+.followBtn:not(.active) i:hover {
+    color: var(--secondary);
+}
+
+.followBtn.active i:hover {
+    color: var(--black-light);
+}
+
+.profileImage {
+    width: 128px;
+    height: 128px;
+    border-radius: 50%;
+    background-color: var(--black-disabled);
+    margin: auto 2rem;
+}
+
+.lastName {
+    font-size: 2rem;
+    font-weight: 800;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
+.firstName {
+    font-size: 1.5rem;
+    font-weight: 600;
+}
+.email {
+    font-size: 0.9rem;
+    font-style: italic; 
+}
+.username {
+    font-size: 1.3rem;
+    color: var(--secondary);
+}
+
+@media screen and (min-width:600px) {
+    .wrapper {
+        flex-direction: row;
+        padding: 2rem;
+    }
+
+    .profileCredentials {
+        text-align: right;
+    }
+
+    .profileDetails {
+        padding-left: 5rem;
+    }
+
+    .followBtn {
+        text-align: left;
+    }
+
+}
