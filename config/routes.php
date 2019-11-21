@@ -65,19 +65,19 @@ Router::prefix('api', function (RouteBuilder $routes) {
 });
 
 Router::scope('/', function (RouteBuilder $routes) {
-    // // Register scoped middleware for in scopes.
-    // $routes->registerMiddleware('csrf', new CsrfProtectionMiddleware([
-    //     'httpOnly' => true
-    // ]));
+    // Register scoped middleware for in scopes.
+    $routes->registerMiddleware('csrf', new CsrfProtectionMiddleware([
+        'httpOnly' => true
+    ]));
 
-    // /**
-    //  * Apply a middleware to the current route scope.
-    //  * Requires middleware to be registered via `Application::routes()` with `registerMiddleware()`
-    //  */
-    // $routes->applyMiddleware('csrf');
+    /**
+     * Apply a middleware to the current route scope.
+     * Requires middleware to be registered via `Application::routes()` with `registerMiddleware()`
+     */
+    $routes->applyMiddleware('csrf');
 
     $routes->connect('/', ['controller' => 'Pages', 'action' => 'display', 'home']);
-    $routes->connect('/pages/*', ['controller' => 'Pages', 'action' => 'display']);
+    $routes->connect('/*', ['controller' => 'Pages', 'action' => 'display']);
 
     $routes->fallbacks(DashedRoute::class);
 });

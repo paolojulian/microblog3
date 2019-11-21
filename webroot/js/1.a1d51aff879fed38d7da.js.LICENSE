@@ -1,0 +1,29 @@
+/*!****************************************************!*\
+  !*** ./clients/components/post/edit/post-edit.jsx ***!
+  \****************************************************/
+
+/*! exports provided: default */
+
+/*!********************************************************************!*\
+  !*** ./clients/components/widgets/form/textarea/form-textarea.jsx ***!
+  \********************************************************************/
+
+/*!***************************************************************************!*\
+  !*** ./clients/components/widgets/form/textarea/form-textarea.module.css ***!
+  \***************************************************************************/
+
+/*! no static exports found */
+
+/*!***********************************************************!*\
+  !*** ./clients/components/widgets/form/textarea/index.js ***!
+  \***********************************************************/
+
+/*!**********************************************!*\
+  !*** ./clients/store/actions/postActions.js ***!
+  \**********************************************/
+
+/*! exports provided: getPostById, getPosts, getCommentsByPost, getUserPosts, addPost, editPost, deletePost, sharePost, likePost, addComment, deleteComment, fetchLikesByPost, countCommentByPost */
+
+/*!***************************************************************************************************************************!*\
+  !*** ./node_modules/css-loader/dist/cjs.js??ref--6-1!./clients/components/widgets/form/textarea/form-textarea.module.css ***!
+  \***************************************************************************************************************************/

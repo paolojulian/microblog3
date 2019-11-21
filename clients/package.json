@@ -21,7 +21,7 @@
     "webpack": "^4.41.2",
     "websocket": "^1.0.30"
   },
-  "proxy": "microblog.localhost",
+  "proxy": "http://microblog.localhost",
   "eslintConfig": {
     "extends": "react-app"
   },
@@ -46,16 +46,24 @@
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "cd clients && npm run dev",
+    "dev": "react-scripts start",
     "build": "webpack -p --env.NODE_ENV=production",
     "build-local": "webpack -p --env.NODE_ENV=local",
     "build-dev": "webpack -d --watch --env.NODE_ENV=development"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/scottypipz/lacosina.git"
-  },
   "keywords": [],
   "author": "chefpipz",
-  "license": "MIT"
+  "license": "MIT",
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  }
 }
