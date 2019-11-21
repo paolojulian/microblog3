@@ -1,12 +1,11 @@
 import React from 'react';
-import Login from './index';
-import renderer from 'react-test-renderer';
+import { shallow } from 'enzyme';
+import ErrorMsg from '../../widgets/form/error';
 
-test('Link changes the class when hovered', () => {
-    const component = renderer.create(
-        <Login/>
-    );
-    let tree = component.toJSON();
-    expect(tree).toMatchSnapshot();
-    console.log(component);
-})
+describe("Login", () => {
+    it('renders form error message', () => {
+        const errorMessage = 'Username or Password is incorrect';
+        const component = shallow(<ErrorMsg error={errorMessage}/>);
+        expect(component).toMatchSnapshot();
+    });
+});

@@ -10,6 +10,7 @@ import { loginUser } from '../../../store/actions/authActions'
 import PCard from '../../widgets/p-card'
 import PButton from '../../widgets/p-button'
 import FormInput from '../../widgets/form/input'
+import ErrorMsg from '../../widgets/form/error';
 
 const Login = ({
     loginUser,
@@ -49,19 +50,27 @@ const Login = ({
         try {
             await loginUser(User, history);
         } catch (e) {
-            if (e.hasOwnProperty('response') && e.response.status === 422) {
-                return setErrors({
-                    form: e.response.data.data,
-                    username: true,
-                    password: true
-                })
+            handleError(e);
+        } finally {
+            setLoading(false);
+        }
+    }
+
+    const handleError = e => {
+        try {
+            if (e.response.status !== 422) {
+                throw new Error();
             }
+            return setErrors({
+                form: e.response.data.data,
+                username: true,
+                password: true
+            })
+        } catch (e) {
             return setErrors({
                 ...errors,
                 form: 'Oops. Something went wrong'
             })
-        } finally {
-            setLoading(false);
         }
     }
 
@@ -72,11 +81,7 @@ const Login = ({
                     className="form"
                     onSubmit={handleSubmit}
                 >
-                    {
-                        errors.form && <div className="invalid-feedback">
-                            {`* ${errors.form}`}
-                        </div>
-                    }
+                    <ErrorMsg error={errors.form}/>
                     <FormInput
                         placeholder="Username"
                         name="username"
