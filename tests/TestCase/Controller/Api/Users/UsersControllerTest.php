@@ -1,16 +1,16 @@
 <?php
-namespace App\Test\TestCase\Controller\Api\User;
+namespace App\Test\TestCase\Controller\Api\Users;
 
-use App\Controller\Api\User\UsersController;
+use App\Controller\Api\Users\UsersController;
 use App\Test\TestCase\Controller\Api\ApiTestCase;
 use App\Test\Utils\TokenGenerator;
 use Cake\TestSuite\IntegrationTestTrait;
 use Cake\ORM\TableRegistry;
 
 /**
- * App\Controller\Api/User/UsersController Test Case
+ * App\Controller\Api/Users/UsersController Test Case
  *
- * @uses \App\Controller\Api/User/UsersController
+ * @uses \App\Controller\Api/Users/UsersController
  */
 class UsersControllerTest extends ApiTestCase
 {
@@ -28,7 +28,7 @@ class UsersControllerTest extends ApiTestCase
 
     public function testFetchFollowersWillReturnExactAmount()
     {
-        $this->get('/api/user/activated/followers/count');
+        $this->get('/api/users/activated/followers/count');
         $this->assertResponseOk();
         $followersModel = TableRegistry::getTableLocator()->get('Followers');
         $count = $followersModel->find()
@@ -40,7 +40,7 @@ class UsersControllerTest extends ApiTestCase
 
     public function testFetchFollowingWillReturnExactAmount()
     {
-        $this->get('/api/user/activated/following/count');
+        $this->get('/api/users/activated/following/count');
         $this->assertResponseOk();
         $followersModel = TableRegistry::getTableLocator()->get('Followers');
         $count = $followersModel->find()
@@ -52,7 +52,7 @@ class UsersControllerTest extends ApiTestCase
 
     public function testFetchFollowsReturnExactAmount()
     {
-        $this->get('/api/user/activated/follow/count');
+        $this->get('/api/users/activated/follow/count');
         $this->assertResponseOk();
         $followersModel = TableRegistry::getTableLocator()->get('Followers');
         $followerCount = $followersModel->find()
@@ -68,7 +68,7 @@ class UsersControllerTest extends ApiTestCase
 
     public function testFetchRecommendedShouldNotBeFollowed()
     {
-        $this->get('/api/user/activated/follow/recommended');
+        $this->get('/api/users/follow/recommended');
         $this->assertResponseOk();
         $followersModel = TableRegistry::getTableLocator()->get('Followers');
         $followedUsers = $followersModel->find()
@@ -80,6 +80,18 @@ class UsersControllerTest extends ApiTestCase
             $followedUsers[0]->following_id,
             $result->data->users
         );
+    }
+
+    public function testFetchRecommendedShouldContainFriendsOfFriends()
+    {
+        $this->get('/api/users/follow/recommended');
+        $this->assertResponseOk();
+        $followersModel = TableRegistry::getTableLocator()->get('Followers');
+        $followedUsers = $followersModel->find()
+            ->select('following_id')
+            ->where(['user_id' => $this->loggedInUser])
+            ->toArray();
+        $result = json_decode((string)$this->_response->getBody());
         $this->assertResponseContains(200012, $result->data->users);
         $this->assertResponseContains('anotherActivated', $result->data->users);
     }

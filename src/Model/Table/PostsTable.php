@@ -5,6 +5,7 @@ use Cake\ORM\Query;
 use Cake\ORM\RulesChecker;
 use Cake\ORM\Table;
 use Cake\Validation\Validator;
+use Cake\Datasource\ConnectionManager;
 
 /**
  * Posts Model
@@ -114,6 +115,18 @@ class PostsTable extends Table
         $rules->add($rules->existsIn(['user_id'], 'Users'));
 
         return $rules;
+    }
+
+    public function fetchPostsForLanding($userId, $pageNo = 1, $perPage = 10)
+    {
+        $this->connection = ConnectionManager::get('default');
+        $offset = ($pageNo - 1) * $perPage;
+        $results = $this->connection->execute(
+            'CALL fetchPostsToDisplay(?, ?, ?)', 
+            [$userId, $perPage, $offset]
+        )->fetchAll('assoc');
+
+        return $results;
     }
 
     /**

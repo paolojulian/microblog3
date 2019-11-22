@@ -55,10 +55,22 @@ Router::prefix('api', function (RouteBuilder $routes) {
         $routes->connect('/activate/:key', ['controller' => 'Auths', 'action' => 'activate']);
         $routes->connect('/me', ['controller' => 'Auths', 'action' => 'me']);
     });
-    $routes->prefix('post', function (RouteBuilder $routes) {
-        $routes->connect('/create', ['controller' => 'Posts', 'action' => 'create']);
+    $routes->prefix('posts', function (RouteBuilder $routes) {
+        $routes->connect(
+            '/',
+            ['controller' => 'Posts', 'action' => 'fetchPosts']
+        )->setMethods(['GET']);
+        $routes->connect(
+            '/create',
+            ['controller' => 'Posts', 'action' => 'create']
+        )->setMethods(['POST']);
     });
-    $routes->prefix('user', function (RouteBuilder $routes) {
+    $routes->prefix('users', function (RouteBuilder $routes) {
+        $routes->connect(
+            '/follow/recommended',
+            ['controller' => 'Users', 'action' => 'recommended']
+        );
+
         $routes->connect(
             '/:username/followers',
             ['controller' => 'Users', 'action' => 'fetchFollowers']
@@ -66,10 +78,6 @@ Router::prefix('api', function (RouteBuilder $routes) {
         $routes->connect(
             '/:username/following',
             ['controller' => 'Users', 'action' => 'fetchFollowing']
-        );
-        $routes->connect(
-            '/:username/follow/recommended',
-            ['controller' => 'Users', 'action' => 'recommended']
         );
         $routes->connect(
             '/:username/followers/count',

@@ -4,12 +4,14 @@ import {
     CLEAR_CURRENT_PROFILE,
     TOGGLE_LOADING_PROFILE,
     ADD_FOLLOWER,
-    ADD_FOLLOWING
+    ADD_FOLLOWING,
+    FOLLOW
 } from '../types';
 
 const initialState = {
     loading: true,
     isFollowing: false,
+    user: {},
     totalFollowers: 0,
     totalFollowing: 0,
     notFollowed: []
@@ -26,8 +28,14 @@ export default (state = initialState, action) => {
         case SET_PROFILE:
             return {
                 ...state,
-                ...action.payload,
+                user: {...action.payload},
                 loading: false
+            }
+        case FOLLOW.setFollow:
+            return {
+                ...state,
+                totalFollowers: action.payload.totalFollowers,
+                totalFollowing: action.payload.totalFollowing,
             }
         case SET_NOT_FOLLOWED:
             return {

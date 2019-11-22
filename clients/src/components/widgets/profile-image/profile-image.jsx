@@ -4,7 +4,7 @@ import PropTypes from 'prop-types'
 /** Components */
 import PImage from '../p-image'
 
-const profilesURL = '/app/webroot/img/profiles/';
+const profilesURL = '/img/profiles/';
 
 const ProfileImage = (props) => {
     const fallback = `${profilesURL}default_avatarx${props.size}.png`;

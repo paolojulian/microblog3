@@ -5,7 +5,8 @@ import {
     SET_PROFILE,
     TOGGLE_LOADING_PROFILE,
     ADD_FOLLOWING,
-    ADD_FOLLOWER
+    ADD_FOLLOWER,
+    FOLLOW
 } from '../types';
 
 /**
@@ -18,7 +19,7 @@ export const getProfile = (username = '') => async dispatch => {
         if (username) {
             res = await axios.get(`/profiles/view/${username}.json`)
         } else {
-            res = await axios.get('/profiles/current.json')
+            res = await axios.get('/api/auth/me')
         }
         dispatch({
             type: SET_PROFILE,
@@ -104,12 +105,31 @@ export const fetchFollow = (userId, type, page = 1) => async dispatch => {
 }
 
 /**
+ * Fetches the count of followers and following
+ */
+export const fetchFollowCount = (username) => async dispatch => {
+    try {
+        const res = await axios.get(`/api/users/${username}/follow/count`)
+        dispatch({
+            type: FOLLOW.setFollow,
+            payload: {
+                totalFollowers: res.data.data.followerCount,
+                totalFollowing: res.data.data.followingCount,
+            }
+        })
+        return Promise.resolve(res.data.data)
+    } catch (e) {
+        return Promise.reject()
+    }
+}
+
+/**
  * Fetch the users who have not yet followed
  * prioritize the ones who have mutual connections
  */
 export const fetchNotFollowed = (page = 1) => async dispatch => {
     try {
-        const res = await axios.get(`/users/notfollowed.json?page=${page}`);
+        const res = await axios.get(`/api/users/follow/recommended?pageNo=${page}`);
         dispatch({
             type: SET_NOT_FOLLOWED,
             payload: res.data.data

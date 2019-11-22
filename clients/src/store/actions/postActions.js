@@ -16,10 +16,10 @@ export const getPostById = (postId) => async dispatch => {
 /**
  * Fetches the posts to display on main page
  */
-export const getPosts = (page = 1) => async dispatch => {
+export const getPostsForLanding = (page = 1) => async dispatch => {
     try {
         dispatch({ type: TOGGLE_LOADING_POST, payload: true })
-        const res = await axios.get(`/posts.json?page=${page}`)
+        const res = await axios.get(`/api/posts?pageNo=${page}`)
         // Will override all posts
         if (page === 1) {
             dispatch({
@@ -110,7 +110,7 @@ export const addPost = (post, history) => async dispatch => {
             formData.append('img', post.img);
         }
         await axios.post('/posts.json', formData, config)
-        await dispatch(getPosts());
+        await dispatch(getPostsForLanding());
         return Promise.resolve()
     } catch (e) {
         return Promise.reject(e)

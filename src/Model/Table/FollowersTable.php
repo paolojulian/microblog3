@@ -85,6 +85,12 @@ class FollowersTable extends Table
         return $rules;
     }
 
+    /**
+     * Counts the followers of the given user
+     * 
+     * @param int $userId - users.id
+     * @return int
+     */
     public function countFollowers($userId)
     {
         return $this->find()
@@ -92,6 +98,12 @@ class FollowersTable extends Table
             ->count();
     }
 
+    /**
+     * Counts the users the is being followed by the given user
+     * 
+     * @param int $userId - users.id
+     * @return int
+     */
     public function countFollowing($userId)
     {
         return $this->find()

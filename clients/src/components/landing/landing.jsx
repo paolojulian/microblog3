@@ -5,8 +5,8 @@ import styles from './landing.module.css';
 import WithNavbar from '../hoc/with-navbar';
 
 /** Redux */
-import { getProfile, fetchNotFollowed } from '../../store/actions/profileActions';
-import { getPosts } from '../../store/actions/postActions';
+import { getProfile, fetchFollowCount, fetchNotFollowed } from '../../store/actions/profileActions';
+import { getPostsForLanding } from '../../store/actions/postActions';
 import { CLEAR_POSTS } from '../../store/types';
 
 /** Components */
@@ -23,6 +23,7 @@ const Landing = () => {
     const [isLoading, setLoading] = useState(true);
     const [isError, setError] = useState(false);
     const { refreshToken } = useSelector(state => state.refresh);
+    const { user: { username } } = useSelector(state => state.auth);
 
     useEffect(() => {
         window.scrollTo({ top: 0, left: 0 });
@@ -30,8 +31,9 @@ const Landing = () => {
             try {
                 setLoading(true);
                 await dispatch(getProfile());
-                await fetchHandler();
+                await dispatch(fetchFollowCount(username));
                 await dispatch(fetchNotFollowed());
+                await fetchHandler();
             } catch (e) {
                 setError(true);
             } finally {
@@ -45,7 +47,7 @@ const Landing = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [refreshToken])
 
-    const fetchHandler = (page = 1) => dispatch(getPosts(page));
+    const fetchHandler = (page = 1) => dispatch(getPostsForLanding(page));
 
     if (isError) {
         return <ServerError/>

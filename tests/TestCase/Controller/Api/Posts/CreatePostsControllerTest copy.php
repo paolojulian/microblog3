@@ -1,7 +1,7 @@
 <?php
-namespace App\Test\TestCase\Controller\Api\Post;
+namespace App\Test\TestCase\Controller\Api\Posts;
 
-use App\Controller\Api\Post\PostsController;
+use App\Controller\Api\Posts\PostsController;
 use App\Test\TestCase\Controller\Api\ApiTestCase;
 use App\Test\Utils\TokenGenerator;
 use Cake\TestSuite\IntegrationTestTrait;

@@ -40,7 +40,7 @@ export default (state = initialState, action) => {
     const setPosts = (posts) => {
         let postIds = [];
         for (let i = 0; i < posts.length; i++) {
-            postIds.push(posts[i].Post.id);
+            postIds.push(posts[i].id);
         }
 
         return {

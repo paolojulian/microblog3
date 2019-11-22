@@ -10,8 +10,12 @@ import PLoader from '../widgets/p-loader';
 import ProfileImage from '../widgets/profile-image';
 
 const ProfileCard = (props) => {
-    const { user, loading } = useSelector(state => state.profile);
-    const { totalFollowers, totalFollowing } = useSelector(state => state.profile)
+    const {
+        user, 
+        loading,
+        totalFollowers,
+        totalFollowing
+    } = useSelector(state => state.profile)
 
 
     const renderBody = () => (

@@ -29,6 +29,7 @@ export const fetchUnreadNotifications = (page = 1, limit = 3) => async dispatch 
  */
 export const countUnreadNotifications = () => async dispatch => {
     try {
+        return Promise.resolve(1);
         const res = await axios.get('/notifications/unreadCount.json');
         dispatch({
             type: NOTIFICATION.setCount,

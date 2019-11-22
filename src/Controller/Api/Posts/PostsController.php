@@ -1,5 +1,5 @@
 <?php
-namespace App\Controller\Api\Post;
+namespace App\Controller\Api\Posts;
 
 use App\Controller\Api\AppController;
 
@@ -35,5 +35,26 @@ class PostsController extends AppController
             return $this->responseUnprocessableEntity($post['errors']);
         }
         return $this->responseCreated($post['entity']);
+    }
+    /**
+     * [GET]
+     * [PRIVATE]
+     * 
+     * Fetches the posts to be displayed in the landing page
+     * 
+     * @return array - list of posts
+     */
+    public function fetchPosts()
+    {
+        $this->request->allowMethod('get');
+        if ( ! $pageNo = $this->request->getParam('pageNo')) {
+            $pageNo = 1;
+        }
+        return $this->responseData(
+            $this->Posts->fetchPostsForLanding(
+                $this->Auth->user('id'),
+                $pageNo
+            )
+        );
     }
 }

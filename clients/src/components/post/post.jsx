@@ -13,31 +13,31 @@ const Post = ({ fetchHandler }) => {
     const { list: posts, page } = useSelector(state => state.post)
     const { id } = useSelector(state => state.auth.user)
     
-    const renderPosts = () => posts.map(({ Post }, i) => {
+    const renderPosts = () => posts.map((post, i) => {
         const sharedPost = {
-            userId: Number(Post.shared_user_id),
-            username: Post.shared_username,
-            avatarUrl: Post.shared_avatar_url,
-            body: Post.shared_body,
-            created: Post.shared_created
+            userId: Number(post.shared_user_id),
+            username: post.shared_username,
+            avatarUrl: post.shared_avatar_url,
+            body: post.shared_body,
+            created: post.shared_created
         }
         return (
-            <div key={Post.id}>
+            <div key={post.id}>
                 <PostItem
-                    isShared={!!Post.is_shared}
+                    isShared={!!post.is_shared}
                     sharedPost={sharedPost}
-                    id={Number(Post.id)}
-                    avatarUrl={Post.avatar_url}
-                    title={Post.title}
-                    body={Post.body}
-                    created={Post.created}
-                    creator={Post.username}
-                    imgPath={Post.img_path}
-                    retweet_post_id={Number(Post.retweet_post_id)}
-                    user_id={Number(Post.user_id)}
+                    id={Number(post.id)}
+                    avatarUrl={post.avatar_url}
+                    title={post.title}
+                    body={post.body}
+                    created={post.created}
+                    creator={post.username}
+                    imgPath={post.img_path}
+                    retweet_post_id={Number(post.retweet_post_id)}
+                    user_id={Number(post.user_id)}
 
-                    likes={Post.likes}
-                    comments={Post.comments}
+                    likes={post.likes}
+                    comments={post.comments}
                     loggedin_id={Number(id)}
                     fetchHandler={fetchHandler}
                 />

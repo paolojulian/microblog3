@@ -269,9 +269,16 @@ class UsersTable extends Table
             ->where(['username' => $username])
             ->contain(['Followers'])
             ->first();
-        var_dump($user);die();
     }
 
+    /**
+     * Fetches the recommended users to be followed by the user given
+     * prioritizes users that has been followed by the followed users by the given id
+     * 
+     * @param int $userId - users.id
+     * @param int $pageNo
+     * @param int $perPage
+     */
     public function fetchRecommendedUsers($userId, $pageNo = 1, $perPage = 5)
     {
         $this->connection = ConnectionManager::get('default');
@@ -288,6 +295,13 @@ class UsersTable extends Table
         return $results;
     }
 
+    /**
+     * Fetches users that is not yet followed by the user given
+     * 
+     * @param int $userId - users.id
+     * @param int $pageNo
+     * @param int $perPage
+     */
     public function fetchNotFollowedUsers($userId, $pageNo = 1, $perPage = 5)
     {
         return $this->find('all' , [

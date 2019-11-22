@@ -67,14 +67,14 @@ const PeopleYouMayKnow = () => {
             header={<Header/>}
         >
             {notFollowed.map((data, i) => {
-                let mutual = data[0] && data[0].hasOwnProperty('mutual')
-                    ? data[0].mutual
+                let mutual = data && data.hasOwnProperty('mutual')
+                    ? data.mutual
                     : 0
                 return (
                     <MutualUser
                         key={i}
                         mutual={mutual}
-                        user={data.User}
+                        user={data}
                     />
                 )
             })}
