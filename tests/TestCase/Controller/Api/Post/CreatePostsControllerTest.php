@@ -3,9 +3,9 @@ namespace App\Test\TestCase\Controller\Api\Post;
 
 use App\Controller\Api\Post\PostsController;
 use App\Test\TestCase\Controller\Api\ApiTestCase;
+use App\Test\Utils\TokenGenerator;
 use Cake\TestSuite\IntegrationTestTrait;
 
-use App\Test\Utils\TokenGenerator;
 
 /**
  * App\Controller\Api/Post/PostsController Test Case

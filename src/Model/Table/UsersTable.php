@@ -6,6 +6,7 @@ use Cake\ORM\RulesChecker;
 use Cake\ORM\Table;
 use Cake\Validation\Validator;
 use Cake\Http\Exception\BadRequestException;
+use Cake\Datasource\ConnectionManager;
 use SoftDelete\Model\Table\SoftDeleteTrait;
 
 /**
@@ -51,7 +52,12 @@ class UsersTable extends Table
             'foreignKey' => 'user_id'
         ]);
         $this->hasMany('Followers', [
-            'foreignKey' => 'user_id'
+            'foreignKey' => 'following_id',
+            'className' => 'Followers'
+        ]);
+        $this->hasMany('Following', [
+            'foreignKey' => 'user_id',
+            'className' => 'Followers'
         ]);
         $this->hasMany('Likes', [
             'foreignKey' => 'user_id'
@@ -196,6 +202,18 @@ class UsersTable extends Table
         return $rules;
     }
 
+    public function fetchByUsername($username, $fields = '*')
+    {
+        $query = $this->find()
+            ->select($fields)
+            ->where(['username' => $username]);
+
+        if ($query->isEmpty()) {
+            throw new NotFoundException();
+        }
+        return $query->first();
+    }
+
     /**
      * Adds a new user
      * defaults
@@ -243,6 +261,42 @@ class UsersTable extends Table
             throw new InternalErrorException();
         }
         return true;
+    }
+
+    public function fetchFollowers($username)
+    {
+        $user = $this->find('list')
+            ->where(['username' => $username])
+            ->contain(['Followers'])
+            ->first();
+        var_dump($user);die();
+    }
+
+    public function fetchRecommendedUsers($userId, $pageNo = 1, $perPage = 5)
+    {
+        $this->connection = ConnectionManager::get('default');
+        $offset = ($pageNo - 1) * $perPage;
+        $results = $this->connection->execute(
+            'CALL getNotFollowedUsers(?, ?, ?)', 
+            [$userId, $perPage, $offset]
+        )->fetchAll('assoc');
+
+        if (count($results) === 0) {
+            return $this->fetchNotFollowedUsers($userId, $pageNo, $perPage);
+        }
+
+        return $results;
+    }
+
+    public function fetchNotFollowedUsers($userId, $pageNo = 1, $perPage = 5)
+    {
+        return $this->find('all' , [
+            'conditions' => ['is_activated' => 1, 'id !=' => $userId],
+            'order' => 'created DESC',
+            'fields' => ['id', 'username', 'first_name', 'last_name', 'avatar_url'],
+            'limit' => $perPage,
+            'page' => $pageNo
+        ])->toList();
     }
 
     /**

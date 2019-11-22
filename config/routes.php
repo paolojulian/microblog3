@@ -58,6 +58,32 @@ Router::prefix('api', function (RouteBuilder $routes) {
     $routes->prefix('post', function (RouteBuilder $routes) {
         $routes->connect('/create', ['controller' => 'Posts', 'action' => 'create']);
     });
+    $routes->prefix('user', function (RouteBuilder $routes) {
+        $routes->connect(
+            '/:username/followers',
+            ['controller' => 'Users', 'action' => 'fetchFollowers']
+        );
+        $routes->connect(
+            '/:username/following',
+            ['controller' => 'Users', 'action' => 'fetchFollowing']
+        );
+        $routes->connect(
+            '/:username/follow/recommended',
+            ['controller' => 'Users', 'action' => 'recommended']
+        );
+        $routes->connect(
+            '/:username/followers/count',
+            ['controller' => 'Users', 'action' => 'countFollowers']
+        );
+        $routes->connect(
+            '/:username/following/count',
+            ['controller' => 'Users', 'action' => 'countFollowing']
+        );
+        $routes->connect(
+            '/:username/follow/count',
+            ['controller' => 'Users', 'action' => 'countFollow']
+        );
+    });
         // Followers
 
     // Posts
