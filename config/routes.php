@@ -55,6 +55,9 @@ Router::prefix('api', function (RouteBuilder $routes) {
         $routes->connect('/activate/:key', ['controller' => 'Auths', 'action' => 'activate']);
         $routes->connect('/me', ['controller' => 'Auths', 'action' => 'me']);
     });
+    $routes->prefix('post', function (RouteBuilder $routes) {
+        $routes->connect('/create', ['controller' => 'Posts', 'action' => 'create']);
+    });
         // Followers
 
     // Posts

@@ -2,10 +2,9 @@
 namespace App\Test\TestCase\Controller\Api\Auth;
 
 use App\Controller\Api\Auth\AuthsController;
-use Cake\ORM\TableRegistry;
-use Cake\TestSuite\IntegrationTestTrait;
-use Cake\TestSuite\TestCase;
 use App\Test\TestCase\Controller\Api\ApiTestCase;
+use Cake\TestSuite\IntegrationTestTrait;
+use Cake\ORM\TableRegistry;
 
 /**
  * App\Controller\Api/AuthsController Test Case
@@ -18,6 +17,10 @@ class AuthsControllerTest extends ApiTestCase
 
     public $fixtures = ['app.Users'];
 
+    /********************
+     * LOGIN
+     *******************/
+
     public function testLoginShouldOnlyAllowPost()
     {
         $this->get('/api/auth/login');
@@ -28,6 +31,28 @@ class AuthsControllerTest extends ApiTestCase
         $this->assertResponseCode(405);
         $this->delete('/api/auth/login');
         $this->assertResponseCode(405);
+    }
+
+    public function testUnactivatedAccountShouldReturnMessage()
+    {
+        $data = [
+            'username' => 'unactivated',
+            'password' => 'qwe123'
+        ];
+        $this->post('/api/auth/login', $data);
+        $this->assertResponseCode(422);
+        $this->assertResponseContains('Please activate your account first');
+    }
+
+    public function testLoginShouldReturnOkAndToken()
+    {
+        $data = [
+            'username' => 'activated',
+            'password' => 'qwe123'
+        ];
+        $this->post('/api/auth/login', $data);
+        $this->assertResponseOk();
+        $this->assertResponseContains('token');
     }
 
     // public function testLoginShouldReturnToken()
@@ -285,30 +310,6 @@ class AuthsControllerTest extends ApiTestCase
             ->first();
         $this->assertNotEquals($data['password'], $user->password);
         $this->assertResponseOk();
-    }
-
-    public function testUnactivatedAccountShouldReturnMessage()
-    {
-        $data = [
-            'username' => 'unactivated',
-            'password' => 'qwe123'
-        ];
-        $usersModel = TableRegistry::getTableLocator()->get('Users');
-        $this->post('/api/auth/login', $data);
-        $this->assertResponseCode(422);
-        $this->assertResponseContains('Please activate your account first');
-    }
-
-    public function testLoginShouldReturnOkAndToken()
-    {
-        $data = [
-            'username' => 'activated',
-            'password' => 'qwe123'
-        ];
-        $usersModel = TableRegistry::getTableLocator()->get('Users');
-        $this->post('/api/auth/login', $data);
-        $this->assertResponseOk();
-        $this->assertResponseContains('token');
     }
 
     public function testAccessMeWithoutTokenShould401()

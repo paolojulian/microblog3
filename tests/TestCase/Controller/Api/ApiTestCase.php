@@ -11,15 +11,24 @@ use Cake\TestSuite\TestCase;
  */
 class ApiTestCase extends TestCase
 {
+    protected $requestHeaders = [
+        'Accept' => 'application/json',
+        'Content-Type' => 'x-www-form-urlencoded'
+    ];
 
     public function setUp()
     {
         parent::setUp();
         $this->configRequest([
-            'headers' => [
-                'Accept' => 'application/json',
-                'Content-Type' => 'x-www-form-urlencoded'
-            ]
+            'headers' => $this->requestHeaders
+        ]);
+    }
+
+    protected function addAuthorizationHeader(string $token)
+    {
+        $this->requestHeaders['Authorization'] = 'Bearer ' . $token;
+        $this->configRequest([
+            'headers' => $this->requestHeaders
         ]);
     }
 }
