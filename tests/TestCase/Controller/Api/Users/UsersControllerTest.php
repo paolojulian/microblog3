@@ -78,7 +78,7 @@ class UsersControllerTest extends ApiTestCase
         $result = json_decode((string)$this->_response->getBody());
         $this->assertResponseNotContains(
             $followedUsers[0]->following_id,
-            $result->data->users
+            $result->data
         );
     }
 
@@ -92,7 +92,7 @@ class UsersControllerTest extends ApiTestCase
             ->where(['user_id' => $this->loggedInUser])
             ->toArray();
         $result = json_decode((string)$this->_response->getBody());
-        $this->assertResponseContains(200012, $result->data->users);
-        $this->assertResponseContains('anotherActivated', $result->data->users);
+        $this->assertResponseContains(200012, $result->data);
+        $this->assertResponseContains('anotherActivated', $result->data);
     }
 }
