@@ -31,9 +31,9 @@ const Landing = () => {
             try {
                 setLoading(true);
                 await dispatch(getProfile());
-                await dispatch(fetchFollowCount(username));
-                await dispatch(fetchNotFollowed());
                 await fetchHandler();
+                dispatch(fetchNotFollowed());
+                dispatch(fetchFollowCount(username));
             } catch (e) {
                 setError(true);
             } finally {
@@ -47,7 +47,9 @@ const Landing = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [refreshToken])
 
-    const fetchHandler = (page = 1) => dispatch(getPostsForLanding(page));
+    const fetchHandler = async (page = 1) => {
+        await dispatch(getPostsForLanding(page))
+    };
 
     if (isError) {
         return <ServerError/>

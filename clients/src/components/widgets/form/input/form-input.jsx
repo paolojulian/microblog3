@@ -15,6 +15,7 @@ const FormInput = ({
     type,
     disabled,
     theme,
+    isRequired,
     ...props
 }) => {
 
@@ -26,7 +27,10 @@ const FormInput = ({
 
     const handleKeyPress = e => {
         if (stateError) {
-            setError(false);
+            return setError(false);
+        }
+        if (isRequired) {
+            return setError(true);
         }
     }
 
@@ -68,7 +72,8 @@ FormInput.defaultProps = {
     type: 'text',
     theme: 'default',
     refs: null,
-    disabled: false
+    disabled: false,
+    isRequired: false
 }
 
 export default FormInput;

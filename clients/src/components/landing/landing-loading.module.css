@@ -16,15 +16,12 @@
     height: 15rem;
     margin-bottom: 0.5rem;
     background-color: var(--grey);
+    padding: 3rem 1rem;
 }
 
 .profile,
 .right {
     display: none;
-}
-
-.post {
-    padding: 3rem 1rem;
 }
 
 .header {

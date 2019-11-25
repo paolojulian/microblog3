@@ -82,7 +82,7 @@ const PostCreate = ({
                 case 415:
                     return setErrors({ img: 'File is not supported!' })
                 case 422:
-                    return setErrors(e.response.data.data.errors);
+                    return setErrors(e.response.data.data);
                 default:
                     throw new Error(e);
             }
@@ -135,6 +135,7 @@ const PostCreate = ({
                     refs={body}
                     info="What's on your mind?"
                     error={errors.body}
+                    isRequired={true}
                 />
 
                 <FormImage

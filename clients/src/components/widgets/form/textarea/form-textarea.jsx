@@ -1,7 +1,8 @@
-import React from 'react';
-import styles from './form-textarea.module.css';
+import React, { useState, useEffect } from 'react';
+import styles from '../form-component.module.css';
 import classnames from 'classnames';
 import PropTypes from 'prop-types';
+import ErrorMsg from '../error';
 
 const FormTextArea = ({
     name,
@@ -13,34 +14,43 @@ const FormTextArea = ({
     disabled,
     theme,
     rows,
+    isRequired,
     ...props
 }) => {
+
+    const [stateError, setError] = useState(error);
+
+    useEffect(() => {
+        setError(error)
+    }, [error]);
+
+    const handleKeyPress = e => {
+        if (stateError) {
+            return setError(false);
+        }
+        if (isRequired) {
+            return setError(true);
+        }
+    }
     return (
         <div className={styles.form_textarea}>
             <textarea
                 className={classnames(styles.input, {
-                    'is-invalid': error,
-                    [styles.theme_default]: theme === 'default' && !error,
-                    [styles.theme_primary]: theme === 'primary' && !error,
-                    [styles.theme_secondary]: theme === 'secondary' && !error,
+                    'is-invalid': stateError,
+                    [styles.theme_default]: theme === 'default' && !stateError,
+                    [styles.theme_primary]: theme === 'primary' && !stateError,
+                    [styles.theme_secondary]: theme === 'secondary' && !stateError,
                 })}
                 name={name}
                 placeholder={placeholder}
                 disabled={disabled}
                 ref={refs}
                 rows={rows}
+                onKeyPress={handleKeyPress}
                 {...props}
             ></textarea>
             {info && <div className={styles.formInfo}>{info}</div>}
-            {error && <div className="invalid-feedback">
-                {
-                    typeof error === 'string'
-                        ? `* ${error}`
-                        : typeof error[0] === 'string'
-                            ? `* ${error[0]}`
-                            : ``
-                }
-            </div>}
+            <ErrorMsg error={stateError}/>
         </div>
     )
 }
@@ -61,7 +71,8 @@ FormTextArea.defaultProps = {
     type: 'text',
     theme: 'default',
     refs: null,
-    rows: 4
+    rows: 4,
+    isRequired: false,
 }
 
 export default FormTextArea;

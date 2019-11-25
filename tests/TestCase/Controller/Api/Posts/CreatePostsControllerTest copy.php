@@ -18,6 +18,7 @@ class CreatePostsControllerTest extends ApiTestCase
 
     public $fixtures = ['app.Users', 'app.Posts'];
     public $loggedInUser = 200002;
+    private $createPostURL = '/api/posts';
 
     public function setUp()
     {
@@ -34,7 +35,7 @@ class CreatePostsControllerTest extends ApiTestCase
             'title' => '',
             'body' => ''
         ];
-        $this->post('/api/post/create', $data);
+        $this->post($this->createPostURL, $data);
         $this->assertResponseCode(422);
         $this->assertResponseContains('body');
         $this->assertResponseContains('Please enter your message');
@@ -42,7 +43,7 @@ class CreatePostsControllerTest extends ApiTestCase
 
     public function testNonExistingBodyShouldReturnError()
     {
-        $this->post('/api/post/create');
+        $this->post($this->createPostURL);
         $this->assertResponseCode(422);
         $this->assertResponseContains('body');
         $this->assertResponseContains('Please enter your message');
@@ -54,7 +55,7 @@ class CreatePostsControllerTest extends ApiTestCase
             'title' => '',
             'body' => '  '
         ];
-        $this->post('/api/post/create');
+        $this->post($this->createPostURL);
         $this->assertResponseCode(422);
         $this->assertResponseContains('body');
         $this->assertResponseContains('Please enter your message');
@@ -66,12 +67,27 @@ class CreatePostsControllerTest extends ApiTestCase
             'title' => '',
             'body' => 'New Body'
         ];
-        $this->post('/api/post/create', $data);
+        $this->post($this->createPostURL, $data);
         $this->assertResponseOk();
         $result = json_decode((string)$this->_response->getBody());
         $this->assertEquals($data['body'], $result->data->body);
         $this->assertEquals($this->loggedInUser, $result->data->user_id);
     }
+
+    public function testMaxInputShouldInvalidate()
+    {
+        $data = [
+            'title' => 'WERTYUIODASDSADJASLKDJSAKLDJLSAKJDKLASJDKLASJDKLASJDKLSA',
+            'body' => 'WERTYUIODASDSADJASLKDJSAKLDJLSAKJDKLASJDKLASJDKLASJDKLSAWERTYUIODASDSADJASLKDJSAKLDJLSAKJDKLASJDKLASJDKLASJDKLSAWERTYUIODASDSADJASLKDJSAKLDJLSAKJDKLASJDKLASJDKLASJDKLSA'
+        ];
+        $this->post($this->createPostURL, $data);
+        $this->assertResponseCode(422);
+        $this->assertResponseContains('title');
+        $this->assertResponseContains('body');
+        $this->assertResponseContains('Maximum of 30 characters is allowed');
+        $this->assertResponseContains('Maximum of 140 characters is allowed');
+    }
+
 
     public function testValidPostWithWhiteSpacesWillTrimBody()
     {
@@ -79,7 +95,7 @@ class CreatePostsControllerTest extends ApiTestCase
             'title' => '',
             'body' => '  This has white spaces  '
         ];
-        $this->post('/api/post/create', $data);
+        $this->post($this->createPostURL, $data);
         $this->assertResponseOk();
         $result = json_decode((string)$this->_response->getBody());
         $this->assertEquals(trim($data['body']), $result->data->body);

@@ -59,7 +59,6 @@ axios.interceptors.response.use(config => {
         case 404:
             window.location.href = '/not-found'
             break;
-        case 403:
         case 401:
             store.dispatch(logoutUser());
             window.location.href = '/login'
