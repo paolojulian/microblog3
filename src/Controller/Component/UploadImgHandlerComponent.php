@@ -36,7 +36,7 @@ class UploadImgHandlerComponent extends Component
             throw $e;
         }
         return [
-            'basePath' => "/app/webroot/$imgPath$imageName",
+            'basePath' => "/$imgPath$imageName",
             'imageName' => $imageName
         ];
     }

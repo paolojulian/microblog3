@@ -3,6 +3,7 @@ namespace App\Controller\Api;
 
 use Cake\Controller\Controller;
 use Cake\Event\Event;
+use Cake\ORM\Table;
 
 /**
  * Application Controller for Api
@@ -24,6 +25,7 @@ class AppController extends Controller
         $this->loadComponent('RequestHandler');
         $this->loadComponent('Auth', [
             'storage' => 'Memory',
+            'authorize' => ['Controller'],
             'authenticate' => [
                 'Form' => [
                     'fields' => [
@@ -94,5 +96,27 @@ class AppController extends Controller
     protected function responseForbidden()
     {
         $this->jsonResponse(403);
+    }
+
+    public function isAuthorized()
+    {
+        return true;
+    }
+
+    /**
+     * Check if model is owned by user passed
+     * !!IMPORTANT
+     * table should have user_id as column name
+     * for its owner
+     * 
+     * TODO
+     * make it dynamic for any field_name
+     * 
+     * @return bool
+     */
+    public function isOwnedBy(Table $model, int $userId)
+    {
+        $reqId = (int) $this->request->params['id'];
+        return $model->isOwnedBy($reqId, $userId);
     }
 }

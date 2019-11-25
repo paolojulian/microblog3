@@ -6,7 +6,7 @@ import InitialStatus from '../../utils/initial-status.js';
 
 /** Redux Actions */
 import { CLEAR_ERRORS } from '../../../store/types'
-import { editPost } from '../../../store/actions/postActions'
+import { updatePost } from '../../../store/actions/postActions'
 
 /** Components */
 import FormInput from '../../widgets/form/input'
@@ -18,7 +18,7 @@ import { ModalContext } from '../../widgets/p-modal/p-modal-context'
 import PModal from '../../widgets/p-modal/p-modal'
 
 const PostEdit = ({
-    editPost,
+    updatePost,
     id,
     isShared,
     onSuccess,
@@ -60,21 +60,22 @@ const PostEdit = ({
         }
         try {
             setStatus({ ...InitialStatus, loading: true });
-            await editPost(id, form)
+            await updatePost(id, form)
             context.notify.success("Updated Successfully!");
             onSuccess();
             setStatus({ ...InitialStatus, post: true });
         } catch (e) {
             handleError(e);
-            setStatus({ ...InitialStatus, error: true });
         }
     }
 
     const handleError = (e) => {
         try {
             if (e.response.status !== 422) {
+                setStatus({ ...InitialStatus, error: true });
                 throw new Error();
             }
+            setStatus({ ...InitialStatus, loading: false });
         } catch (e) {
             context.notify.serverError();
         }
@@ -125,4 +126,4 @@ PostEdit.defaultProps = {
     isShared: false
 }
 
-export default connect(null, { editPost })(PostEdit)
+export default connect(null, { updatePost })(PostEdit)

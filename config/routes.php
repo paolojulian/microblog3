@@ -56,14 +56,39 @@ Router::prefix('api', function (RouteBuilder $routes) {
         $routes->connect('/me', ['controller' => 'Auths', 'action' => 'me']);
     });
     $routes->prefix('posts', function (RouteBuilder $routes) {
+        /** Fetch Posts to display */
         $routes->connect(
             '/',
             ['controller' => 'Posts', 'action' => 'fetchPosts']
         )->setMethods(['GET']);
+
+        /** Add */
         $routes->connect(
-            '/create',
+            '/',
             ['controller' => 'Posts', 'action' => 'create']
         )->setMethods(['POST']);
+        
+        /** Update */
+        $routes->connect(
+            '/update/:id',
+            ['controller' => 'Posts', 'action' => 'update']
+        )->setPatterns(['id' => '\d+'])
+        ->setMethods(['POST']);
+
+        /** Like */
+        $routes->connect(
+            '/like/:id',
+            ['controller' => 'Posts', 'action' => 'like']
+        )->setPatterns(['id' => '\d+'])
+        ->setMethods(['PATCH']);
+
+        /** Delete */
+        $routes->connect(
+            '/:id',
+            ['controller' => 'Posts', 'action' => 'delete']
+        )->setPatterns(['id' => '\d+'])
+        ->setMethods(['DELETE']);
+
     });
     $routes->prefix('users', function (RouteBuilder $routes) {
         $routes->connect(

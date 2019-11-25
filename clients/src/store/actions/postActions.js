@@ -109,7 +109,7 @@ export const addPost = (post, history) => async dispatch => {
             }
             formData.append('img', post.img);
         }
-        await axios.post('/posts.json', formData, config)
+        await axios.post('/api/posts', formData, config)
         await dispatch(getPostsForLanding());
         return Promise.resolve()
     } catch (e) {
@@ -118,14 +118,15 @@ export const addPost = (post, history) => async dispatch => {
 }
 
 /**
- * Edits a post by the current user
+ * Updates a post by the current user
  */
-export const editPost = (postId, post) => async dispatch => {
+export const updatePost = (postId, post) => async dispatch => {
     try {
         let config = {}
         const formData = new FormData();
         formData.append('title', post.title);
         formData.append('body', post.body);
+        // Only change content type if img has content
         if (post.hasOwnProperty('img') && post.img === -1) {
             // use to check if image is removed or changed
             formData.append('img_path', '');
@@ -137,7 +138,7 @@ export const editPost = (postId, post) => async dispatch => {
             }
             formData.append('img', post.img);
         }
-        await axios.post(`/posts/edit/${postId}.json`, formData, config)
+        await axios.post(`/api/posts/update/${postId}`, formData, config)
         return Promise.resolve()
     } catch (e) {
         return Promise.reject(e)
@@ -149,7 +150,7 @@ export const editPost = (postId, post) => async dispatch => {
  */
 export const deletePost = (postId) => async dispatch => {
     try {
-        await axios.delete(`/posts/${postId}.json`)
+        await axios.delete(`/api/posts/${postId}`)
         return Promise.resolve()
     } catch (e) {
         return Promise.reject(e)
@@ -175,8 +176,8 @@ export const sharePost = (postId, body) => async dispatch => {
  */
 export const likePost = (postId) => async dispatch => {
     try {
-        await axios.post(`/posts/like/${postId}.json`)
-        return Promise.resolve()
+        const res = await axios.patch(`/api/posts/like/${postId}`)
+        return Promise.resolve(res.data.data)
     } catch (e) {
         return Promise.reject(e)
     }
