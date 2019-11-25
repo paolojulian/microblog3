@@ -52,14 +52,19 @@ const PostItem = ({
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
-    const handleLike = () => {
-        dispatch(likePost(id))
-        if (isLiked) {
-            setLikeCount(likeCount - 1)
-        } else {
-            setLikeCount(likeCount + 1)
+    const handleLike = async () => {
+        const orig = {
+            count: likeCount,
+            isLiked: isLiked
         }
-        setIsLiked(!isLiked)
+        try {
+            const { totalCount } = await dispatch(likePost(id));
+            setLikeCount(totalCount);
+            setIsLiked(!isLiked);
+        } catch (e) {
+            setLikeCount(orig.count);
+            setIsLiked(orig.isLiked);
+        }
     }
 
     const successHandler = () => {
