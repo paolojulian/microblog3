@@ -3,7 +3,7 @@ const webpack = require('webpack')
 const TerserPlugin = require('terser-webpack-plugin')
 
 const BUILD_DIR = path.resolve(__dirname, 'webroot/');
-const APP_DIR = path.resolve(__dirname, 'clients');
+const APP_DIR = path.resolve(__dirname, 'clients/src/');
 
 module.exports = env => {
   return {

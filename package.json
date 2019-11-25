@@ -8,6 +8,7 @@
   },
   "dependencies": {
     "@babel/polyfill": "^7.6.0",
+    "babel-preset-react": "^6.24.1",
     "classnames": "^2.2.6",
     "jwt-decode": "^2.2.0",
     "moment": "^2.24.0",
@@ -18,6 +19,7 @@
     "react-dom": "^16.11.0",
     "react-image-crop": "^8.4.0",
     "redux-thunk": "^2.3.0",
+    "webpack": "^4.41.2",
     "websocket": "^1.0.30"
   },
   "proxy": "microblog.localhost",
@@ -41,12 +43,11 @@
     "terser-webpack-plugin": "^2.2.1",
     "uglifyjs-webpack-plugin": "^2.2.0",
     "url-loader": "^2.2.0",
-    "webpack": "^4.41.2",
     "webpack-cli": "^3.3.9"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "react-scripts start",
+    "test": "cd clients && npm run test",
+    "dev": "cd clients && npm run dev",
     "build": "webpack -p --env.NODE_ENV=production",
     "build-local": "webpack -p --env.NODE_ENV=local",
     "build-dev": "webpack -d --watch --env.NODE_ENV=development"

@@ -55,6 +55,68 @@ Router::prefix('api', function (RouteBuilder $routes) {
         $routes->connect('/activate/:key', ['controller' => 'Auths', 'action' => 'activate']);
         $routes->connect('/me', ['controller' => 'Auths', 'action' => 'me']);
     });
+    $routes->prefix('posts', function (RouteBuilder $routes) {
+        /** Fetch Posts to display */
+        $routes->connect(
+            '/',
+            ['controller' => 'Posts', 'action' => 'fetchPosts']
+        )->setMethods(['GET']);
+
+        /** Add */
+        $routes->connect(
+            '/',
+            ['controller' => 'Posts', 'action' => 'create']
+        )->setMethods(['POST']);
+        
+        /** Update */
+        $routes->connect(
+            '/update/:id',
+            ['controller' => 'Posts', 'action' => 'update']
+        )->setPatterns(['id' => '\d+'])
+        ->setMethods(['POST']);
+
+        /** Like */
+        $routes->connect(
+            '/like/:id',
+            ['controller' => 'Posts', 'action' => 'like']
+        )->setPatterns(['id' => '\d+'])
+        ->setMethods(['PATCH']);
+
+        /** Delete */
+        $routes->connect(
+            '/:id',
+            ['controller' => 'Posts', 'action' => 'delete']
+        )->setPatterns(['id' => '\d+'])
+        ->setMethods(['DELETE']);
+
+    });
+    $routes->prefix('users', function (RouteBuilder $routes) {
+        $routes->connect(
+            '/follow/recommended',
+            ['controller' => 'Users', 'action' => 'recommended']
+        );
+
+        $routes->connect(
+            '/:username/followers',
+            ['controller' => 'Users', 'action' => 'fetchFollowers']
+        );
+        $routes->connect(
+            '/:username/following',
+            ['controller' => 'Users', 'action' => 'fetchFollowing']
+        );
+        $routes->connect(
+            '/:username/followers/count',
+            ['controller' => 'Users', 'action' => 'countFollowers']
+        );
+        $routes->connect(
+            '/:username/following/count',
+            ['controller' => 'Users', 'action' => 'countFollowing']
+        );
+        $routes->connect(
+            '/:username/follow/count',
+            ['controller' => 'Users', 'action' => 'countFollow']
+        );
+    });
         // Followers
 
     // Posts
@@ -65,19 +127,19 @@ Router::prefix('api', function (RouteBuilder $routes) {
 });
 
 Router::scope('/', function (RouteBuilder $routes) {
-    // // Register scoped middleware for in scopes.
-    // $routes->registerMiddleware('csrf', new CsrfProtectionMiddleware([
-    //     'httpOnly' => true
-    // ]));
+    // Register scoped middleware for in scopes.
+    $routes->registerMiddleware('csrf', new CsrfProtectionMiddleware([
+        'httpOnly' => true
+    ]));
 
-    // /**
-    //  * Apply a middleware to the current route scope.
-    //  * Requires middleware to be registered via `Application::routes()` with `registerMiddleware()`
-    //  */
-    // $routes->applyMiddleware('csrf');
+    /**
+     * Apply a middleware to the current route scope.
+     * Requires middleware to be registered via `Application::routes()` with `registerMiddleware()`
+     */
+    $routes->applyMiddleware('csrf');
 
     $routes->connect('/', ['controller' => 'Pages', 'action' => 'display', 'home']);
-    $routes->connect('/pages/*', ['controller' => 'Pages', 'action' => 'display']);
+    $routes->connect('/*', ['controller' => 'Pages', 'action' => 'display']);
 
     $routes->fallbacks(DashedRoute::class);
 });
