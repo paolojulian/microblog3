@@ -54,12 +54,26 @@ class FetchPostsControllerTest extends ApiTestCase
         $this->assertResponseContains($this->loggedInUser);
     }
 
-    public function testFetchingSinglePostWillReturnPostEntity()
+    public function testFetchingSinglePostWillReturnPostEntityWUser()
     {
         $postId = 1;
         $this->get('/api/posts/' . $postId);
         $this->assertResponseOk();
         $this->assertResponseContains($postId);
         $this->assertResponseContains('Lorem Ipsum');
+        $this->assertResponseContains(200002);
+        $this->assertResponseContains('activated');
+    }
+
+    public function testFetchingSharedPostWillRetrieveOriginalPost()
+    {
+        $sharedPostId = 4;
+        $originalPostId = 1;
+        $this->get('/api/posts/' . $sharedPostId);
+        $this->assertResponseOk();
+        $this->assertResponseContains($sharedPostId);
+        $this->assertResponseContains($originalPostId);
+        $this->assertResponseContains('Lorem Ipsum');
+        $this->assertResponseContains('This is a shared post');
     }
 }

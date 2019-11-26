@@ -118,6 +118,33 @@ class PostsTable extends Table
     }
 
     /**
+     * Fetch a single post
+     */
+    public function fetchPost(int $postId)
+    {
+        $post = $this->find()
+            ->where(['Posts.id' => $postId])
+            ->contain([
+                'Users' => function($q) {
+                    return $q->select(['Users.id', 'Users.username', 'Users.avatar_url']);
+                }
+            ])
+            ->first();
+
+        if (!!$post->retweet_post_id) {
+            $originalPost = $this->fetchPost($post->retweet_post_id);
+            return [
+                'post' => $originalPost,
+                'sharedPost' => $post
+            ];
+        }
+
+        $post['likes'] = $this->Likes->fetchLikersOfPost($postId);
+        // TODO get comments
+        return $post;
+    }
+
+    /**
      * Fetches all posts that will be displayed in the landing page
      * 
      * Fetches posts U shared_posts of owned OR followed users

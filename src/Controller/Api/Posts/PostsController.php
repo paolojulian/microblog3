@@ -51,6 +51,22 @@ class PostsController extends AppController
     }
 
     /**
+     * [GET]
+     * [PRIVATE]
+     * 
+     * Get a Single Post
+     * 
+     * @return status 204
+     */
+    public function view()
+    {
+        $this->request->allowMethod('get');
+        $postId = (int) $this->request->getParam('id');
+        $data = $this->Posts->fetchPost($postId);
+        return $this->responseData($data);
+    }
+
+    /**
      * TODO: Investigate why PUT does not get FormData()
      * [POST]
      * [PRIVATE]
