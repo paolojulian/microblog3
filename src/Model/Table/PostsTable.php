@@ -7,6 +7,7 @@ use Cake\ORM\Table;
 use Cake\Validation\Validator;
 use Cake\Datasource\ConnectionManager;
 use Cake\Http\Exception\NotFoundException;
+use SoftDelete\Model\Table\SoftDeleteTrait;
 
 /**
  * Posts Model
@@ -30,6 +31,7 @@ use Cake\Http\Exception\NotFoundException;
  */
 class PostsTable extends Table
 {
+    use SoftDeleteTrait;
     /**
      * Initialize method
      *

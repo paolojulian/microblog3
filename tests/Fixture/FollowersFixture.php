@@ -35,6 +35,14 @@ class FollowersFixture extends TestFixture
             'modified' => '2019-11-20 03:47:52',
             'deleted' => null
         ],
+        [
+            'id' => 4,
+            'user_id' => 200002,
+            'following_id' => 200014,
+            'created' => '2019-11-20 03:47:52',
+            'modified' => '2019-11-20 03:47:52',
+            'deleted' => null
+        ],
     ];
 
 }

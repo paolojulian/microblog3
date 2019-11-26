@@ -149,12 +149,19 @@ Router::prefix('api', function (RouteBuilder $routes) {
         $routes->connect(
             '/:username/following/count',
             ['controller' => 'Users', 'action' => 'countFollowing']
-        );
+        )->setMethods(['GET']);
 
         $routes->connect(
             '/:username/follow/count',
             ['controller' => 'Users', 'action' => 'countFollow']
-        );
+        )->setMethods(['GET']);
+
+        $routes->connect(
+            '/:id/follow',
+            ['controller' => 'Users', 'action' => 'follow']
+        )
+        ->setPatterns(['id' => '\d+'])
+        ->setMethods(['POST']);
     });
 
     // Notifications

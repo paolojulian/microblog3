@@ -5,6 +5,7 @@ use Cake\ORM\Query;
 use Cake\ORM\RulesChecker;
 use Cake\ORM\Table;
 use Cake\Validation\Validator;
+use Cake\Http\Exception\NotFoundException;
 
 /**
  * Followers Model
@@ -109,6 +110,45 @@ class FollowersTable extends Table
         return $this->find()
             ->where(['user_id' => $userId])
             ->count();
+    }
+
+    /**
+     * Toggles the follow a user
+     * 
+     * @param int $followingId - users.id - The user to be followed
+     * @param int $userId - users.id - The user to follow
+     * 
+     * @return void
+     */
+    public function toggleFollowUser(int $followingId, int $userId)
+    {
+        if ( ! $this->Users->exists(['id' => $followingId])) {
+            throw new NotFoundException();
+        }
+
+        $followEntity = $this->find()
+            ->where([
+                'following_id' => $followingId,
+                'user_id' => $userId
+            ])
+            ->first();
+
+        if ($followEntity) {
+            // Delete follow entity
+            if ( ! $this->delete($followEntity)) {
+                throw new InternalErrorException();
+            }
+            return true;
+        }
+
+        $followEntity = $this->newEntity();
+        $followEntity->user_id = $userId;
+        $followEntity->following_id = $followingId;
+        if ( ! $this->save($followEntity)) {
+            throw new InternalErrorException();
+        }
+
+        return true;
     }
 
     /**

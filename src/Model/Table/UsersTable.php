@@ -321,13 +321,21 @@ class UsersTable extends Table
      */
     public function fetchNotFollowedUsers($userId, $pageNo = 1, $perPage = 5)
     {
-        return $this->find('all' , [
-            'conditions' => ['is_activated' => 1, 'id !=' => $userId],
-            'order' => 'created DESC',
-            'fields' => ['id', 'username', 'first_name', 'last_name', 'avatar_url'],
-            'limit' => $perPage,
-            'page' => $pageNo
-        ])->toList();
+        $followedUsers = $this->Followers->find()
+            ->select(['following_id'])
+            ->where(['user_id' => $userId]);
+
+        return $this->find()
+            ->select(['id', 'username', 'first_name', 'last_name', 'avatar_url'])
+            ->where([
+                'Users.is_activated' => 1,
+                'Users.id NOT IN' => $followedUsers,
+                'Users.id <>' => $userId
+            ])
+            ->orderDesc('Users.created')
+            ->limit($perPage)
+            ->page($pageNo)
+            ->toList();
     }
 
     /**

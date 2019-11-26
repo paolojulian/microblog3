@@ -64,7 +64,7 @@ export const uploadProfileImg = (img) => async dispatch => {
  */
 export const followUser = (userId) => async dispatch => {
     try {
-        const res = await axios.post(`/followers/follow/${userId}.json`);
+        const res = await axios.post(`/api/users/${userId}/follow`);
         return Promise.resolve(res.data.data);
     } catch (e) {
         return Promise.reject(e);

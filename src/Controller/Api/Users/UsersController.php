@@ -136,6 +136,25 @@ class UsersController extends AppController
     }
 
     /**
+     * [POST]
+     * [PRIVATE]
+     * Follow a user
+     * 
+     * @param string - username
+     * @return status created
+     */
+    public function follow()
+    {
+        $this->request->allowMethod('post');
+        $userId = $this->request->getParam('id');
+        $this->Users->Followers->toggleFollowUser(
+            (int) $userId,
+            (int) $this->Auth->user('id')
+        );
+        return $this->responseCreated();
+    }
+
+    /**
      * [GET]
      * [PRIVATE]
      * Check if user passed is being followed by the user
@@ -152,6 +171,6 @@ class UsersController extends AppController
             (int) $this->Auth->user('id'),
             (int) $userId
         );
-        return $this->responseData($isFollowing ? 1 : -1);
+        return $this->responseData($isFollowing ? 1 : 0);
     }
 }

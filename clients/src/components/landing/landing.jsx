@@ -48,7 +48,6 @@ const Landing = () => {
     }, [refreshToken])
 
     const fetchHandler = async (page = 1) => {
-        console.log(page);
         await dispatch(getPostsForLanding(page))
     };
 

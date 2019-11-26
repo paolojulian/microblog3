@@ -19,6 +19,8 @@ class FollowUsersControllerTest extends ApiTestCase
     protected $requireToken = true;
     protected $loggedInUser = 200002;
     protected $username = 'activated';
+    protected $tobeFollowedId = 200013;
+    protected $tobeUnfollowedId = 200014;
     protected $followedUsername = 'existingusername';
     protected $notFollowedUsername = 'anotherActivated';
 
@@ -33,6 +35,30 @@ class FollowUsersControllerTest extends ApiTestCase
     {
         $this->get('/api/users/' . $this->notFollowedUsername . '/is-following');
         $this->assertResponseOk();
-        $this->assertResponseContains(-1);
+        $this->assertResponseContains(0);
+    }
+
+    public function testFollowUserWillReturn200()
+    {
+        $this->post('/api/users/' . $this->tobeFollowedId . '/follow');
+        $followersModel = TableRegistry::getTableLocator()->get('Followers');
+        $doesExists = $followersModel->exists([
+            'following_id' => $this->tobeFollowedId,
+            'user_id' => $this->loggedInUser
+        ]);
+        $this->assertEquals($doesExists, true);
+        $this->assertResponseOk();
+    }
+
+    public function testUnFollowUserWillDeleteDataFromDB()
+    {
+        $this->post('/api/users/' . $this->tobeUnfollowedId . '/follow');
+        $followersModel = TableRegistry::getTableLocator()->get('Followers');
+        $doesExists = $followersModel->exists([
+            'following_id' => $this->tobeUnfollowedId,
+            'user_id' => $this->loggedInUser
+        ]);
+        $this->assertEquals($doesExists, false);
+        $this->assertResponseOk();
     }
 }
