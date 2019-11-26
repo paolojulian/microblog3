@@ -66,6 +66,11 @@ const PeopleYouMayKnow = () => {
         <PCard size="fit"
             header={<Header/>}
         >
+            {notFollowed.length === 0 && (
+                <div className="disabled">
+                    No User/s Yet
+                </div>
+            )}
             {notFollowed.map((data, i) => {
                 let mutual = data && data.hasOwnProperty('mutual')
                     ? data.mutual

@@ -6,7 +6,7 @@ const types = ['alert', 'danger', 'success'];
 const colors = {
     alert: 'var(--blue)',
     danger: 'var(--secondary)',
-    success: 'var(--green-primary)'
+    success: 'rgba(0, 0, 0, 0.75)'
 }
 
 const AlertNotification = ({ 

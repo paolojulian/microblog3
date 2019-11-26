@@ -132,14 +132,16 @@ Router::prefix('api', function (RouteBuilder $routes) {
         );
 
         $routes->connect(
-            '/:username/followers',
+            '/:id/followers',
             ['controller' => 'Users', 'action' => 'fetchFollowers']
-        );
+        )
+        ->setMethods(['GET']);
 
         $routes->connect(
-            '/:username/following',
+            '/:id/following',
             ['controller' => 'Users', 'action' => 'fetchFollowing']
-        );
+        )
+        ->setMethods(['GET']);
 
         $routes->connect(
             '/:username/followers/count',

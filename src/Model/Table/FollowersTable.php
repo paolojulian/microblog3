@@ -46,7 +46,10 @@ class FollowersTable extends Table
             'foreignKey' => 'user_id',
             'joinType' => 'INNER'
         ]);
+
         $this->belongsTo('Followings', [
+            'className' => 'Users',
+            'propertyName' => 'user',
             'foreignKey' => 'following_id',
             'joinType' => 'INNER'
         ]);
@@ -84,6 +87,57 @@ class FollowersTable extends Table
         $rules->add($rules->existsIn(['following_id'], 'Users'));
 
         return $rules;
+    }
+
+    /**
+     * Fetches the followers of the user given
+     * 
+     * @param int $userId - users.id
+     * @return array of users
+     */
+    public function fetchFollowers(int $userId)
+    {
+        return $this->find()
+            ->select([
+                'Followers.user_id',
+                'isFollowing.id'
+            ])
+            ->where(['Followers.following_id' => $userId])
+            ->contain([
+                'Users' => function ($q) {
+                    return $q->select(['id', 'username', 'avatar_url', 'first_name', 'last_name']);
+                }
+            ])
+            ->join([
+                'isFollowing' => [
+                    'table' => 'Followers',
+                    'type' => 'LEFT',
+                    'conditions' => [
+                        'isFollowing.following_id = Followers.user_id',
+                        "isFollowing.user_id = $userId"
+                    ]
+                ]
+            ])
+            ->toList();
+    }
+
+    /**
+     * Fetches the users being followed by the given user
+     * 
+     * @param int $userId - users.id
+     * @return array of users
+     */
+    public function fetchFollowing(int $userId)
+    {
+        return $this->find()
+            ->select(['Followers.following_id'])
+            ->where(['user_id' => $userId])
+            ->contain([
+                'Followings' => function ($q) {
+                    return $q->select(['id', 'username', 'avatar_url', 'first_name', 'last_name']);
+                }
+            ])
+            ->toList();
     }
 
     /**

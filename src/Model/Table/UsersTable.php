@@ -279,15 +279,6 @@ class UsersTable extends Table
         return true;
     }
 
-    public function fetchFollowers(string $username)
-    {
-        $user = $this->find('list')
-            ->select(['Followers'])
-            ->where(['username' => $username])
-            ->contain(['Followers'])
-            ->first();
-    }
-
     /**
      * Fetches the recommended users to be followed by the user given
      * prioritizes users that has been followed by the followed users by the given id

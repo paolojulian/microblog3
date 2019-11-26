@@ -11,14 +11,6 @@ use App\Controller\Api\AppController;
  */
 class UsersController extends AppController
 {
-    public function fetchFollowers()
-    {
-        $this->request->allowMethod('get');
-        $username = $this->request->getParam('username');
-        return $this->responseData([
-            'count' => $this->Users->fetchFollowers($username)
-        ]);
-    }
 
     /**
      * Fetches the profile
@@ -45,9 +37,7 @@ class UsersController extends AppController
     {
         $this->request->allowMethod('get');
         $username = $this->request->getParam('username');
-        if ( ! $page = $this->request->getQuery('page')) {
-            $page = 1;
-        }
+        $page = $this->request->getQuery('page', 1);
 
         $friendId = (int) $this->Users->fetchByUsername($username, ['id'])->id;
         $users = $this->Users->fetchFriendsWhoFollowedUser(
@@ -58,9 +48,20 @@ class UsersController extends AppController
         return $this->responseData($users);
     }
 
+    public function fetchFollowers()
+    {
+        $this->request->allowMethod('get');
+        $id = $this->request->getParam('id');
+        $page = $this->request->getQuery('page', 1);
+        return $this->responseData($this->Users->Followers->fetchFollowers($id, $page));
+    }
+
     public function fetchFollowing()
     {
-        // TODO
+        $this->request->allowMethod('get');
+        $id = $this->request->getParam('id');
+        $page = $this->request->getQuery('page', 1);
+        return $this->responseData($this->Users->Followers->fetchFollowing($id, $page));
     }
 
     /**

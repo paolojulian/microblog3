@@ -162,9 +162,7 @@ class PostsController extends AppController
     public function fetchPosts()
     {
         $this->request->allowMethod('get');
-        if ( ! $page = $this->request->getQuery('page')) {
-            $page = 1;
-        }
+        $page = $this->request->getQuery('page', 1);
         return $this->responseData(
             $this->Posts->fetchPostsForLanding(
                 $this->Auth->user('id'),
@@ -186,9 +184,7 @@ class PostsController extends AppController
     public function fetchPostsOfUser()
     {
         $this->request->allowMethod('get');
-        if ( ! $page = $this->request->getQuery('page')) {
-            $page = 1;
-        }
+        $page = $this->request->getQuery('page', 1);
         $username = $this->request->getParam('username');
         $userId = $this->Posts->Users->fetchByUsername($username, ['id'])->id;
         return $this->responseData(

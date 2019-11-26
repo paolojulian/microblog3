@@ -61,4 +61,20 @@ class FollowUsersControllerTest extends ApiTestCase
         $this->assertEquals($doesExists, false);
         $this->assertResponseOk();
     }
+
+    public function testFetchFollowersOfUserWillReturnSuccess()
+    {
+        $this->get('/api/users/' . $this->loggedInUser . '/followers');
+        $this->assertResponseOk();
+        // Check if contains a user that follows the given user
+        $this->assertResponseContains(200001);
+    }
+
+    public function testFetchFollowingWillReturnSuccess()
+    {
+        $this->get('/api/users/' . $this->loggedInUser . '/following');
+        $this->assertResponseOk();
+        // Check if contains the user being followed by the given user
+        $this->assertResponseContains(200001);
+    }
 }
