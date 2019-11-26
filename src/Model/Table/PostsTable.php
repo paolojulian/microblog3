@@ -6,6 +6,7 @@ use Cake\ORM\RulesChecker;
 use Cake\ORM\Table;
 use Cake\Validation\Validator;
 use Cake\Datasource\ConnectionManager;
+use Cake\Http\Exception\NotFoundException;
 
 /**
  * Posts Model
@@ -100,6 +101,14 @@ class PostsTable extends Table
             ->dateTime('deleted')
             ->allowEmptyDateTime('deleted');
 
+        return $validator;
+    }
+
+    public function validationShare(Validator $validator) {
+        $validator
+            ->scalar('body')
+            ->maxLength('body', 140, __('Maximum of 140 characters is allowed'))
+            ->allowEmptyString('body', true);
         return $validator;
     }
 
@@ -272,6 +281,34 @@ class PostsTable extends Table
             throw new InternalErrorException();
         }
         return true;
+    }
+
+    /**
+     * Shares a Post
+     * 
+     * @param int $postId - the post to be shared
+     * @param int $userId - the user who shared the post
+     * 
+     * @return array - status and Post Enitity
+     */
+    public function sharePost(int $postId, int $userId, array $data)
+    {
+        if ( ! $this->exists(['id' => $postId])) {
+            throw new NotFoundException();
+        }
+        $post = $this->newEntity($data, ['validate' => 'Share']);
+        $post->retweet_post_id = $postId;
+        $post->user_id = $userId;
+
+        if ($post->hasErrors()) {
+            return $post;
+        }
+
+        if ( ! $this->save($post)) {
+            throw new InternalErrorException();
+        }
+
+        return $post;
     }
 
     public function beforeSave($event, $entity, $options)

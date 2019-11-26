@@ -113,6 +113,27 @@ class PostsController extends AppController
     }
 
     /**
+     * [POST]
+     * [PRIVATE]
+     * 
+     * Shares a post
+     * 
+     * @return object - Post Entity
+     */
+    public function share()
+    {
+        $this->request->allowMethod('post');
+        $postId = (int) $this->request->getParam('id');
+        $userId = (int) $this->Auth->user('id');
+        $requestData = $this->request->getData();
+        $post = $this->Posts->sharePost($postId, $userId, $requestData);
+        if ($post->hasErrors()) {
+            return $this->responseUnprocessableEntity($post->errors());
+        }
+        return $this->responseCreated($post);
+    }
+
+    /**
      * [PATCH]
      * [PRIVATE]
      * 
@@ -127,7 +148,7 @@ class PostsController extends AppController
         $userId = (int) $this->Auth->user('id');
         $this->Posts->Likes->toggleLike($userId, $postId);
         $totalCount = $this->Posts->Likes->countByPost($postId);
-        return $this->responseData(['totalCount' => $totalCount]);
+        return $this->responseCreated(['totalCount' => $totalCount]);
     }
 
     /**

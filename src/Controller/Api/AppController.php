@@ -87,7 +87,7 @@ class AppController extends Controller
     }
     protected function responseCreated($data = [])
     {
-        $this->jsonResponse(200, '', $data);
+        $this->jsonResponse(201, '', $data);
     }
     protected function responseNotFound()
     {

@@ -164,7 +164,7 @@ export const sharePost = (postId, body) => async dispatch => {
     try {
         const formData = new FormData();
         formData.append('body', body);
-        await axios.post(`/posts/share/${postId}.json`, formData);
+        await axios.post(`/api/posts/share/${postId}`, formData);
         return Promise.resolve()
     } catch (e) {
         return Promise.reject(e)
