@@ -6,7 +6,7 @@ import { SET_PAGE, SET_POSTS, ADD_POSTS, TOGGLE_LOADING_POST } from '../types';
  */
 export const getPostById = (postId) => async dispatch => {
     try {
-        const res = await axios.get(`/posts/${postId}.json`)
+        const res = await axios.get(`/api/posts/${postId}`)
         return Promise.resolve(res.data.data)
     } catch (e) {
         return Promise.reject()

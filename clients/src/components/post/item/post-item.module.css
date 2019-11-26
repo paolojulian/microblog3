@@ -106,3 +106,7 @@
 .closeComment span:hover {
     color: var(--blue);
 }
+
+.status {
+    text-align: center;
+}

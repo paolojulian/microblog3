@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { withRouter } from 'react-router-dom';
 
 import styles from './post-view.module.css';
 
@@ -7,10 +8,10 @@ import styles from './post-view.module.css';
 import { getPostById } from '../../../store/actions/postActions';
 
 /** Components */
-import PLoader from '../../widgets/p-loader';
 import PostItem from '../item';
 import WithNavbar from '../../hoc/with-navbar';
 import InitialStatus from '../../utils/initial-status.js';
+import PostItemWireframe from '../item/post-item-wireframe';
 
 const PostView = (props) => {
     const { id } = props.match.params;
@@ -31,12 +32,12 @@ const PostView = (props) => {
     const reloadPost = async () => {
         try {
             setStatus({ ...InitialStatus.LOADING })
-            const { Post, isShared, ...response } = await dispatch(getPostById(id));
-            setPost(Post.Post);
-            setProfile(Post.User);
+            const { isShared, post, ...response} = await dispatch(getPostById(id));
+            setPost(post);
+            setProfile(post.user);
             setShared(isShared);
             if (isShared) {
-                setSharedPost(response.Shared);
+                setSharedPost(response.sharedPost);
             }
             setStatus({ ...InitialStatus.POST })
         } catch (e) {
@@ -44,8 +45,16 @@ const PostView = (props) => {
         }
     }
 
+    const redirectOnSuccess = (link = '/') => {
+        props.history.push(link);
+    }
+
     if (status.loading) {
-        return <PLoader />
+        return (
+            <div className={styles.wrapper}>
+                <PostItemWireframe />
+            </div>
+        )
     }
 
     if (status.error) {
@@ -53,33 +62,34 @@ const PostView = (props) => {
     }
 
     return (
-        <div className={styles.wrapper} key={post.id}>
+        <div className={styles.wrapper}>
             <PostItem
                 openCommentOnStart={true}
                 isShared={isShared}
                 sharedPost={isShared ? {
-                    userId: Number(sharedPost.Post.user_id),
-                    username: sharedPost.User.username,
-                    avatarUrl: sharedPost.User.avatar_url,
-                    body: sharedPost.Post.body,
-                    created: sharedPost.Post.created
+                    userId: Number(sharedPost.user_id),
+                    username: sharedPost.user.username,
+                    avatarUrl: sharedPost.user.avatar_url,
+                    body: sharedPost.body,
+                    created: sharedPost.created
                 } : null}
 
                 avatarUrl={profile.avatar_url}
                 creator={profile.username}
 
-                id={isShared ? Number(sharedPost.Post.id) : Number(post.id)}
+                id={isShared ? Number(sharedPost.id): Number(post.id)}
                 title={post.title}
                 body={post.body}
                 created={post.created}
                 imgPath={post.img_path}
-                retweet_post_id={isShared ? sharedPost.Post.id : post.id}
+                retweet_post_id={isShared ? sharedPost.retweet_post_id : post.retweet_post_id}
                 user_id={Number(post.user_id)}
 
-                likes={isShared ? sharedPost.Post.likes: post.likes}
-                comments={isShared ? sharedPost.Post.comments: post.comments}
+                likes={isShared ? sharedPost.likes: post.likes}
+                comments={isShared ? sharedPost.comments: post.comments}
                 loggedin_id={Number(user.id)}
                 fetchHandler={reloadPost}
+                redirectOnSuccess={redirectOnSuccess}
             />
         </div>
     );
@@ -91,4 +101,4 @@ PostView.propTypes = {
 PostView.defaultProps = {
 }
 
-export default WithNavbar(PostView)
+export default withRouter(WithNavbar(PostView))

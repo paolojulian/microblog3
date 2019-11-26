@@ -154,11 +154,15 @@ class PostsTable extends Table
         if (!!$post->retweet_post_id) {
             $originalPost = $this->fetchPost($post->retweet_post_id, false);
             return [
-                'post' => $originalPost,
-                'sharedPost' => $post
+                'post' => $originalPost['post'],
+                'sharedPost' => $post,
+                'isShared' => true
             ];
         }
-        return ['post' => $post];
+        return [
+            'post' => $post,
+            'isShared' => false
+        ];
     }
 
     /**

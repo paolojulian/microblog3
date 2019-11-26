@@ -1,4 +1,4 @@
-import React, { useState, useContext, useEffect } from 'react'
+import React, { useState, useContext } from 'react'
 import classnames from 'classnames'
 import { useDispatch } from 'react-redux'
 import PropTypes from 'prop-types'
@@ -37,6 +37,7 @@ const PostItem = ({
     retweet_post_id,
     title,
     user_id,
+    redirectOnSuccess
 }) => {
     const dispatch = useDispatch();
     const context = useContext(ModalContext);
@@ -84,7 +85,7 @@ const PostItem = ({
                 username={creator}
                 sharedPostId={isShared ? retweet_post_id : id}
                 onSuccessEdit={successHandler}
-                onSuccessDelete={successHandler}
+                onSuccessDelete={redirectOnSuccess ? redirectOnSuccess : successHandler}
                 onSuccessShare={successHandler}
             />
             {isShared && <SharedPost
@@ -172,7 +173,8 @@ PostItem.defaultProps = {
     likes: [],
     comments: 0,
     isShared: false,
-    openCommentOnStart: false
+    openCommentOnStart: false,
+    redirectOnSuccess: null
 }
 
 export default PostItem
