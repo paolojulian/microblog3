@@ -43,7 +43,7 @@ class UsersFixture extends TestFixture
                 'sex' => 'M',
                 'role' => 'USER',
                 'avatar_url' => null,
-                'is_activated' => false,
+                'is_activated' => true,
                 'activation_key' => '70b45cd46d274bd1374324a7dcc877e4ed1600aa807188001574299686',
                 'created' => '2019-11-20 03:47:52',
                 'modified' => '2019-11-20 03:47:52',

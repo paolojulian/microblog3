@@ -17,8 +17,8 @@ export default (state = initialState, action) => {
     const addUniquePosts = (posts) => {
         let uniquePosts = [];
         let newPostIds = [];
-        for (let i = 0; i < posts.length; i ++) {
-            const newPostId = posts[i].Post.id;
+        for (let i = 0, l = posts.length; i < l; i ++) {
+            const newPostId = posts[i].id;
             if (state.postIds.indexOf(newPostId) === -1) {
                 newPostIds.push(newPostId);
                 uniquePosts.push(posts[i]);

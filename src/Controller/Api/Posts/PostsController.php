@@ -111,6 +111,7 @@ class PostsController extends AppController
         $totalCount = $this->Posts->Likes->countByPost($postId);
         return $this->responseData(['totalCount' => $totalCount]);
     }
+
     /**
      * [GET]
      * [PRIVATE]
@@ -122,13 +123,39 @@ class PostsController extends AppController
     public function fetchPosts()
     {
         $this->request->allowMethod('get');
-        if ( ! $pageNo = $this->request->getParam('pageNo')) {
-            $pageNo = 1;
+        if ( ! $page = $this->request->getQuery('page')) {
+            $page = 1;
         }
         return $this->responseData(
             $this->Posts->fetchPostsForLanding(
                 $this->Auth->user('id'),
-                $pageNo
+                $page
+            )
+        );
+    }
+
+    /**
+     * [GET]
+     * [PRIVATE]
+     * 
+     * Fetches the posts to be displayed on users page
+     * 
+     * @param string username
+     * 
+     * @return array - list of posts
+     */
+    public function fetchPostsOfUser()
+    {
+        $this->request->allowMethod('get');
+        if ( ! $page = $this->request->getQuery('page')) {
+            $page = 1;
+        }
+        $username = $this->request->getParam('username');
+        $userId = $this->Posts->Users->fetchByUsername($username, ['id'])->id;
+        return $this->responseData(
+            $this->Posts->fetchPostsForUser(
+                $userId,
+                $page
             )
         );
     }

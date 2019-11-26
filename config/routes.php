@@ -46,7 +46,6 @@ use Cake\Routing\Route\DashedRoute;
 Router::defaultRouteClass(DashedRoute::class);
 
 Router::prefix('api', function (RouteBuilder $routes) {
-    // TODO No $routes->applyMiddleware() here.
 
     $routes->setExtensions(['json', 'xml']);
     $routes->prefix('auth', function (RouteBuilder $routes) {
@@ -60,6 +59,12 @@ Router::prefix('api', function (RouteBuilder $routes) {
         $routes->connect(
             '/',
             ['controller' => 'Posts', 'action' => 'fetchPosts']
+        )->setMethods(['GET']);
+
+        /** Fetch Posts of user */
+        $routes->connect(
+            '/users/:username',
+            ['controller' => 'Posts', 'action' => 'fetchPostsOfUser']
         )->setMethods(['GET']);
 
         /** Add */
@@ -82,6 +87,13 @@ Router::prefix('api', function (RouteBuilder $routes) {
         )->setPatterns(['id' => '\d+'])
         ->setMethods(['PATCH']);
 
+        /** View */
+        $routes->connect(
+            '/:id',
+            ['controller' => 'Posts', 'action' => 'view']
+        )->setPatterns(['id' => '\d+'])
+        ->setMethods(['GET']);
+
         /** Delete */
         $routes->connect(
             '/:id',
@@ -91,6 +103,22 @@ Router::prefix('api', function (RouteBuilder $routes) {
 
     });
     $routes->prefix('users', function (RouteBuilder $routes) {
+        // Profiles
+        $routes->connect(
+            '/:username',
+            ['controller' => 'Users', 'action' => 'profile']
+        );
+        // Mutual
+        $routes->connect(
+            '/:username/mutual',
+            ['controller' => 'Users', 'action' => 'mutual']
+        );
+        // Followers
+        $routes->connect(
+            '/:username/is-following',
+            ['controller' => 'Users', 'action' => 'isFollowing']
+        )->setMethods(['GET']);
+
         $routes->connect(
             '/follow/recommended',
             ['controller' => 'Users', 'action' => 'recommended']
@@ -100,29 +128,28 @@ Router::prefix('api', function (RouteBuilder $routes) {
             '/:username/followers',
             ['controller' => 'Users', 'action' => 'fetchFollowers']
         );
+
         $routes->connect(
             '/:username/following',
             ['controller' => 'Users', 'action' => 'fetchFollowing']
         );
+
         $routes->connect(
             '/:username/followers/count',
             ['controller' => 'Users', 'action' => 'countFollowers']
         );
+
         $routes->connect(
             '/:username/following/count',
             ['controller' => 'Users', 'action' => 'countFollowing']
         );
+
         $routes->connect(
             '/:username/follow/count',
             ['controller' => 'Users', 'action' => 'countFollow']
         );
     });
-        // Followers
 
-    // Posts
-        // Comments
-        // Likes
-    
     // Notifications
 });
 

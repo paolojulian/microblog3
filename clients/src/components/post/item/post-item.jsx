@@ -42,15 +42,8 @@ const PostItem = ({
     const context = useContext(ModalContext);
     const [likeCount, setLikeCount] = useState(likes.length);
     const [commentsCount, setCommentsCount] = useState(comments);
-    const [isLiked, setIsLiked] = useState(likes.indexOf(String(loggedin_id)) !== -1);
-    const [showComment, setShowComment] = useState(false);
-
-    useEffect(() => {
-        if (openCommentOnStart) {
-            setShowComment(true);
-        }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [])
+    const [isLiked, setIsLiked] = useState(likes.indexOf(loggedin_id) !== -1);
+    const [showComment, setShowComment] = useState(!!openCommentOnStart);
 
     const handleLike = async () => {
         const orig = {

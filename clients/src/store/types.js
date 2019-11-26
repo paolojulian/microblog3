@@ -26,7 +26,8 @@ export const GET_PROFILE_POSTS = "GET_PROFILE_POSTS";
 export const GET_POST_COMMENTS = "GET_POST_COMMENTS";
 /** TODO Follow */
 export const FOLLOW = {
-    setFollow: "SET_FOLLOW"
+    setFollow: "SET_FOLLOW",
+    setIsFollowing: "SET_IS_FOLLOWING"
 }
 
 /** Notifications */

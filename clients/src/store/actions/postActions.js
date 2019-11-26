@@ -19,7 +19,7 @@ export const getPostById = (postId) => async dispatch => {
 export const getPostsForLanding = (page = 1) => async dispatch => {
     try {
         dispatch({ type: TOGGLE_LOADING_POST, payload: true })
-        const res = await axios.get(`/api/posts?pageNo=${page}`)
+        const res = await axios.get(`/api/posts?page=${page}`)
         // Will override all posts
         if (page === 1) {
             dispatch({
@@ -64,7 +64,7 @@ export const getCommentsByPost = (postId, page=1) => async dispatch => {
 export const getUserPosts = (username, page = 1) => async dispatch => {
     try {
         dispatch({ type: TOGGLE_LOADING_POST, payload: true })
-        const res = await axios.get(`/posts/user/${username}.json?page=${page}`)
+        const res = await axios.get(`/api/posts/users/${username}?page=${page}`)
         // Will override all posts
         if (page === 1) {
             dispatch({

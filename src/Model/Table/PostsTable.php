@@ -122,12 +122,30 @@ class PostsTable extends Table
      * 
      * Fetches posts U shared_posts of owned OR followed users
      */
-    public function fetchPostsForLanding($userId, $pageNo = 1, $perPage = 10)
+    public function fetchPostsForLanding($userId, $pageNo = 1, $perPage = 5)
     {
         $this->connection = ConnectionManager::get('default');
         $offset = ($pageNo - 1) * $perPage;
         $results = $this->connection->execute(
             'CALL fetchPostsToDisplay(?, ?, ?)', 
+            [$userId, $perPage, $offset]
+        )->fetchAll('assoc');
+
+        $this->populateWithLikesAndComments($results);
+        return $results;
+    }
+
+    /**
+     * Fetches all posts that will be displayed in the landing page
+     * 
+     * Fetches posts U shared_posts of owned OR followed users
+     */
+    public function fetchPostsForUser($userId, $pageNo = 1, $perPage = 5)
+    {
+        $this->connection = ConnectionManager::get('default');
+        $offset = ($pageNo - 1) * $perPage;
+        $results = $this->connection->execute(
+            'CALL fetchPostsOfUser(?, ?, ?)', 
             [$userId, $perPage, $offset]
         )->fetchAll('assoc');
 

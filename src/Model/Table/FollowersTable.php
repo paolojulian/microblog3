@@ -110,4 +110,19 @@ class FollowersTable extends Table
             ->where(['user_id' => $userId])
             ->count();
     }
+
+    /**
+     * Checks if user follows certain user
+     * 
+     * @param int $userId - users.id
+     * @param int $followedUserId - users.id
+     * @return int
+     */
+    public function isFollowing(int $userId, int $followedUserId)
+    {
+        return $this->exists([
+            'user_id' => $userId,
+            'following_id' => $followedUserId
+        ]);
+    }
 }

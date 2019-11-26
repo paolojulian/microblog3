@@ -17,15 +17,9 @@ class FetchPostsControllerTest extends ApiTestCase
     use IntegrationTestTrait;
 
     public $fixtures = ['app.Users', 'app.Posts', 'app.Followers'];
-    public $loggedInUser = 200002;
-
-    public function setUp()
-    {
-        // All actions here needs auth
-        parent::setUp();
-        $token = TokenGenerator::getToken();
-        $this->addAuthorizationHeader($token);
-    }
+    protected $requireToken = true;
+    protected $loggedInUser = 200002;
+    protected $username = 'activated';
 
     public function testFetchPostsShouldNotDisplayNotFollowedUsersPost()
     {
@@ -51,5 +45,21 @@ class FetchPostsControllerTest extends ApiTestCase
         $this->get('/api/posts/');
         $this->assertResponseOk();
         $this->assertResponseContains($this->loggedInUser);
+    }
+
+    public function testFetchUsersPostsShouldDisplayPostsBySelf()
+    {
+        $this->get('/api/posts/users/' . $this->username);
+        $this->assertResponseOk();
+        $this->assertResponseContains($this->loggedInUser);
+    }
+
+    public function testFetchingSinglePostWillReturnPostEntity()
+    {
+        $postId = 1;
+        $this->get('/api/posts/' . $postId);
+        $this->assertResponseOk();
+        $this->assertResponseContains($postId);
+        $this->assertResponseContains('Lorem Ipsum');
     }
 }

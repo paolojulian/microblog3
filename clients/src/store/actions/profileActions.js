@@ -12,19 +12,15 @@ import {
 /**
  * Get profile of current logged in user
  */
-export const getProfile = (username = '') => async dispatch => {
+export const getProfile = (username) => async dispatch => {
     try {
         dispatch({ type: TOGGLE_LOADING_PROFILE })
-        let res;
-        if (username) {
-            res = await axios.get(`/profiles/view/${username}.json`)
-        } else {
-            res = await axios.get('/api/auth/me')
-        }
+        const res = await axios.get(`/api/users/${username}`)
         dispatch({
             type: SET_PROFILE,
             payload: res.data.data
         })
+        await dispatch(fetchFollowCount(username));
         return Promise.resolve(res.data.data)
     } catch (e) {
         return Promise.reject()
@@ -146,7 +142,24 @@ export const fetchNotFollowed = (page = 1) => async dispatch => {
  */
 export const fetchMutualFriends = (username) => async dispatch => {
     try {
-        const res = await axios.get(`/users/mutual/${username}.json`);
+        const res = await axios.get(`/api/users/${username}/mutual`);
+        return Promise.resolve(res.data.data);
+    } catch (e) {
+        return Promise.reject(e);
+    }
+}
+
+/**
+ * Fetch the mutual friends with the given user
+ * @param username - user to check mutual friends
+ */
+export const isFollowing = (username) => async dispatch => {
+    try {
+        const res = await axios.get(`/api/users/${username}/is-following`);
+        dispatch ({
+            type: FOLLOW.setIsFollowing,
+            payload: !!res.data.data
+        })
         return Promise.resolve(res.data.data);
     } catch (e) {
         return Promise.reject(e);

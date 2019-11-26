@@ -8,10 +8,9 @@ import { useSelector } from 'react-redux'
 import PostItem from './item'
 import OnScrollPaginate from '../utils/on-scroll-paginate'
 import PCard from '../widgets/p-card/p-card'
-import PostItemWireframe from './item/post-item-wireframe'
 
 const Post = ({ fetchHandler }) => {
-    const { list: posts, page, isLoading } = useSelector(state => state.post)
+    const { list: posts, page } = useSelector(state => state.post)
     const { id } = useSelector(state => state.auth.user)
     
     const renderPosts = () => posts.map((post, i) => {
@@ -45,16 +44,6 @@ const Post = ({ fetchHandler }) => {
             </div>
         )
     })
-
-    if (isLoading) {
-        return (
-            <>
-                <PostItemWireframe />
-                <PostItemWireframe />
-                <PostItemWireframe />
-            </>
-        )
-    }
 
     if (!posts || posts.length === 0) {
         return (

@@ -202,7 +202,23 @@ class UsersTable extends Table
         return $rules;
     }
 
-    public function fetchByUsername($username, $fields = '*')
+    /**
+     * Fetches all the friends who followed the given user
+     */
+    public function fetchFriendsWhoFollowedUser($userId, $friendId, $pageNo = 1)
+    {
+        $perPage = 3;
+        $this->connection = ConnectionManager::get('default');
+        $offset = ($pageNo - 1) * $perPage;
+        $results = $this->connection->execute(
+            'CALL getMutualFriends(?, ?, ?, ?)', 
+            [$userId, $friendId, $perPage, $offset]
+        )->fetchAll('assoc');
+
+        return $results;
+    }
+
+    public function fetchByUsername($username, $fields = [])
     {
         $query = $this->find()
             ->select($fields)
@@ -263,9 +279,10 @@ class UsersTable extends Table
         return true;
     }
 
-    public function fetchFollowers($username)
+    public function fetchFollowers(string $username)
     {
         $user = $this->find('list')
+            ->select(['Followers'])
             ->where(['username' => $username])
             ->contain(['Followers'])
             ->first();

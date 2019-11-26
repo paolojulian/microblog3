@@ -5,7 +5,7 @@ import styles from './profile.module.css'
 
 /** Redux */
 import { CLEAR_POSTS } from '../../store/types'
-import { getProfile, fetchMutualFriends } from '../../store/actions/profileActions'
+import { isFollowing, getProfile, fetchMutualFriends } from '../../store/actions/profileActions'
 import { getUserPosts } from '../../store/actions/postActions'
 
 /** Components */
@@ -52,16 +52,21 @@ const Profile = (props) => {
     useEffect(() => {
         const init = async () => {
             try {
-                const res = await dispatch(getProfile(username))
                 setMutualFriends([]);
-                if ( ! res.user) {
+
+                const res = await dispatch(getProfile(username))
+                if ( ! res) {
                     throw new Error('Not found');
                 }
+
                 await dispatch(getUserPosts(username))
                 if (user.username !== username) {
                     const mutual = await dispatch(fetchMutualFriends(username));
                     setMutualFriends(mutual);
                 }
+
+                await dispatch(isFollowing(username))
+
                 setIsMounted(true);
             } catch (e) {
                 return props.history.push('/not-found')

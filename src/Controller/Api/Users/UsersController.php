@@ -13,12 +13,49 @@ class UsersController extends AppController
 {
     public function fetchFollowers()
     {
-        // TODO
         $this->request->allowMethod('get');
         $username = $this->request->getParam('username');
         return $this->responseData([
             'count' => $this->Users->fetchFollowers($username)
         ]);
+    }
+
+    /**
+     * Fetches the profile
+     * of the given username
+     * 
+     * @param string username - users.username
+     * @return object User Entity
+     */
+    public function profile()
+    {
+        $this->request->allowMethod('get');
+        $username = $this->request->getParam('username');
+        $profile = $this->Users->fetchByUsername($username);
+        return $this->responseData($profile);
+    }
+
+    /**
+     * Fetches the mutual following with the given user
+     * 
+     * @param string username - users.username
+     * @return array - of User
+     */
+    public function mutual()
+    {
+        $this->request->allowMethod('get');
+        $username = $this->request->getParam('username');
+        if ( ! $page = $this->request->getQuery('page')) {
+            $page = 1;
+        }
+
+        $friendId = (int) $this->Users->fetchByUsername($username, ['id'])->id;
+        $users = $this->Users->fetchFriendsWhoFollowedUser(
+            $friendId,
+            (int) $this->Auth->user('id'),
+            $page
+        );
+        return $this->responseData($users);
     }
 
     public function fetchFollowing()
@@ -91,10 +128,30 @@ class UsersController extends AppController
     {
         $this->request->allowMethod('get');
         $username = $this->request->getParam('username');
-        $userId = $this->Users->fetchByUsername($username, 'Users.id')->id;
+        $userId = $this->Users->fetchByUsername($username, ['Users.id'])->id;
         return $this->responseData([
             'followerCount' => $this->Users->Followers->countFollowers($userId),
             'followingCount' => $this->Users->Followers->countFollowing($userId)
         ]);
+    }
+
+    /**
+     * [GET]
+     * [PRIVATE]
+     * Check if user passed is being followed by the user
+     * 
+     * @param string - username
+     * @return bool
+     */
+    public function isFollowing()
+    {
+        $this->request->allowMethod('get');
+        $username = $this->request->getParam('username');
+        $userId = $this->Users->fetchByUsername($username, 'Users.id')->id;
+        $isFollowing = $this->Users->Followers->isFollowing(
+            (int) $this->Auth->user('id'),
+            (int) $userId
+        );
+        return $this->responseData($isFollowing ? 1 : -1);
     }
 }
