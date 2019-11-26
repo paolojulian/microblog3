@@ -207,7 +207,7 @@ class PostsTable extends Table
     {
         foreach ($data as $key => $item) {
             $data[$key]['likes'] = $this->Likes->fetchLikersOfPost($item['id']);
-            // $data[$key]['Post']['comments'] = $this->Comments->countPerPost($item['Post']['id']);
+            $data[$key]['comments'] = $this->Comments->countPerPost($item['id']);
         }
     }
 
