@@ -1,4 +1,4 @@
-import React, { useState, useContext, useEffect } from 'react'
+import React, { useState, useContext } from 'react'
 import classnames from 'classnames'
 import { useDispatch } from 'react-redux'
 import PropTypes from 'prop-types'
@@ -37,20 +37,14 @@ const PostItem = ({
     retweet_post_id,
     title,
     user_id,
+    redirectOnSuccess
 }) => {
     const dispatch = useDispatch();
     const context = useContext(ModalContext);
     const [likeCount, setLikeCount] = useState(likes.length);
     const [commentsCount, setCommentsCount] = useState(comments);
-    const [isLiked, setIsLiked] = useState(likes.indexOf(String(loggedin_id)) !== -1);
-    const [showComment, setShowComment] = useState(false);
-
-    useEffect(() => {
-        if (openCommentOnStart) {
-            setShowComment(true);
-        }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [])
+    const [isLiked, setIsLiked] = useState(likes.indexOf(loggedin_id) !== -1);
+    const [showComment, setShowComment] = useState(!!openCommentOnStart);
 
     const handleLike = async () => {
         const orig = {
@@ -91,7 +85,7 @@ const PostItem = ({
                 username={creator}
                 sharedPostId={isShared ? retweet_post_id : id}
                 onSuccessEdit={successHandler}
-                onSuccessDelete={successHandler}
+                onSuccessDelete={redirectOnSuccess ? redirectOnSuccess : successHandler}
                 onSuccessShare={successHandler}
             />
             {isShared && <SharedPost
@@ -179,7 +173,8 @@ PostItem.defaultProps = {
     likes: [],
     comments: 0,
     isShared: false,
-    openCommentOnStart: false
+    openCommentOnStart: false,
+    redirectOnSuccess: null
 }
 
 export default PostItem

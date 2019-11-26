@@ -12,19 +12,15 @@ import {
 /**
  * Get profile of current logged in user
  */
-export const getProfile = (username = '') => async dispatch => {
+export const getProfile = (username) => async dispatch => {
     try {
         dispatch({ type: TOGGLE_LOADING_PROFILE })
-        let res;
-        if (username) {
-            res = await axios.get(`/profiles/view/${username}.json`)
-        } else {
-            res = await axios.get('/api/auth/me')
-        }
+        const res = await axios.get(`/api/users/${username}`)
         dispatch({
             type: SET_PROFILE,
             payload: res.data.data
         })
+        await dispatch(fetchFollowCount(username));
         return Promise.resolve(res.data.data)
     } catch (e) {
         return Promise.reject()
@@ -68,7 +64,7 @@ export const uploadProfileImg = (img) => async dispatch => {
  */
 export const followUser = (userId) => async dispatch => {
     try {
-        const res = await axios.post(`/followers/follow/${userId}.json`);
+        const res = await axios.post(`/api/users/${userId}/follow`);
         return Promise.resolve(res.data.data);
     } catch (e) {
         return Promise.reject(e);
@@ -93,11 +89,40 @@ export const searchUser = (searchText) => async dispatch => {
  * @param userId - user followers/followed to be seen
  * @param type - [follower/following] only
  */
-export const fetchFollow = (userId, type, page = 1) => async dispatch => {
+export const fetchFollow = (userId, type, page = 1) => dispatch => {
+    if (type === 'follower') {
+        return dispatch(fetchFollowers(userId, page));
+    }
+    if (type === 'following') {
+        return dispatch(fetchFollowing(userId, page));
+    }
+    return Promise.reject('Wrong type given');
+}
+
+/**
+ * Fetches the followers of the given user
+ * @param userId
+ * @param page
+ */
+export const fetchFollowers = (userId, page = 1) => async dispatch => {
     try {
-        const res = await axios.get(`/followers.json`, {
-            params: {userId, type, page}
-        });
+        const params = { page };
+        const res = await axios.get(`/api/users/${userId}/followers`, { params });
+        return Promise.resolve(res.data.data);
+    } catch (e) {
+        return Promise.reject(e);
+    }
+}
+
+/**
+ * Fetches the users being followed by the given user
+ * @param userId
+ * @param page
+ */
+export const fetchFollowing = (userId, page = 1) => async dispatch => {
+    try {
+        const params = { page };
+        const res = await axios.get(`/api/users/${userId}/following`, { params });
         return Promise.resolve(res.data.data);
     } catch (e) {
         return Promise.reject(e);
@@ -146,7 +171,24 @@ export const fetchNotFollowed = (page = 1) => async dispatch => {
  */
 export const fetchMutualFriends = (username) => async dispatch => {
     try {
-        const res = await axios.get(`/users/mutual/${username}.json`);
+        const res = await axios.get(`/api/users/${username}/mutual`);
+        return Promise.resolve(res.data.data);
+    } catch (e) {
+        return Promise.reject(e);
+    }
+}
+
+/**
+ * Fetch the mutual friends with the given user
+ * @param username - user to check mutual friends
+ */
+export const isFollowing = (username) => async dispatch => {
+    try {
+        const res = await axios.get(`/api/users/${username}/is-following`);
+        dispatch ({
+            type: FOLLOW.setIsFollowing,
+            payload: !!res.data.data
+        })
         return Promise.resolve(res.data.data);
     } catch (e) {
         return Promise.reject(e);

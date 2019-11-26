@@ -6,7 +6,7 @@ import { SET_PAGE, SET_POSTS, ADD_POSTS, TOGGLE_LOADING_POST } from '../types';
  */
 export const getPostById = (postId) => async dispatch => {
     try {
-        const res = await axios.get(`/posts/${postId}.json`)
+        const res = await axios.get(`/api/posts/${postId}`)
         return Promise.resolve(res.data.data)
     } catch (e) {
         return Promise.reject()
@@ -19,7 +19,7 @@ export const getPostById = (postId) => async dispatch => {
 export const getPostsForLanding = (page = 1) => async dispatch => {
     try {
         dispatch({ type: TOGGLE_LOADING_POST, payload: true })
-        const res = await axios.get(`/api/posts?pageNo=${page}`)
+        const res = await axios.get(`/api/posts?page=${page}`)
         // Will override all posts
         if (page === 1) {
             dispatch({
@@ -64,7 +64,7 @@ export const getCommentsByPost = (postId, page=1) => async dispatch => {
 export const getUserPosts = (username, page = 1) => async dispatch => {
     try {
         dispatch({ type: TOGGLE_LOADING_POST, payload: true })
-        const res = await axios.get(`/posts/user/${username}.json?page=${page}`)
+        const res = await axios.get(`/api/posts/users/${username}?page=${page}`)
         // Will override all posts
         if (page === 1) {
             dispatch({
@@ -164,7 +164,7 @@ export const sharePost = (postId, body) => async dispatch => {
     try {
         const formData = new FormData();
         formData.append('body', body);
-        await axios.post(`/posts/share/${postId}.json`, formData);
+        await axios.post(`/api/posts/share/${postId}`, formData);
         return Promise.resolve()
     } catch (e) {
         return Promise.reject(e)

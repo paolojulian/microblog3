@@ -147,7 +147,7 @@ const PostCreate = ({
                 <br />
 
                 {isLoading
-                    ? <div classNames={styles.action_btns}><PLoader/></div>
+                    ? <div className={styles.action_btns}><PLoader/></div>
                     : (
                         <div className={styles.action_btns}>
                             <PFab

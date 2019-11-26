@@ -51,6 +51,17 @@ class PostsFixture extends TestFixture
                 'modified' => '2019-11-22 09:35:10',
                 'deleted' => null
             ],
+            [
+                'id' => 4,
+                'title' => '',
+                'body' => 'This is a shared post',
+                'retweet_post_id' => 1,
+                'user_id' => 200001,
+                'img_path' => null,
+                'created' => '2019-11-22 09:35:10',
+                'modified' => '2019-11-22 09:35:10',
+                'deleted' => null
+            ],
         ];
         parent::init();
     }

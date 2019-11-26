@@ -202,7 +202,23 @@ class UsersTable extends Table
         return $rules;
     }
 
-    public function fetchByUsername($username, $fields = '*')
+    /**
+     * Fetches all the friends who followed the given user
+     */
+    public function fetchFriendsWhoFollowedUser($userId, $friendId, $pageNo = 1)
+    {
+        $perPage = 3;
+        $this->connection = ConnectionManager::get('default');
+        $offset = ($pageNo - 1) * $perPage;
+        $results = $this->connection->execute(
+            'CALL getMutualFriends(?, ?, ?, ?)', 
+            [$userId, $friendId, $perPage, $offset]
+        )->fetchAll('assoc');
+
+        return $results;
+    }
+
+    public function fetchByUsername($username, $fields = [])
     {
         $query = $this->find()
             ->select($fields)
@@ -263,14 +279,6 @@ class UsersTable extends Table
         return true;
     }
 
-    public function fetchFollowers($username)
-    {
-        $user = $this->find('list')
-            ->where(['username' => $username])
-            ->contain(['Followers'])
-            ->first();
-    }
-
     /**
      * Fetches the recommended users to be followed by the user given
      * prioritizes users that has been followed by the followed users by the given id
@@ -304,13 +312,21 @@ class UsersTable extends Table
      */
     public function fetchNotFollowedUsers($userId, $pageNo = 1, $perPage = 5)
     {
-        return $this->find('all' , [
-            'conditions' => ['is_activated' => 1, 'id !=' => $userId],
-            'order' => 'created DESC',
-            'fields' => ['id', 'username', 'first_name', 'last_name', 'avatar_url'],
-            'limit' => $perPage,
-            'page' => $pageNo
-        ])->toList();
+        $followedUsers = $this->Followers->find()
+            ->select(['following_id'])
+            ->where(['user_id' => $userId]);
+
+        return $this->find()
+            ->select(['id', 'username', 'first_name', 'last_name', 'avatar_url'])
+            ->where([
+                'Users.is_activated' => 1,
+                'Users.id NOT IN' => $followedUsers,
+                'Users.id <>' => $userId
+            ])
+            ->orderDesc('Users.created')
+            ->limit($perPage)
+            ->page($pageNo)
+            ->toList();
     }
 
     /**

@@ -51,6 +51,24 @@ class PostsController extends AppController
     }
 
     /**
+     * [GET]
+     * [PRIVATE]
+     * 
+     * Fetches a single post
+     * includes likers (user_id)
+     * and count of comments
+     * 
+     * @return object - Post Entity/s
+     */
+    public function view()
+    {
+        $this->request->allowMethod('get');
+        $postId = (int) $this->request->getParam('id');
+        $data = $this->Posts->fetchPost($postId);
+        return $this->responseData($data);
+    }
+
+    /**
      * TODO: Investigate why PUT does not get FormData()
      * [POST]
      * [PRIVATE]
@@ -95,6 +113,27 @@ class PostsController extends AppController
     }
 
     /**
+     * [POST]
+     * [PRIVATE]
+     * 
+     * Shares a post
+     * 
+     * @return object - Post Entity
+     */
+    public function share()
+    {
+        $this->request->allowMethod('post');
+        $postId = (int) $this->request->getParam('id');
+        $userId = (int) $this->Auth->user('id');
+        $requestData = $this->request->getData();
+        $post = $this->Posts->sharePost($postId, $userId, $requestData);
+        if ($post->hasErrors()) {
+            return $this->responseUnprocessableEntity($post->errors());
+        }
+        return $this->responseCreated($post);
+    }
+
+    /**
      * [PATCH]
      * [PRIVATE]
      * 
@@ -109,8 +148,9 @@ class PostsController extends AppController
         $userId = (int) $this->Auth->user('id');
         $this->Posts->Likes->toggleLike($userId, $postId);
         $totalCount = $this->Posts->Likes->countByPost($postId);
-        return $this->responseData(['totalCount' => $totalCount]);
+        return $this->responseCreated(['totalCount' => $totalCount]);
     }
+
     /**
      * [GET]
      * [PRIVATE]
@@ -122,13 +162,35 @@ class PostsController extends AppController
     public function fetchPosts()
     {
         $this->request->allowMethod('get');
-        if ( ! $pageNo = $this->request->getParam('pageNo')) {
-            $pageNo = 1;
-        }
+        $page = $this->request->getQuery('page', 1);
         return $this->responseData(
             $this->Posts->fetchPostsForLanding(
                 $this->Auth->user('id'),
-                $pageNo
+                $page
+            )
+        );
+    }
+
+    /**
+     * [GET]
+     * [PRIVATE]
+     * 
+     * Fetches the posts to be displayed on users page
+     * 
+     * @param string username
+     * 
+     * @return array - list of posts
+     */
+    public function fetchPostsOfUser()
+    {
+        $this->request->allowMethod('get');
+        $page = $this->request->getQuery('page', 1);
+        $username = $this->request->getParam('username');
+        $userId = $this->Posts->Users->fetchByUsername($username, ['id'])->id;
+        return $this->responseData(
+            $this->Posts->fetchPostsForUser(
+                $userId,
+                $page
             )
         );
     }

@@ -6,6 +6,8 @@ use Cake\ORM\RulesChecker;
 use Cake\ORM\Table;
 use Cake\Validation\Validator;
 use Cake\Datasource\ConnectionManager;
+use Cake\Http\Exception\NotFoundException;
+use SoftDelete\Model\Table\SoftDeleteTrait;
 
 /**
  * Posts Model
@@ -29,6 +31,7 @@ use Cake\Datasource\ConnectionManager;
  */
 class PostsTable extends Table
 {
+    use SoftDeleteTrait;
     /**
      * Initialize method
      *
@@ -103,6 +106,14 @@ class PostsTable extends Table
         return $validator;
     }
 
+    public function validationShare(Validator $validator) {
+        $validator
+            ->scalar('body')
+            ->maxLength('body', 140, __('Maximum of 140 characters is allowed'))
+            ->allowEmptyString('body', true);
+        return $validator;
+    }
+
     /**
      * Returns a rules checker object that will be used for validating
      * application integrity.
@@ -118,16 +129,82 @@ class PostsTable extends Table
     }
 
     /**
+     * Fetch a single post
+     * if it is a shared post,
+     * include the original post
+     * 
+     * @param int $postId - posts.id - The post to fetch
+     * @param bool $includeLikesAndComments - check if will include likes and comments
+     * @return object - Post Entity/s
+     */
+    public function fetchPost(int $postId, bool $includeLikesAndComments = true)
+    {
+        $post = $this->find()
+            ->where(['Posts.id' => $postId])
+            ->contain([
+                'Users' => function($q) {
+                    return $q->select(['Users.id', 'Users.username', 'Users.avatar_url']);
+                },
+                // 'Likes' => function($q) {
+                //     $q->select([
+                //             'Likes.user_id',
+                //             'Likes.post_id',
+                //             'total' => $q->func()->count('Likes.user_id')
+                //         ])
+                //         ->group(['Likes.post_id']);
+                //     return $q;
+                // },
+            ])
+            ->first();
+        
+        if ($includeLikesAndComments) {
+            $post->likes = $this->Likes->fetchLikersOfPost($postId);
+            $post->comments = $this->Comments->countPerPost($postId);
+        }
+
+        if (!!$post->retweet_post_id) {
+            $originalPost = $this->fetchPost($post->retweet_post_id, false);
+            return [
+                'post' => $originalPost['post'],
+                'sharedPost' => $post,
+                'isShared' => true
+            ];
+        }
+        return [
+            'post' => $post,
+            'isShared' => false
+        ];
+    }
+
+    /**
      * Fetches all posts that will be displayed in the landing page
      * 
      * Fetches posts U shared_posts of owned OR followed users
      */
-    public function fetchPostsForLanding($userId, $pageNo = 1, $perPage = 10)
+    public function fetchPostsForLanding($userId, $pageNo = 1, $perPage = 5)
     {
         $this->connection = ConnectionManager::get('default');
         $offset = ($pageNo - 1) * $perPage;
         $results = $this->connection->execute(
             'CALL fetchPostsToDisplay(?, ?, ?)', 
+            [$userId, $perPage, $offset]
+        )->fetchAll('assoc');
+
+        $this->populateWithLikesAndComments($results);
+        return $results;
+    }
+
+    /**
+     * Fetches all posts that will be displayed in the landing page
+     * 
+     * Fetches posts U shared_posts of owned OR followed users
+     */
+    public function fetchPostsForUser($userId, $pageNo = 1, $perPage = 5)
+    {
+        $this->connection = ConnectionManager::get('default');
+        $offset = ($pageNo - 1) * $perPage;
+        $results = $this->connection->execute(
+            'CALL fetchPostsOfUser(?, ?, ?)', 
             [$userId, $perPage, $offset]
         )->fetchAll('assoc');
 
@@ -145,7 +222,7 @@ class PostsTable extends Table
     {
         foreach ($data as $key => $item) {
             $data[$key]['likes'] = $this->Likes->fetchLikersOfPost($item['id']);
-            // $data[$key]['Post']['comments'] = $this->Comments->countPerPost($item['Post']['id']);
+            $data[$key]['comments'] = $this->Comments->countPerPost($item['id']);
         }
     }
 
@@ -206,6 +283,34 @@ class PostsTable extends Table
             throw new InternalErrorException();
         }
         return true;
+    }
+
+    /**
+     * Shares a Post
+     * 
+     * @param int $postId - the post to be shared
+     * @param int $userId - the user who shared the post
+     * 
+     * @return array - status and Post Enitity
+     */
+    public function sharePost(int $postId, int $userId, array $data)
+    {
+        if ( ! $this->exists(['id' => $postId])) {
+            throw new NotFoundException();
+        }
+        $post = $this->newEntity($data, ['validate' => 'Share']);
+        $post->retweet_post_id = $postId;
+        $post->user_id = $userId;
+
+        if ($post->hasErrors()) {
+            return $post;
+        }
+
+        if ( ! $this->save($post)) {
+            throw new InternalErrorException();
+        }
+
+        return $post;
     }
 
     public function beforeSave($event, $entity, $options)

@@ -29,7 +29,7 @@ const FormInput = ({
         if (stateError) {
             return setError(false);
         }
-        if (isRequired) {
+        if (isRequired && !e.target.value) {
             return setError(true);
         }
     }

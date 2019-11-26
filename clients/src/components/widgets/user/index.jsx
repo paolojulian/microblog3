@@ -14,12 +14,13 @@ import Username from '../username';
 const UserItem = ({
     user,
     showFollow,
+    isFollowing,
     onRequestClose,
     closeOnClick,
     history
 }) => {
     const dispatch = useDispatch();
-    const [isFollowing, setFollowing] = useState(!!user.is_following);
+    const [stateIsFollowing, setFollowing] = useState(!!isFollowing);
 
     const handleFollow = (id) => {
         dispatch(followUser(id))
@@ -53,7 +54,7 @@ const UserItem = ({
                            />
                     </div>
                 </div>
-                {showFollow && ! isFollowing && <div className={styles.follow}
+                {showFollow && ! stateIsFollowing && <div className={styles.follow}
                     onClick={() => handleFollow(user.id)}
                 >
                     <i className="fa fa-heart"></i>
@@ -70,7 +71,8 @@ UserItem.propTypes = {
 }
 
 UserItem.defaultProps = {
-    showFollow: true,
+    showFollow: false,
+    isFollowing: true,
     onRequestClose: () => {},
     closeOnClick: false
 }

@@ -81,12 +81,14 @@ const PostComments = ({
                 totalLeft={totalLeft}
                 onRequestLoad={() => getComments(page + 1)}
                 />
+            <div className={styles.status}>
+                {renderStatus()}
+            </div>
             <div className={styles.closeComment}>
                 <span onClick={onRequestClose}>
                     Close &times;
                 </span>
             </div>
-            {renderStatus()}
         </div>
     )
 }

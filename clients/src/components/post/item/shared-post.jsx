@@ -48,7 +48,7 @@ SharedPost.propTypes = {
     postId: PropTypes.number.isRequired,
     originalUserId: PropTypes.number.isRequired,
     body: PropTypes.string.isRequired,
-    avatarUrl: PropTypes.string.isRequired,
+    avatarUrl: PropTypes.any,
     username: PropTypes.string.isRequired,
     created: PropTypes.string.isRequired,
 }

@@ -65,12 +65,16 @@ const PFollowModal = ({
                 fetchHandler={handleFetchFollow}
                 className={styles.users}
             >
-                {users.map((item, i) => {
-                    let user = type === 'follower' ? item.User : item.Following;
+                {users.map(({ user, ...item }, i) => {
+                    let isFollowing = true;
+                    if (type === 'follower') {
+                        isFollowing = !!item.isFollowing.id;
+                    }
                     return <UserItem
                         key={user.id + i}
                         user={user}
-                        showFollow={Number(user.id) !== Number(loggedInUser)}
+                        isFollowing={isFollowing}
+                        showFollow={Number(user.id) !== Number(loggedInUser) && type === 'follower'}
                         onRequestClose={onRequestClose}
                         closeOnClick={true}
                     />

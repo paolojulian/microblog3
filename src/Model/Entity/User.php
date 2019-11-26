@@ -68,6 +68,8 @@ class User extends Entity
      * @var array
      */
     protected $_hidden = [
+        'deleted',
+        'activation_key',
         'password'
     ];
     

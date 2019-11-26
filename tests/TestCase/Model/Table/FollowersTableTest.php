@@ -25,7 +25,6 @@ class FollowersTableTest extends TestCase
     public $fixtures = [
         'app.Followers',
         'app.Users',
-        'app.Followings'
     ];
 
     /**
@@ -38,6 +37,7 @@ class FollowersTableTest extends TestCase
         parent::setUp();
         $config = TableRegistry::getTableLocator()->exists('Followers') ? [] : ['className' => FollowersTable::class];
         $this->Followers = TableRegistry::getTableLocator()->get('Followers', $config);
+        $this->Users = TableRegistry::getTableLocator()->get('Users');
     }
 
     /**
@@ -52,33 +52,30 @@ class FollowersTableTest extends TestCase
         parent::tearDown();
     }
 
-    /**
-     * Test initialize method
-     *
-     * @return void
-     */
-    public function testInitialize()
+    public function testFetchFollowersWillReturnArray()
     {
-        $this->markTestIncomplete('Not implemented yet.');
+        $followers = $this->Followers->fetchFollowers(200002);
+        $this->assertEquals($followers[0]->user->id, 200001);
+        $this->assertEquals(is_array($followers), true);
     }
 
-    /**
-     * Test validationDefault method
-     *
-     * @return void
-     */
-    public function testValidationDefault()
+    public function testFetchNoFollowersWillReturnEmptyArray()
     {
-        $this->markTestIncomplete('Not implemented yet.');
+        $followers = $this->Followers->fetchFollowers(123);
+        $this->assertEquals($followers, []);
+        $this->assertEquals(is_array($followers), true);
     }
 
-    /**
-     * Test buildRules method
-     *
-     * @return void
-     */
-    public function testBuildRules()
+    public function testFetchFollowingWillReturnArray()
     {
-        $this->markTestIncomplete('Not implemented yet.');
+        $followers = $this->Followers->fetchFollowing(200002);
+        $this->assertEquals(is_array($followers), true);
+    }
+
+    public function testFetchNoFollowingWillReturnEmptyArray()
+    {
+        $followers = $this->Followers->fetchFollowing(123);
+        $this->assertEquals($followers, []);
+        $this->assertEquals(is_array($followers), true);
     }
 }

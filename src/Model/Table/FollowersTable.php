@@ -5,6 +5,7 @@ use Cake\ORM\Query;
 use Cake\ORM\RulesChecker;
 use Cake\ORM\Table;
 use Cake\Validation\Validator;
+use Cake\Http\Exception\NotFoundException;
 
 /**
  * Followers Model
@@ -45,7 +46,10 @@ class FollowersTable extends Table
             'foreignKey' => 'user_id',
             'joinType' => 'INNER'
         ]);
+
         $this->belongsTo('Followings', [
+            'className' => 'Users',
+            'propertyName' => 'user',
             'foreignKey' => 'following_id',
             'joinType' => 'INNER'
         ]);
@@ -86,6 +90,57 @@ class FollowersTable extends Table
     }
 
     /**
+     * Fetches the followers of the user given
+     * 
+     * @param int $userId - users.id
+     * @return array of users
+     */
+    public function fetchFollowers(int $userId)
+    {
+        return $this->find()
+            ->select([
+                'Followers.user_id',
+                'isFollowing.id'
+            ])
+            ->where(['Followers.following_id' => $userId])
+            ->contain([
+                'Users' => function ($q) {
+                    return $q->select(['id', 'username', 'avatar_url', 'first_name', 'last_name']);
+                }
+            ])
+            ->join([
+                'isFollowing' => [
+                    'table' => 'Followers',
+                    'type' => 'LEFT',
+                    'conditions' => [
+                        'isFollowing.following_id = Followers.user_id',
+                        "isFollowing.user_id = $userId"
+                    ]
+                ]
+            ])
+            ->toList();
+    }
+
+    /**
+     * Fetches the users being followed by the given user
+     * 
+     * @param int $userId - users.id
+     * @return array of users
+     */
+    public function fetchFollowing(int $userId)
+    {
+        return $this->find()
+            ->select(['Followers.following_id'])
+            ->where(['user_id' => $userId])
+            ->contain([
+                'Followings' => function ($q) {
+                    return $q->select(['id', 'username', 'avatar_url', 'first_name', 'last_name']);
+                }
+            ])
+            ->toList();
+    }
+
+    /**
      * Counts the followers of the given user
      * 
      * @param int $userId - users.id
@@ -109,5 +164,59 @@ class FollowersTable extends Table
         return $this->find()
             ->where(['user_id' => $userId])
             ->count();
+    }
+
+    /**
+     * Toggles the follow a user
+     * 
+     * @param int $followingId - users.id - The user to be followed
+     * @param int $userId - users.id - The user to follow
+     * 
+     * @return void
+     */
+    public function toggleFollowUser(int $followingId, int $userId)
+    {
+        if ( ! $this->Users->exists(['id' => $followingId])) {
+            throw new NotFoundException();
+        }
+
+        $followEntity = $this->find()
+            ->where([
+                'following_id' => $followingId,
+                'user_id' => $userId
+            ])
+            ->first();
+
+        if ($followEntity) {
+            // Delete follow entity
+            if ( ! $this->delete($followEntity)) {
+                throw new InternalErrorException();
+            }
+            return true;
+        }
+
+        $followEntity = $this->newEntity();
+        $followEntity->user_id = $userId;
+        $followEntity->following_id = $followingId;
+        if ( ! $this->save($followEntity)) {
+            throw new InternalErrorException();
+        }
+
+        return true;
+    }
+
+    /**
+     * Checks if user follows certain user
+     * 
+     * @param int $userId - users.id
+     * @param int $followedUserId - users.id
+     * @return int
+     */
+    public function isFollowing(int $userId, int $followedUserId)
+    {
+        return $this->exists([
+            'user_id' => $userId,
+            'following_id' => $followedUserId
+        ]);
     }
 }
