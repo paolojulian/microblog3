@@ -34,24 +34,42 @@ const Navbar = ({
     };
 
     return (
-        <nav>
-            <SearchBar/>
-            <div className={styles.logo}>LaCosina</div>
-            <ul className={styles.container}>
-                <li
-                    className={styles.home}
-                    onClick={reloadOrNavigate}>
-                    Home
-                </li>
-                <li className={styles.notification}>
-                    <NotificationBell notificationCount={notificationCount}/>
-                </li>
-                <li className={styles.logout}
-                    onClick={handleLogout}>
-                    Logout
-                </li>
-            </ul>
-        </nav>
+        <>
+            <nav className={styles.top}>
+                <SearchBar/>
+                <div className={styles.logo}>LaCosina</div>
+                <ul className={styles.container}>
+                    <li
+                        className={styles.home}
+                        onClick={reloadOrNavigate}>
+                        Home
+                    </li>
+                    <li className={styles.notification}>
+                        <NotificationBell notificationCount={notificationCount}/>
+                    </li>
+                    <li className={styles.logout}
+                        onClick={handleLogout}>
+                        Logout
+                    </li>
+                </ul>
+            </nav>
+            <nav className={styles.bottom}>
+                <ul className={styles.container}>
+                    <li
+                        className={styles.home}
+                        onClick={reloadOrNavigate}>
+                        <i className="fa fa-home fa-lg"></i>
+                    </li>
+                    <li className={styles.notification}>
+                        <NotificationBell notificationCount={notificationCount}/>
+                    </li>
+                    <li className={styles.logout}
+                        onClick={handleLogout}>
+                        <i className="fa fa-sign-out fa-lg"/>
+                    </li>
+                </ul>
+            </nav>
+        </>
     )
 }
 

@@ -141,8 +141,9 @@ class UsersController extends AppController
      * [PRIVATE]
      * Follow a user
      * 
-     * @param string - username
-     * @return status created
+     * @param int - users.id
+     * @return int - the updated count of followers of the given user
+     * @return int - the updated count of users the current user is following
      */
     public function follow()
     {
@@ -152,7 +153,10 @@ class UsersController extends AppController
             (int) $userId,
             (int) $this->Auth->user('id')
         );
-        return $this->responseCreated();
+        return $this->responseCreated([
+            'followerCount' => $this->Users->Followers->countFollowers($userId),
+            'followingCount' => $this->Users->Followers->countFollowers($this->Auth->user('id'))
+        ]);
     }
 
     /**
@@ -160,7 +164,7 @@ class UsersController extends AppController
      * [PRIVATE]
      * Check if user passed is being followed by the user
      * 
-     * @param string - username
+     * @param string - users.username
      * @return bool
      */
     public function isFollowing()
