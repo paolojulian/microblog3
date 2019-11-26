@@ -119,29 +119,46 @@ class PostsTable extends Table
 
     /**
      * Fetch a single post
+     * if it is a shared post,
+     * include the original post
+     * 
+     * @param int $postId - posts.id - The post to fetch
+     * @param bool $includeLikesAndComments - check if will include likes and comments
+     * @return object - Post Entity/s
      */
-    public function fetchPost(int $postId)
+    public function fetchPost(int $postId, bool $includeLikesAndComments = true)
     {
         $post = $this->find()
             ->where(['Posts.id' => $postId])
             ->contain([
                 'Users' => function($q) {
                     return $q->select(['Users.id', 'Users.username', 'Users.avatar_url']);
-                }
+                },
+                // 'Likes' => function($q) {
+                //     $q->select([
+                //             'Likes.user_id',
+                //             'Likes.post_id',
+                //             'total' => $q->func()->count('Likes.user_id')
+                //         ])
+                //         ->group(['Likes.post_id']);
+                //     return $q;
+                // },
             ])
             ->first();
+        
+        if ($includeLikesAndComments) {
+            $post->likes = $this->Likes->fetchLikersOfPost($postId);
+            $post->comments = $this->Comments->countPerPost($postId);
+        }
 
         if (!!$post->retweet_post_id) {
-            $originalPost = $this->fetchPost($post->retweet_post_id);
+            $originalPost = $this->fetchPost($post->retweet_post_id, false);
             return [
                 'post' => $originalPost,
                 'sharedPost' => $post
             ];
         }
-
-        $post['likes'] = $this->Likes->fetchLikersOfPost($postId);
-        // TODO get comments
-        return $post;
+        return ['post' => $post];
     }
 
     /**

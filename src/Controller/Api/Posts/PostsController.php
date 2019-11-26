@@ -54,9 +54,11 @@ class PostsController extends AppController
      * [GET]
      * [PRIVATE]
      * 
-     * Get a Single Post
+     * Fetches a single post
+     * includes likers (user_id)
+     * and count of comments
      * 
-     * @return status 204
+     * @return object - Post Entity/s
      */
     public function view()
     {
