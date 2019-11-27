@@ -186,10 +186,14 @@ export const likePost = (postId) => async dispatch => {
 /**
  * Add a comment to a certain post
  */
-export const addComment = (comment) => async dispatch => {
+export const addComment = (postId, comment) => async dispatch => {
     try {
-        await axios.post(`/comments.json`, comment)
-        return Promise.resolve()
+        const res = await axios.post(`/api/posts/${postId}/comments`, comment)
+        if (res.data.status === 201) {
+            return Promise.resolve(res.data.data)
+        } else {
+            throw new Error('Status is not valid');
+        }
     } catch (e) {
         return Promise.reject(e)
     }

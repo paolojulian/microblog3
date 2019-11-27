@@ -24,7 +24,6 @@ const initialError = {
 }
 
 const CommentCreate = ({
-    userId,
     postId,
     onRequestSuccess,
 }) => {
@@ -39,12 +38,10 @@ const CommentCreate = ({
     const handleSubmit = e => {
         if (e) e.preventDefault();
         const form = {
-            user_id: userId,
-            post_id: postId,
             body: comment.current.value
         }
         setLoading(true);
-        dispatch(addComment(form))
+        dispatch(addComment(postId, form))
             .then(handleSuccess)
             .catch(handleError)
             .then(() => setLoading(false));
@@ -117,7 +114,6 @@ const CommentCreate = ({
 }
 
 CommentCreate.propTypes = {
-    userId: PropTypes.number.isRequired,
     postId: PropTypes.number.isRequired,
     onRequestSuccess: PropTypes.func.isRequired,
 }

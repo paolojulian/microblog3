@@ -66,7 +66,6 @@ const PostComments = ({
         <div className={styles.postComments}>
             <CommentCreate
                 postId={Number(postId)}
-                userId={Number(loggedIn.id)}
                 onRequestSuccess={(data) => {
                     getComments(1)
                     onRequestSuccessCreate(data)
