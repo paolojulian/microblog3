@@ -51,7 +51,13 @@ export const getPostsForLanding = (page = 1) => async dispatch => {
  */
 export const getCommentsByPost = (postId, page=1) => async dispatch => {
     try {
-        const res = await axios.get(`/posts/comments/${postId}.json?page=${page}`)
+        const res = await axios.get(`/api/posts/${postId}/comments?page=${page}`)
+        if (Number(res.data.status) !== 200) {
+            throw new Error('Invalid Status');
+        }
+        if ( ! Array.isArray(res.data.data.list)) {
+            throw new Error('Not an array');
+        }
         return Promise.resolve(res.data.data)
     } catch (e) {
         return Promise.reject(e)

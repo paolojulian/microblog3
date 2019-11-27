@@ -58,7 +58,7 @@ class FetchCommentsTableTest extends TestCase
         $page = 1;
         $query = $this->Comments->fetchPerPost($postId, $page);
         $this->assertInstanceOf('Cake\ORM\Query', $query);
-        $result = $query->enableHydration(false)->toArray();
+        $result = $query->disableHydration()->toArray();
         $this->assertEquals(is_array($result), true);
     }
 
@@ -68,7 +68,18 @@ class FetchCommentsTableTest extends TestCase
         $page = 1;
         $query = $this->Comments->fetchPerPost($postId, $page);
         $this->assertInstanceOf('Cake\ORM\Query', $query);
-        $result = $query->enableHydration(false)->toArray();
+        $result = $query->disableHydration()->toArray();
+        $this->assertEquals(is_array($result), true);
+        $this->assertEquals($result, []);
+    }
+
+    public function testNonExistingPageWillReturnEmpty()
+    {
+        $postId = 1;
+        $page = 1099;
+        $query = $this->Comments->fetchPerPost($postId, $page);
+        $this->assertInstanceOf('Cake\ORM\Query', $query);
+        $result = $query->disableHydration()->toArray();
         $this->assertEquals(is_array($result), true);
         $this->assertEquals($result, []);
     }

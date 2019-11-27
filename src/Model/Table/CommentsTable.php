@@ -141,8 +141,9 @@ class CommentsTable extends Table
                 return $q->select(['username', 'avatar_url', 'id']);
             }])
             ->where(['post_id' => $postId])
-            ->page(1)
-            ->limit(10);
+            ->order(['Comments.created' => 'DESC'])
+            ->limit($perPage)
+            ->page($page);
     }
         
     /**

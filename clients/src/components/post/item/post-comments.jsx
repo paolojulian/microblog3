@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import styles from './post-item.module.css';
 
 /** Utils */
@@ -22,27 +22,28 @@ const PostComments = ({
 }) => {
 
     const dispatch = useDispatch();
-    const { user: loggedIn } = useSelector(state => state.auth);
     const [status, setStatus] = useState(initialStatus);
     const [comments, setComments] = useState([]);
     const [totalLeft, setTotalLeft] = useState(0);
     const [page, setPage] = useState(1);
 
     useEffect(() => {
-        getComments();
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [])
+        getComments(page);
+    }, [page])
 
     const getComments = async(pageNo = 1) => {
         try {
             setStatus({ ...initialStatus, loading: true })
             const res = await dispatch(getCommentsByPost(postId, pageNo))
+
             if (pageNo === 1) {
                 setComments(res.list)
+                setTotalLeft(res.totalCount - res.list.length);
             } else {
                 setComments([...comments, ...res.list])
+                setTotalLeft(res.totalCount - [...comments, ...res.list].length);
             }
-            setTotalLeft(res.totalLeft);
+
             onUpdateCommentCount(Number(res.totalCount));
             setPage(pageNo);
             setStatus({ ...initialStatus, post: true })
@@ -74,11 +75,11 @@ const PostComments = ({
             />
             <PostComment
                 comments={comments}
-                reloadPost={() => getComments(1)}
+                reloadPost={() => setPage(1)}
             />
             <LoadMore
                 totalLeft={totalLeft}
-                onRequestLoad={() => getComments(page + 1)}
+                onRequestLoad={() => setPage(page + 1)}
                 />
             <div className={styles.status}>
                 {renderStatus()}

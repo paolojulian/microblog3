@@ -216,9 +216,11 @@ class PostsController extends AppController
         $page = $this->request->getQuery('page', 1);
         $result = $this->Posts->Comments
             ->fetchPerPost($postId, $page)
-            ->disableHydration()
-            ->toArray();
-        return $this->responseCreated($result);
+            ->toList();
+        return $this->responseData([
+            'list' => $result,
+            'totalCount' => $this->Posts->Comments->countPerPost($postId)
+        ]);
     }
 
     /**
