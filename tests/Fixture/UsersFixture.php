@@ -42,7 +42,7 @@ class UsersFixture extends TestFixture
                 'password' => 'dasdsa',
                 'sex' => 'M',
                 'role' => 'USER',
-                'avatar_url' => null,
+                'avatar_url' => '/testUrl',
                 'is_activated' => true,
                 'activation_key' => '70b45cd46d274bd1374324a7dcc877e4ed1600aa807188001574299686',
                 'created' => '2019-11-20 03:47:52',

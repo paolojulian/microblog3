@@ -28,7 +28,9 @@ const PostComments = ({
     const [page, setPage] = useState(1);
 
     useEffect(() => {
-        getComments(page);
+        if (page) {
+            getComments(page);
+        }
     }, [page])
 
     const getComments = async(pageNo = 1) => {
@@ -75,7 +77,10 @@ const PostComments = ({
             />
             <PostComment
                 comments={comments}
-                reloadPost={() => setPage(1)}
+                reloadPost={() => {
+                    setPage(false);
+                    setPage(1);
+                }}
             />
             <LoadMore
                 totalLeft={totalLeft}

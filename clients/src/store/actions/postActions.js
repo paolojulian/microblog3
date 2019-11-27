@@ -210,7 +210,7 @@ export const addComment = (postId, comment) => async dispatch => {
  */
 export const deleteComment = (commentId) => async dispatch => {
     try {
-        await axios.delete(`/comments/${commentId}.json`)
+        await axios.delete(`/api/posts/comments/${commentId}`)
         return Promise.resolve()
     } catch (e) {
         return Promise.reject()

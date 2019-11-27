@@ -101,6 +101,13 @@ Router::prefix('api', function (RouteBuilder $routes) {
         )->setPatterns(['id' => '\d+'])
         ->setMethods(['GET']);
 
+        /** Delete Comment */
+        $routes->connect(
+            '/comments/:id',
+            ['controller' => 'Comments', 'action' => 'delete']
+        )->setPatterns(['id' => '\d+'])
+        ->setMethods(['DELETE']);
+
         /** Share */
         $routes->connect(
             '/share/:id',

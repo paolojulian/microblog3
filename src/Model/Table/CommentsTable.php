@@ -7,6 +7,7 @@ use Cake\ORM\Table;
 use Cake\Validation\Validator;
 use Cake\Network\Exception\InternalErrorException;
 use Cake\Network\Exception\NotFoundException;
+use SoftDelete\Model\Table\SoftDeleteTrait;
 
 /**
  * Comments Model
@@ -27,6 +28,7 @@ use Cake\Network\Exception\NotFoundException;
  */
 class CommentsTable extends Table
 {
+    use SoftDeleteTrait;
     /**
      * Initialize method
      *
@@ -145,6 +147,22 @@ class CommentsTable extends Table
             ->limit($perPage)
             ->page($page);
     }
+
+    /**
+     * Delete a comment
+     * 
+     * @param int $commentId - comments.id - comment to delete
+     * 
+     * @return bool
+     */
+    public function deleteComment(int $commentId)
+    {
+        $comment = $this->get($commentId);
+        if ( ! $this->delete($comment)) {
+            throw new InternalErrorException();
+        }
+        return true;
+    }
         
     /**
      * Counts the number of comments in a post
@@ -157,5 +175,13 @@ class CommentsTable extends Table
         return $this->find()
             ->where(['post_id' => $postId])
             ->count();
+    }
+
+    /**
+     * Check if comment is owned by user
+     */
+    public function isOwnedBy(int $commentId, int $userId)
+    {
+        return $this->exists(['id' => $commentId, 'user_id' => $userId]);
     }
 }
