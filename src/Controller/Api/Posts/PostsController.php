@@ -203,6 +203,28 @@ class PostsController extends AppController
      * [GET]
      * [PRIVATE]
      * 
+     * Fetches comments of a post
+     * 
+     * @param int $postId - posts.id
+     * 
+     * @return array of Comments
+     */
+    public function fetchComments()
+    {
+        $this->request->allowMethod('get');
+        $postId = $this->request->getParam('id');
+        $page = $this->request->getQuery('page', 1);
+        $result = $this->Posts->Comments
+            ->fetchPerPost($postId, $page)
+            ->disableHydration()
+            ->toArray();
+        return $this->responseCreated($result);
+    }
+
+    /**
+     * [GET]
+     * [PRIVATE]
+     * 
      * Fetches the posts to be displayed on users page
      * 
      * @param string username

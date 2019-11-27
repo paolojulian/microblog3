@@ -21,7 +21,7 @@ class CommentsFixture extends TestFixture
         ],
         [
             'id' => 2,
-            'body' => 'This is a comment on post 1',
+            'body' => 'This is a comment on post 2',
             'post_id' => 1,
             'user_id' => 200001,
             'created' => '2019-11-26 09:25:33',

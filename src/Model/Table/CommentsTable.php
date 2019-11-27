@@ -96,8 +96,14 @@ class CommentsTable extends Table
 
     /**
      * Adds a comment to a post
+     * 
+     * @param int $postId - posts.id
+     * @param int $userId - users.id
+     * @param array $data - Data to be inserted
+     * 
+     * @return App\Model\Entity\Comment
      */
-    public function addCommentToPost($postId, $userId, $data)
+    public function addCommentToPost(int $postId, int $userId, array $data)
     {
         $comment = $this->newEntity($data);
         $comment->post_id = $postId;
@@ -116,6 +122,27 @@ class CommentsTable extends Table
         }
 
         return $comment;
+    }
+
+    /**
+     * Fetches comments of the given post
+     * 
+     * @param int $postId - posts.id
+     * @param int $page - page
+     * @param int $perPage
+     * 
+     * @return \Cake\ORM\Query
+     */
+    public function fetchPerPost(int $postId, int $page, int $perPage = 10)
+    {
+        return $this->find()
+            ->select(['Comments.id', 'Comments.body', 'Comments.created'])
+            ->contain(['Users' => function ($q) {
+                return $q->select(['username', 'avatar_url', 'id']);
+            }])
+            ->where(['post_id' => $postId])
+            ->page(1)
+            ->limit(10);
     }
         
     /**

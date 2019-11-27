@@ -69,4 +69,14 @@ class CommentOnPostsControllerTest extends ApiTestCase
         $this->assertResponseContains('commentCount');
         $this->assertEquals($result->data->commentCount, $commentsTable->countPerPost($postId));
     }
+
+    public function testFetchingCommentsOfPostWillReturnArray()
+    {
+        $postId = 1;
+        $this->get($this->postsURL . "/$postId/comments?page=1");
+        $this->assertResponseOk();
+        $this->assertResponseContains('This is a comment on post 1');
+        $this->assertResponseContains('This is a comment on post 2');
+        $this->assertResponseContains('existingusername');
+    }
 }
