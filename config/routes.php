@@ -87,6 +87,13 @@ Router::prefix('api', function (RouteBuilder $routes) {
         )->setPatterns(['id' => '\d+'])
         ->setMethods(['PATCH']);
 
+        /** Comment */
+        $routes->connect(
+            '/:id/comments',
+            ['controller' => 'Posts', 'action' => 'addComment']
+        )->setPatterns(['id' => '\d+'])
+        ->setMethods(['POST']);
+
         /** Share */
         $routes->connect(
             '/share/:id',

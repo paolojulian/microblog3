@@ -172,6 +172,34 @@ class PostsController extends AppController
     }
 
     /**
+     * [POST]
+     * [PRIVATE]
+     * 
+     * Add a comment to a post
+     * 
+     * @param int $postId - posts.id
+     * 
+     * @return status created (201)
+     */
+    public function addComment()
+    {
+        $this->request->allowMethod('post');
+        $postId = $this->request->getParam('id');
+        $result = $this->Posts->Comments->addCommentToPost(
+            $postId,
+            $this->Auth->user('id'),
+            $this->request->getData()
+        );
+        if ($result->hasErrors()) {
+            return $this->responseUnprocessableEntity($result->errors());
+        }
+
+        return $this->responseCreated([
+            'commentCount' => $this->Posts->Comments->countPerPost($postId)
+        ]);
+    }
+
+    /**
      * [GET]
      * [PRIVATE]
      * 

@@ -38,4 +38,9 @@ class ApiTestCase extends TestCase
             'headers' => $this->requestHeaders
         ]);
     }
+
+    protected function getResponseData()
+    {
+        return json_decode((string)$this->_response->getBody());
+    }
 }

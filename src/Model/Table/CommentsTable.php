@@ -5,6 +5,8 @@ use Cake\ORM\Query;
 use Cake\ORM\RulesChecker;
 use Cake\ORM\Table;
 use Cake\Validation\Validator;
+use Cake\Network\Exception\InternalErrorException;
+use Cake\Network\Exception\NotFoundException;
 
 /**
  * Comments Model
@@ -65,8 +67,9 @@ class CommentsTable extends Table
 
         $validator
             ->scalar('body')
-            ->maxLength('body', 255)
-            ->allowEmptyString('body');
+            ->maxLength('body', 140, __('Maximum of 140 characters only'))
+            ->requirePresence('body', true, __('Please enter your message'))
+            ->notEmptyString('body', __('Please enter your message'));
 
         $validator
             ->dateTime('deleted')
@@ -88,6 +91,30 @@ class CommentsTable extends Table
         $rules->add($rules->existsIn(['user_id'], 'Users'));
 
         return $rules;
+    }
+
+    /**
+     * Adds a comment to a post
+     */
+    public function addCommentToPost($postId, $userId, $data)
+    {
+        $comment = $this->newEntity($data);
+        $comment->post_id = $postId;
+        $comment->user_id = $userId;
+
+        if ( ! $this->Posts->exists(['id' => $postId])) {
+            throw new NotFoundException();
+        }
+
+        if ($comment->hasErrors()) {
+            return $comment;
+        }
+
+        if ( ! $this->save($comment)) {
+            throw new InternalErrorException();
+        }
+
+        return $comment;
     }
         
     /**
