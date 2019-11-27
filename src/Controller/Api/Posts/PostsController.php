@@ -203,6 +203,33 @@ class PostsController extends AppController
      * [GET]
      * [PRIVATE]
      * 
+     * TODO transfer to Posts/LikesController
+     * 
+     * Fetches users who liked of a post
+     * 
+     * @param int $postId - posts.id
+     * 
+     * @return array of Comments
+     */
+    public function fetchLikers()
+    {
+        $this->request->allowMethod('get');
+        $postId = $this->request->getParam('id');
+        $page = $this->request->getQuery('page', 1);
+        $result = $this->Posts->Comments
+            ->fetchPerPost($postId, $page)
+            ->toList();
+
+        return $this->responseData([
+            'list' => $result,
+            'totalCount' => $this->Posts->Comments->countPerPost($postId)
+        ]);
+    }
+
+    /**
+     * [GET]
+     * [PRIVATE]
+     * 
      * Fetches comments of a post
      * 
      * @param int $postId - posts.id
