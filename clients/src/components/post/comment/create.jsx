@@ -1,6 +1,7 @@
-import React, { useState, useRef, useContext } from 'react';
+import React, { useCallback, useState, useRef, useContext } from 'react';
 import PropTypes from 'prop-types';
 import { useDispatch } from 'react-redux';
+import styles from './create.module.css'
 
 /** Context */
 import { ModalContext } from '../../widgets/p-modal/p-modal-context'
@@ -10,14 +11,7 @@ import { addComment } from '../../../store/actions/postActions';
 import { CLEAR_ERRORS } from '../../../store/types'
 
 /** Components */
-import PFab from '../../widgets/p-fab';
-import PLoader from '../../widgets/p-loader';
 import FormTextArea from '../../widgets/form/textarea/form-textarea';
-
-const styles = {
-    padding: '0.5rem',
-    width: '100%'
-}
 
 const initialError = {
     body: ''
@@ -32,11 +26,13 @@ const CommentCreate = ({
     const context = useContext(ModalContext);
     const comment = useRef('');
     const [errors, setErrors] = useState(initialError);
-    const [hasComment, setHasComment] = useState(false);
     const [isLoading, setLoading] = useState(false);
 
-    const handleSubmit = e => {
-        if (e) e.preventDefault();
+    const handleSubmit = useCallback(e => {
+        if (e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
         const form = {
             body: comment.current.value
         }
@@ -45,11 +41,10 @@ const CommentCreate = ({
             .then(handleSuccess)
             .catch(handleError)
             .then(() => setLoading(false));
-    }
+    }, [comment])
 
     const handleSuccess = () => {
         comment.current.value = ''
-        setHasComment(false);
         onRequestSuccess();
         setErrors({ ...initialError });
         dispatch({ type: CLEAR_ERRORS })
@@ -66,35 +61,8 @@ const CommentCreate = ({
         }
     }
 
-    const handleChange = e => {
-        setHasComment(!!e.target.value);
-    }
-
-    const renderButton = () => {
-        if (isLoading) {
-            return (
-                <div className="action_btns">
-                    <PLoader />
-                </div>
-            )
-        }
-
-        if ( ! hasComment) return '';
-
-        return (
-            <div className="action_btns">
-                <PFab
-                    type="submit"
-                    theme="primary"
-                >
-                    <i className="fa fa-check"/>
-                </PFab>
-            </div>
-        ) 
-    }
-
     return (
-        <div styles={styles}>
+        <div className={styles.wrapper}>
             <form
                 onSubmit={handleSubmit}
                 className="form"
@@ -103,11 +71,11 @@ const CommentCreate = ({
                     name="comment"
                     placeholder="Write a comment"
                     refs={comment}
-                    onChange={handleChange}
                     error={errors.body}
-                    rows={1}
+                    rows={2}
+                    isRequired={true}
+                    submitOnEnter={handleSubmit}
                 />
-                {renderButton()}
             </form>
         </div>
     );

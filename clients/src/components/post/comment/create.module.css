@@ -1,0 +1,8 @@
+.wrapper {
+    font-size: 0.9rem;
+    padding: 0 1rem;
+    margin-bottom: 1rem;
+    line-height: 1rem;
+    color: var(--black-disabled);
+    width: 100%;
+}

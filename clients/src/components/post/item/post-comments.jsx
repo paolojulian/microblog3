@@ -3,7 +3,8 @@ import { useDispatch } from 'react-redux';
 import styles from './post-item.module.css';
 
 /** Utils */
-import initialStatus from '../../utils/initial-status';
+import InitialStatus from '../../utils/initial-status';
+import Pager from '../../utils/pager';
 
 /** Redux */
 import { getCommentsByPost } from '../../../store/actions/postActions';
@@ -22,37 +23,32 @@ const PostComments = ({
 }) => {
 
     const dispatch = useDispatch();
-    const [status, setStatus] = useState(initialStatus);
+    const [status, setStatus] = useState(InitialStatus.LOADING);
     const [comments, setComments] = useState([]);
     const [totalLeft, setTotalLeft] = useState(0);
     const [page, setPage] = useState(1);
 
     useEffect(() => {
-        if (page) {
-            getComments(page);
-        }
-    }, [page, getComments])
-
-    const getComments = async(pageNo = 1) => {
-        try {
-            setStatus({ ...initialStatus, loading: true })
-            const res = await dispatch(getCommentsByPost(postId, pageNo))
-
-            if (pageNo === 1) {
-                setComments(res.list)
-                setTotalLeft(res.totalCount - res.list.length);
-            } else {
-                setComments([...comments, ...res.list])
-                setTotalLeft(res.totalCount - [...comments, ...res.list].length);
+        const fetchComments = async () => {
+            try {
+                const res = await dispatch(getCommentsByPost(postId, page))
+                if (page === 1) {
+                    setComments(res.list)
+                    setTotalLeft(res.totalCount - res.list.length);
+                } else {
+                    setComments([...comments, ...res.list])
+                    setTotalLeft(res.totalCount - [...comments, ...res.list].length);
+                }
+                onUpdateCommentCount(Number(res.totalCount));
+                setStatus({ ...InitialStatus, post: true })
+            } catch (e) {
+                setStatus({ ...InitialStatus, error: true })
             }
-
-            onUpdateCommentCount(Number(res.totalCount));
-            setPage(pageNo);
-            setStatus({ ...initialStatus, post: true })
-        } catch (e) {
-            setStatus({ ...initialStatus, error: true })
         }
-    }
+        if (page) {
+            fetchComments(page);
+        }
+    }, [page])
 
     const renderStatus = () => {
         if (status.error) {
@@ -70,7 +66,8 @@ const PostComments = ({
             <CommentCreate
                 postId={Number(postId)}
                 onRequestSuccess={(data) => {
-                    getComments(1)
+                    setPage(false);
+                    setPage(1);
                     onRequestSuccessCreate(data)
                 }}
                 onRequestClose={onRequestClose}
