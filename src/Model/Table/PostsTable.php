@@ -47,6 +47,7 @@ class PostsTable extends Table
         $this->setPrimaryKey('id');
 
         $this->addBehavior('Timestamp');
+        $this->addBehavior('Trimmer');
 
         $this->belongsTo('RetweetPosts', [
             'foreignKey' => 'retweet_post_id'

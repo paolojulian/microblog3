@@ -7,8 +7,6 @@ use Cake\ORM\Table;
 use Cake\Validation\Validator;
 use Cake\Network\Exception\InternalErrorException;
 use Cake\Network\Exception\NotFoundException;
-use Cake\Event\Event;
-use ArrayObject;
 
 /**
  * Comments Model
@@ -38,6 +36,7 @@ class CommentsTable extends Table
     public function initialize(array $config)
     {
         parent::initialize($config);
+        $this->addBehavior('Trimmer');
 
         $this->setTable('comments');
         $this->setDisplayField('id');
@@ -130,14 +129,5 @@ class CommentsTable extends Table
         return $this->find()
             ->where(['post_id' => $postId])
             ->count();
-    }
-
-    public function beforeMarshal(Event $event, ArrayObject $data, ArrayObject $options)
-    {
-        foreach ($data as $key => $value) {
-            if (is_string($value)) {
-                $data[$key] = trim($value);
-            }
-        }
     }
 }
