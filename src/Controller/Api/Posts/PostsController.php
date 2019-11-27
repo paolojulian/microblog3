@@ -218,6 +218,7 @@ class PostsController extends AppController
         $page = $this->request->getQuery('page', 1);
         $result = $this->Posts->Likes
             ->fetchByPost($postId, $page)
+            ->disableHydration()
             ->toList();
 
         return $this->responseData($result);

@@ -108,6 +108,12 @@ export const fetchFollowers = (userId, page = 1) => async dispatch => {
     try {
         const params = { page };
         const res = await axios.get(`/api/users/${userId}/followers`, { params });
+        if (res.data.status !== 200) {
+            throw new Error("Invalid status")
+        }
+        if ( ! Array.isArray(res.data.data)) {
+            throw new Error("Invalid data type")
+        }
         return Promise.resolve(res.data.data);
     } catch (e) {
         return Promise.reject(e);
@@ -123,6 +129,12 @@ export const fetchFollowing = (userId, page = 1) => async dispatch => {
     try {
         const params = { page };
         const res = await axios.get(`/api/users/${userId}/following`, { params });
+        if (res.data.status !== 200) {
+            throw new Error("Invalid status")
+        }
+        if ( ! Array.isArray(res.data.data)) {
+            throw new Error("Invalid data type")
+        }
         return Promise.resolve(res.data.data);
     } catch (e) {
         return Promise.reject(e);

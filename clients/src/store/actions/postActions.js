@@ -220,9 +220,9 @@ export const deleteComment = (commentId) => async dispatch => {
 /**
  * Gets the likes of a post
  */
-export const fetchLikesByPost = (postId, page=1) => async dispatch => {
+export const fetchLikesByPost = (postId, page = 1) => async dispatch => {
     try {
-        const res = await axios.get(`/api/posts/${postId}/likers?page=1`)
+        const res = await axios.get(`/api/posts/${postId}/likers?page=${page}`)
         if (res.data.status !== 200) {
             throw new Error('Invalid Status');
         }

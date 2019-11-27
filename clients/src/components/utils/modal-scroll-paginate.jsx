@@ -1,4 +1,4 @@
-import React, { useRef, useState, useEffect } from 'react'
+import React, { useRef, useState, useEffect, useCallback } from 'react'
 import PropTypes from 'prop-types'
 
 /** Components */
@@ -13,44 +13,33 @@ const ModalScrollPaginate = ({
     const [isLoading, setIsLoading] = useState(false);
     const [isLast, setIsLast] = useState(false);
 
-    useEffect(() => {
-        if (page === 1) {
-            setIsLast(false);
+    const listenOnScroll = useCallback(async e => {
+        const element = e.target;
+        if (isLast) return;
+        if (isLoading) return;
+        if ((element.scrollTop + element.clientHeight) !== element.scrollHeight) {
+            return;
         }
-        if ( ! isLast) {
+        try {
+            setIsLoading(true)
+            await fetchHandler(page + 1);
+            setIsLoading(false);
+        } catch (e) {
+            setIsLast(true);
+        }
+    }, [page, isLoading, isLast]);
+
+    useEffect(() => {
+        if ( ! isLast && ! isLoading) {
             bodyRef.current.addEventListener('scroll', listenOnScroll);
         } else {
             bodyRef.current.removeEventListener('scroll', listenOnScroll);
         }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [isLoading, page, isLast])
 
-    const listenOnScroll = e => {
-        const element = e.target;
-        if (isLast) return;
-        if (isLoading) return;
-        if ((element.scrollTop + element.clientHeight) === element.scrollHeight) {
-            setIsLoading(true)
-            handleScrollDown(page + 1)
-                .then(() => setIsLoading(false));
+        return () => {
+            bodyRef.current.removeEventListener('scroll', listenOnScroll);
         }
-    }
-
-    const handleScrollDown = async (pageNo = 1) => {
-        try {
-            const res = await fetchHandler(pageNo);
-            console.log('Test', res);
-            if (res.length > 0) {
-                setIsLast(false);
-            } else {
-                setIsLast(true);
-            }
-            return Promise.resolve();
-        } catch (e) {
-            setIsLast(true);
-            return Promise.reject();
-        }
-    }
+    }, [listenOnScroll, isLast, isLoading])
 
     return (
         <div

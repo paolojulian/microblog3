@@ -31,7 +31,7 @@ const PostComments = ({
         if (page) {
             getComments(page);
         }
-    }, [page])
+    }, [page, getComments])
 
     const getComments = async(pageNo = 1) => {
         try {
