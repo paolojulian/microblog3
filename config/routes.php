@@ -101,6 +101,13 @@ Router::prefix('api', function (RouteBuilder $routes) {
         )->setPatterns(['id' => '\d+'])
         ->setMethods(['GET']);
 
+        /** Fetch Likers */
+        $routes->connect(
+            '/:id/likers',
+            ['controller' => 'Posts', 'action' => 'fetchLikers']
+        )->setPatterns(['id' => '\d+'])
+        ->setMethods(['GET']);
+
         /** Delete Comment */
         $routes->connect(
             '/comments/:id',

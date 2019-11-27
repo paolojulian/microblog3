@@ -145,7 +145,12 @@ class LikesTable extends Table
             ->select(['Likes.user_id'])
             ->where(['Likes.post_id' => $postId])
             ->contain(['Users' => function ($q) {
-                return $q->select(['Users.username', 'Users.avatar_url']);
+                return $q->select([
+                    'Users.username',
+                    'Users.avatar_url',
+                    'Users.first_name',
+                    'Users.last_name'
+                ]);
             }])
             ->order(['Likes.created' => 'DESC'])
             ->limit($perPage)

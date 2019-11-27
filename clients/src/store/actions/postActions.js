@@ -220,9 +220,15 @@ export const deleteComment = (commentId) => async dispatch => {
 /**
  * Gets the likes of a post
  */
-export const fetchLikesByPost = (postId) => async dispatch => {
+export const fetchLikesByPost = (postId, page=1) => async dispatch => {
     try {
-        const res = await axios.get(`/posts/likes/${postId}.json`)
+        const res = await axios.get(`/api/posts/${postId}/likers?page=1`)
+        if (res.data.status !== 200) {
+            throw new Error('Invalid Status');
+        }
+        if ( ! Array.isArray(res.data.data)) {
+            throw new Error('Invalid data type for likers');
+        }
         return Promise.resolve(res.data.data);
     } catch (e) {
         return Promise.reject(e);

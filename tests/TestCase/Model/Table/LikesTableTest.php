@@ -64,6 +64,8 @@ class LikesTableTest extends TestCase
                 'user' => [
                     'username' => 'existingusername',
                     'avatar_url' => '/testUrl',
+                    'first_name' => 'Julian',
+                    'last_name' => 'Paolo Vincent',
                 ]
             ],
             [
@@ -71,6 +73,8 @@ class LikesTableTest extends TestCase
                 'user' => [
                     'username' => 'activated',
                     'avatar_url' => null,
+                    'first_name' => 'Julian',
+                    'last_name' => 'Paolo Vincent',
                 ]
             ],
         ];
@@ -112,6 +116,8 @@ class LikesTableTest extends TestCase
                 'user' => [
                     'username' => 'activated',
                     'avatar_url' => null,
+                    'first_name' => 'Julian',
+                    'last_name' => 'Paolo Vincent',
                 ]
             ],
         ];

@@ -29,7 +29,6 @@ const LikesModal = ({
             setStatus({...initialStatus, loading: true});
             try {
                 const data = await dispatch(fetchLikesByPost(postId));
-                if ( ! data) throw new Error();
                 setUsers(data);
                 setStatus({...initialStatus, post: true});
             } catch (e) {
@@ -40,10 +39,10 @@ const LikesModal = ({
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
-    const renderLikes = () => users.map(({ User },  i) =>
+    const renderLikes = () => users.map((item,  i) =>
         <UserItem
-            key={User.id + i}
-            user={User}
+            key={item.user_id + i}
+            user={item.user}
             onRequestClose={onRequestClose}/>
     );
 

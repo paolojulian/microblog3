@@ -216,14 +216,11 @@ class PostsController extends AppController
         $this->request->allowMethod('get');
         $postId = $this->request->getParam('id');
         $page = $this->request->getQuery('page', 1);
-        $result = $this->Posts->Comments
-            ->fetchPerPost($postId, $page)
+        $result = $this->Posts->Likes
+            ->fetchByPost($postId, $page)
             ->toList();
 
-        return $this->responseData([
-            'list' => $result,
-            'totalCount' => $this->Posts->Comments->countPerPost($postId)
-        ]);
+        return $this->responseData($result);
     }
 
     /**
