@@ -93,9 +93,12 @@ class FollowersTable extends Table
      * Fetches the followers of the user given
      * 
      * @param int $userId - users.id
+     * @param int $page - page number
+     * @param int $perPage - max data per page
+     * 
      * @return array of users
      */
-    public function fetchFollowers(int $userId)
+    public function fetchFollowers(int $userId, int $page = 1, int $perPage = 10)
     {
         return $this->find()
             ->select([
@@ -118,6 +121,8 @@ class FollowersTable extends Table
                     ]
                 ]
             ])
+            ->limit($perPage)
+            ->page($page)
             ->toList();
     }
 
@@ -125,9 +130,13 @@ class FollowersTable extends Table
      * Fetches the users being followed by the given user
      * 
      * @param int $userId - users.id
+     * @param int $userId - users.id
+     * @param int $page - page number
+     * @param int $perPage - max data per page
+     * 
      * @return array of users
      */
-    public function fetchFollowing(int $userId)
+    public function fetchFollowing(int $userId, int $page = 1, int $perPage = 10)
     {
         return $this->find()
             ->select(['Followers.following_id'])
@@ -137,6 +146,8 @@ class FollowersTable extends Table
                     return $q->select(['id', 'username', 'avatar_url', 'first_name', 'last_name']);
                 }
             ])
+            ->limit($perPage)
+            ->page($page)
             ->toList();
     }
 
