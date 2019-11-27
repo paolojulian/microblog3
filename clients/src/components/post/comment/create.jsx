@@ -60,7 +60,7 @@ const CommentCreate = ({
             if (e.response.status !== 422) {
                 throw new Error();
             }
-            setErrors(e.response.data.data.errors);
+            setErrors(e.response.data.data);
         } catch (err) {
             context.notify.serverError();
         }

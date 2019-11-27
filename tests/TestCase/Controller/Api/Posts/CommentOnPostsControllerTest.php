@@ -32,6 +32,16 @@ class CommentOnPostsControllerTest extends ApiTestCase
         $this->assertResponseContains('Please enter your message');
     }
 
+    public function testWhiteSpacesWillReturnError()
+    {
+        $data = ['body' => '  '];
+        $postId = 1;
+        $this->post($this->postsURL . "/$postId/comments", $data);
+        $this->assertResponseCode(422);
+        $this->assertResponseContains('body');
+        $this->assertResponseContains('Please enter your message');
+    }
+
     public function testNonExistingFieldShouldReturnErrorMessage()
     {
         $postId = 1;

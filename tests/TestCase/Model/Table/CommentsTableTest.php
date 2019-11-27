@@ -81,6 +81,17 @@ class CommentsTableTest extends TestCase
         $this->assertNotEquals($result->errors(), []);
     }
 
+    public function testWhiteSpacesWillReturnError()
+    {
+        $data = ['body' => '  '];
+        $postId = 1;
+        $userId = 200002;
+        $result = $this->Comments->addCommentToPost($postId, $userId, $data);
+        $this->assertInstanceOf('\App\Model\Entity\Comment', $result);
+        $this->assertEquals($result->hasErrors(), true);
+        $this->assertNotEquals($result->errors(), []);
+    }
+
     public function testAddValidComment()
     {
         $data = ['body' => 'New Comment!'];
