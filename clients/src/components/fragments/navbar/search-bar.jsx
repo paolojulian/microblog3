@@ -1,4 +1,5 @@
 import React, { useRef, useState, useEffect } from 'react'
+import queryString from 'query-string'
 import { Link } from 'react-router-dom'
 import { useDispatch } from 'react-redux'
 import classNames from 'classnames'
@@ -21,12 +22,14 @@ const SearchBar = ({ history, location }) => {
     const [users, setUsers] = useState([]);
     const [posts, setPosts] = useState([]);
     const [willShow, setShow] = useState(false);
-    const [isSearching, setIsSearching] = useState(false);
     const [noData, setNoData] = useState(false);
     const [hasMoreData, setHasMoreData] = useState(false);
     const [status, setStatus] = useState(InitialStatus);
 
     useEffect(() => {
+        if (location.pathname === '/search') {
+            searchText.current.value = queryString.parse(location.search).searchText;
+        }
         document.body.addEventListener('click', resetState)
         return () => {
             document.body.removeEventListener('click', resetState)

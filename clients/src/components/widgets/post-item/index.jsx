@@ -72,15 +72,15 @@ const Minimal = ({
 )
 
 export const PostItem = ({ post }) => {
-    const { Post, User, isShared } = post;
-    let sharedPost = null;
-    if (isShared) {
-        sharedPost = post.SharedPost;
-    }
+    // const { Post, User, isShared } = post;
+    // let sharedPost = null;
+    // if (isShared) {
+    //     sharedPost = post.SharedPost;
+    // }
 
     return (
         <PCard size="fit">
-            {isShared && <SharedPost
+            {/* {isShared && <SharedPost
                 postId={Number(sharedPost.Post.id)}
                 userId={Number(sharedPost.Post.user_id)}
                 originalUserId={Number(post.Post.user_id)}
@@ -88,21 +88,21 @@ export const PostItem = ({ post }) => {
                 avatarUrl={sharedPost.User.avatar_url}
                 username={sharedPost.User.username}
                 created={sharedPost.Post.created}
-            />}
+            />} */}
 
             <PostHeader
-                postId={Number(Post.id)}
-                title={Post.title}
-                username={User.username}
-                avatarUrl={User.avatar_url}
-                created={Post.created}
+                postId={Number(post.id)}
+                title={post.title}
+                username={post.user.username}
+                avatarUrl={post.user.avatar_url}
+                created={post.created}
             />
 
             <div style={postStyle.body}>
-                {Post.body}
+                {post.body}
             </div>
 
-            {!!Post.img_path && <PostImage imgPath={Post.img_path} title={Post.title}/>}
+            {!!post.img_path && <PostImage imgPath={post.img_path} title={post.title}/>}
         </PCard>
     )
 }

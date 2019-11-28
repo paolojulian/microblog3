@@ -31,8 +31,8 @@ const SearchUsers = ({
             {users.length > 0 && <PCard size="fit">
                 {users.map((user, i) => 
                     <User
-                        key={user.User.id + i}
-                        user={user.User}/>)}
+                        key={i}
+                        user={user}/>)}
             </PCard>}
             {users.length === 0 && <div className="disabled">No user/s found</div>}
             <LoadMore
