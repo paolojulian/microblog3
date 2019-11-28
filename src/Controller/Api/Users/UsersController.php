@@ -28,6 +28,27 @@ class UsersController extends AppController
     }
 
     /**
+     * [PUT]
+     * [PRIVATE]
+     * 
+     * Updates the profile of the current user logged in
+     * 
+     * @return \App\Model\Entity\User
+     */
+    public function updateUser()
+    {
+        $this->request->allowMethod('put');
+        $user = $this->Users->updateUser(
+            $this->Auth->user('id'),
+            $this->request->getData()
+        );
+        if ($user->hasErrors()) {
+            return $this->responseUnprocessableEntity($user->errors());
+        }
+        return $this->responseData($user);
+    }
+
+    /**
      * Fetches the mutual following with the given user
      * 
      * @param string username - users.username

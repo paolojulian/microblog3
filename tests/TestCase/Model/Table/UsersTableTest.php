@@ -89,4 +89,151 @@ class UsersTableTest extends TestCase
         $this->assertEquals(isset($result['totalCount']), true);
         $this->assertEquals($result['totalCount'], 2);
     }
+
+    public function testUpdateUserWillReturnEntity()
+    {
+        $data = [];
+        $userId = 200002;
+        $user = $this->Users->updateUser($userId, $data);
+        $this->assertInstanceOf('\Cake\ORM\Entity', $user);
+    }
+
+    public function testUpdateUserWithNonExistingDataWillHaveEntityError()
+    {
+        $data = [];
+        $userId = 200002;
+        $user = $this->Users->updateUser($userId, $data);
+        $this->assertInstanceOf('\Cake\ORM\Entity', $user);
+        $this->assertEquals($user->hasErrors(), true);
+    }
+
+    public function testUpdateUserWithEmptyFieldsWillReturnError()
+    {
+        $data = [
+            'username' => '',
+            'first_name' => '',
+            'last_name' => '',
+            'birthdate' => '',
+        ];
+        $userId = 200002;
+        $user = $this->Users->updateUser($userId, $data);
+        $this->assertInstanceOf('\Cake\ORM\Entity', $user);
+        $this->assertEquals($user->hasErrors(), true);
+        $errors = $user->errors();
+        $this->assertEquals(isset($errors['username']), true);
+        $this->assertEquals(isset($errors['first_name']), true);
+        $this->assertEquals(isset($errors['last_name']), true);
+        $this->assertEquals(isset($errors['birthdate']), true);
+    }
+
+    public function testUpdateUsernameWithLessCharWIllReturnError()
+    {
+        $data = [
+            'username' => 'ere',
+        ];
+        $userId = 200002;
+        $user = $this->Users->updateUser($userId, $data);
+        $this->assertInstanceOf('\Cake\ORM\Entity', $user);
+        $this->assertEquals($user->hasErrors(), true);
+        $errors = $user->errors();
+        $this->assertEquals(isset($errors['username']), true);
+    }
+
+    public function testUpdateUsernameWithMoreCharWillReturnError()
+    {
+        $data = [
+            'username' => 'wqeqweqwewqeqwewqeqweqwewqeqweqqwqeqweqwewqeqweq',
+        ];
+        $userId = 200002;
+        $user = $this->Users->updateUser($userId, $data);
+        $this->assertInstanceOf('\Cake\ORM\Entity', $user);
+        $this->assertEquals($user->hasErrors(), true);
+        $errors = $user->errors();
+        $this->assertEquals(isset($errors['username']), true);
+    }
+
+    public function testUpdatingUserWithNonUniqueWillReturnError()
+    {
+        $data = [
+            'username' => 'unactivated',
+        ];
+        $userId = 200002;
+        $user = $this->Users->updateUser($userId, $data);
+        $this->assertInstanceOf('\Cake\ORM\Entity', $user);
+        $this->assertEquals($user->hasErrors(), true);
+        $errors = $user->errors();
+        $this->assertEquals(isset($errors['username']), true);
+    }
+
+    public function testUpdateUserWithMaxCharsWillREturnError()
+    {
+        $data = [
+            'first_name' => 'dkjsalkfjklasdjdkjsalkfjklasdjdkjsalkfjklasdjdkjsalkfjklasdjdkjsalkfjklasdjdkjsalkfjklasdjdkjsalkfjklasdjdkjsalkfjklasdjdkjsalkfjklasdjfffffffffdkjsalkfjklasdjfdkjsalkfjklasdjdkjsalkfjklasdjdkjsalkfjklasdjdkjsalkfjklasdjdkjsalkfjklasdjdkjsalkfjklasdjdkjsalkfjklasdjdkjsalkfjklasdjdkjsalkfjklasdjfffffffffdkjsalkfjklasdjf',
+            'last_name' => 'dkjsalkfjklasdjdkjsalkfjklasdjdkjsalkfjklasdjdkjsalkfjklasdjdkjsalkfjklasdjdkjsalkfjklasdjdkjsalkfjklasdjdkjsalkfjklasdjdkjsalkfjklasdjfffffffffdkjsalkfjklasdjf',
+        ];
+        $userId = 200002;
+        $user = $this->Users->updateUser($userId, $data);
+        $this->assertInstanceOf('\Cake\ORM\Entity', $user);
+        $this->assertEquals($user->hasErrors(), true);
+        $errors = $user->errors();
+        $this->assertEquals(isset($errors['first_name']), true);
+        $this->assertEquals(isset($errors['last_name']), true);
+    }
+
+    public function testUpdateUserWillReturnEntityNoErrors()
+    {
+        $data = [
+            'username' => 'newUsernameha',
+            'first_name' => 'Paolo Vincent',
+            'last_name' => 'Julian',
+            'birthdate' => '1994-07-12'
+        ];
+        $userId = 200002;
+        $user = $this->Users->updateUser($userId, $data);
+        $this->assertInstanceOf('\Cake\ORM\Entity', $user);
+        $this->assertEquals($user->hasErrors(), false);
+    }
+
+    public function testUpdateUserWithWrongOldPasswordWillReturnError()
+    {
+        $data = [
+            'old_password' => 'fldjaklfjaklsdj',
+        ];
+        $userId = 200002;
+        $user = $this->Users->updateUser($userId, $data);
+        $this->assertInstanceOf('\Cake\ORM\Entity', $user);
+        $this->assertEquals($user->hasErrors(), true);
+        $errors = $user->errors();
+        $this->assertEquals(isset($errors['old_password']), true);
+    }
+
+    public function testUpdateUserWithOldPasswordWillRequirePassword()
+    {
+        $data = [
+            'old_password' => 'fldjaklfjaklsdj',
+        ];
+        $userId = 200002;
+        $user = $this->Users->updateUser($userId, $data);
+        $this->assertInstanceOf('\Cake\ORM\Entity', $user);
+        $this->assertEquals($user->hasErrors(), true);
+        $errors = $user->errors();
+        $this->assertEquals(isset($errors['old_password']), true);
+        $this->assertEquals(isset($errors['password']), true);
+        $this->assertEquals(isset($errors['confirm_password']), true);
+    }
+
+    public function testMismatchNewPasswordWillReturnError()
+    {
+        $data = [
+            'old_password' => 'qwe123',
+            'password' => 'hahahaha',
+            'confirm_password' => 'qhawe123',
+        ];
+        $userId = 200002;
+        $user = $this->Users->updateUser($userId, $data);
+        $this->assertInstanceOf('\Cake\ORM\Entity', $user);
+        $this->assertEquals($user->hasErrors(), true);
+        $errors = $user->errors();
+        $this->assertEquals(isset($errors['confirm_password']), true);
+    }
 }

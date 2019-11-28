@@ -10,17 +10,25 @@ import {
 } from '../types';
 
 /**
- * Get profile of current logged in user
+ * Get Profile By their username
+ * or IF NULL get current profile
  */
-export const getProfile = (username) => async dispatch => {
+export const getProfile = (username = null) => async dispatch => {
     try {
         dispatch({ type: TOGGLE_LOADING_PROFILE })
-        const res = await axios.get(`/api/users/${username}`)
+        let res;
+        if (username) {
+            res = await axios.get(`/api/users/${username}`)
+        } else {
+            res = await axios.get(`/api/auth/me`)
+        }
+        if (res.data.status !== 200) {
+            throw new Error("Invalid Status");
+        }
         dispatch({
             type: SET_PROFILE,
             payload: res.data.data
         })
-        await dispatch(fetchFollowCount(username));
         return Promise.resolve(res.data.data)
     } catch (e) {
         return Promise.reject()
@@ -32,7 +40,10 @@ export const getProfile = (username) => async dispatch => {
  */
 export const updateProfile = (data) => async dispatch => {
     try {
-        const res = await axios.put('/users/edit.json', data);
+        const res = await axios.put('/api/users', data);
+        if (res.data.status !== 200) {
+            throw new Error('Invalid Status');
+        }
         return Promise.resolve(res.data.data)
     } catch (e) {
         return Promise.reject(e)

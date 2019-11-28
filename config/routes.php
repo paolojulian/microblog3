@@ -143,6 +143,12 @@ Router::prefix('api', function (RouteBuilder $routes) {
             '/:username',
             ['controller' => 'Users', 'action' => 'profile']
         );
+        // Update Profile
+        $routes->connect(
+            '/',
+            ['controller' => 'Users', 'action' => 'updateUser']
+        )
+        ->setMethods(['PUT']);
         // Mutual
         $routes->connect(
             '/:username/mutual',
