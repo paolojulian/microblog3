@@ -324,6 +324,34 @@ class UsersTable extends Table
     }
 
     /**
+     * Updates the avatar_url of the given user
+     * 
+     * @param int $userId - user to be updated
+     * @param string $avatar_url - path or the updated avatar
+     * 
+     * @return \App\Model\Entity\User
+     */
+    public function updateAvatar(int $userId, string $avatarUrl)
+    {
+        $user = $this->get($userId);
+        if ( ! $user) {
+            throw new NotFoundException();
+        }
+
+        $this->patchEntity(
+            $user,
+            ['avatar_url' => $avatarUrl],
+            ['validate' => false]
+        );
+
+        if ( ! $this->save($user)) {
+            throw new InternalErrorException();
+        }
+
+        return $user;
+    }
+
+    /**
      * Check if two passwords matches
      * 
      * @param string $pwd

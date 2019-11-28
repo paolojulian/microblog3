@@ -50,6 +50,7 @@ const ProfileUpdate = () => {
             setLastName(user.last_name);
             setBirthdate(user.birthdate);
             setProfileImgSrc(user.avatar_url);
+            console.log(user);
         }
         return () => {
             mounted = false;

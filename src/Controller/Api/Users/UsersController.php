@@ -49,6 +49,30 @@ class UsersController extends AppController
     }
 
     /**
+     * [PATCH]
+     * [POST] - for loggedin users only
+     * 
+     * Edits the image of the current user
+     * 
+     * @return Status
+     */
+    public function updateImage()
+    {
+        $this->request->allowMethod('post');
+        $this->loadComponent('UserHandler');
+        $requestData = $this->request->getData();
+        $avatarUrl = $this->UserHandler->uploadImage(
+            $requestData['profile_img'],
+            $this->Auth->user('id')
+        );
+        $this->Users->updateAvatar(
+            $this->Auth->user('id'),
+            $avatarUrl
+        );
+        $this->responseOk();
+    }
+
+    /**
      * Fetches the mutual following with the given user
      * 
      * @param string username - users.username

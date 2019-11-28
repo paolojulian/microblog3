@@ -3,13 +3,14 @@ namespace App\Controller\Component;
 
 use Cake\Controller\Component;
 use Cake\Controller\ComponentRegistry;
+use App\Lib\Utils\ImageResizerHelper;
 
 /**
  * UserHandler component
  */
 class UserHandlerComponent extends Component
 {
-    public $components = ['MailHandler'];
+    public $components = ['MailHandler', 'UploadImgHandler'];
     /**
      * Default configuration.
      *
@@ -33,5 +34,26 @@ class UserHandlerComponent extends Component
             ]
         );
         return true;
+    }
+
+    public function uploadimage($file, $id)
+    {
+        try {
+            $path = "profiles/$id/";
+            $uploadedFile = $this->UploadImgHandler->uploadImage(
+                $file,
+                $path
+            );
+            $imageName = $uploadedFile['imageName'];
+            $imageResizer = new ImageResizerHelper("$path$imageName.png");
+            $imageResizer->multipleResizeMaxHeight(
+                $path.$imageName,
+                [256, 128, 64, 32, 24]
+            );
+        } catch (Exception $e) {
+            throw $e;
+        }
+
+        return $uploadedFile['basePath'];
     }
 }

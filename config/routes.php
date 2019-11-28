@@ -149,6 +149,12 @@ Router::prefix('api', function (RouteBuilder $routes) {
             ['controller' => 'Users', 'action' => 'updateUser']
         )
         ->setMethods(['PUT']);
+        // Update Profile Image
+        $routes->connect(
+            '/update-image',
+            ['controller' => 'Users', 'action' => 'updateImage']
+        )
+        ->setMethods(['POST']);
         // Mutual
         $routes->connect(
             '/:username/mutual',

@@ -236,4 +236,13 @@ class UsersTableTest extends TestCase
         $errors = $user->errors();
         $this->assertEquals(isset($errors['confirm_password']), true);
     }
+
+    public function testUpdateAvatar()
+    {
+        $avatarUrl = '/fasd/fres';
+        $userId = 200002;
+        $user = $this->Users->updateAvatar($userId, $avatarUrl);
+        $this->assertInstanceOf('\Cake\ORM\Entity', $user);
+        $this->assertEquals($user->hasErrors(), false);
+    }
 }

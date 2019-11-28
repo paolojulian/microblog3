@@ -62,7 +62,7 @@ export const uploadProfileImg = (img) => async dispatch => {
         }
         const formData = new FormData();
         formData.append('profile_img', img);
-        const res = await axios.post('/profiles/uploadimage.json', formData, config)
+        const res = await axios.post('/api/users/update-image', formData, config)
         return Promise.resolve(res.data.data)
     } catch (e) {
         return Promise.reject(e)
