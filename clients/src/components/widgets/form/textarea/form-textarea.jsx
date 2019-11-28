@@ -27,6 +27,7 @@ const FormTextArea = ({
 
     const handleKeyPress = e => {
         if (!!submitOnEnter && e.key === 'Enter' && e.shiftKey) {
+            e.preventDefault();
             e.stopPropagation();
             submitOnEnter();
         }
