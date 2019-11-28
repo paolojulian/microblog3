@@ -54,7 +54,7 @@ const FormTextArea = ({
                 onKeyPress={handleKeyPress}
                 {...props}
             ></textarea>
-            <div className={styles.enterToSubmit}>Press Shift + Enter to submit</div>
+            {!!submitOnEnter && <div className={styles.enterToSubmit}>Press Shift + Enter to submit</div>}
             {info && <div className={styles.formInfo}>{info}</div>}
             <ErrorMsg error={stateError}/>
         </div>

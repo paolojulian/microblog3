@@ -330,6 +330,45 @@ class UsersTable extends Table
     }
 
     /**
+     * Searches user according to the passed strtext
+     * and total count
+     * 
+     * @param string $text - the string to match the users
+     * @param int $page
+     * @param int $perPage - max number of data per page
+     * 
+     * @return array
+     */
+    public function searchUser(string $text, int $page = 1, int $perPage = 5)
+    {
+        $conditions = [
+            'OR' => [
+                'username LIKE' => "%$text%",
+                "concat_ws(' ', first_name, last_name) LIKE" => "%$text%",
+            ],
+            'is_activated' => true
+        ];
+
+        $list = $this->find()
+            ->select(['id', 'username', 'first_name', 'last_name' , 'avatar_url'])
+            ->where($conditions)
+            ->order(['created' => 'DESC'])
+            ->limit($perPage)
+            ->page($page)
+            ->disableHydration()
+            ->toArray();
+
+        $totalCount = $this->find()
+            ->where($conditions)
+            ->count();
+
+        return [
+            'list' => $list,
+            'totalCount' => $totalCount
+        ];
+    }
+
+    /**
      * Checker for validations
      * TODO put in separate folder
      */

@@ -24,11 +24,6 @@ class UsersTableTest extends TestCase
      */
     public $fixtures = [
         'app.Users',
-        'app.Comments',
-        'app.Followers',
-        'app.Likes',
-        'app.Notifications',
-        'app.Posts'
     ];
 
     /**
@@ -43,45 +38,55 @@ class UsersTableTest extends TestCase
         $this->Users = TableRegistry::getTableLocator()->get('Users', $config);
     }
 
-    /**
-     * tearDown method
-     *
-     * @return void
-     */
-    public function tearDown()
+    public function testSearchingWithSQLCommandWillReturnEmpty()
     {
-        unset($this->Users);
-
-        parent::tearDown();
+        $text = 'DELETE * FROM users';
+        $page = 1;
+        $result = $this->Users->searchUser($text, $page);
+        $this->assertEquals(isset($result['list']), true);
+        $this->assertEquals($result['list'], []);
     }
 
-    /**
-     * Test initialize method
-     *
-     * @return void
-     */
-    public function testInitialize()
+    public function testSearchingWithSpecialCharsWillReturnEmpty()
     {
-        $this->markTestIncomplete('Not implemented yet.');
+        $text = '(*@#&!(*#&@!\\';
+        $page = 1;
+        $result = $this->Users->searchUser($text, $page);
+        $this->assertEquals(isset($result['list']), true);
+        $this->assertEquals($result['list'], []);
     }
 
-    /**
-     * Test validationDefault method
-     *
-     * @return void
-     */
-    public function testValidationDefault()
+    public function testSearchValidNameWillNotIncludeUnactivatedUsers()
     {
-        $this->markTestIncomplete('Not implemented yet.');
+        $text = 'activated';
+        $page = 1;
+        $result = $this->Users->searchUser($text, $page);
+        $this->assertEquals(isset($result['list']), true);
+        $expected = [
+            [
+                'id' => 200002,
+                'username' => 'activated',
+                'first_name' => 'Julian',
+                'last_name' => 'Paolo Vincent',
+                'avatar_url' => null,
+            ],
+            [
+                'id' => 200012,
+                'username' => 'anotherActivated',
+                'first_name' => 'Julian',
+                'last_name' => 'Paolo Vincent',
+                'avatar_url' => null,
+            ],
+        ];
+        $this->assertEquals($result['list'], $expected);
     }
 
-    /**
-     * Test buildRules method
-     *
-     * @return void
-     */
-    public function testBuildRules()
+    public function testSearchValidNameWillReturnTotalCount()
     {
-        $this->markTestIncomplete('Not implemented yet.');
+        $text = 'activated';
+        $page = 1;
+        $result = $this->Users->searchUser($text, $page);
+        $this->assertEquals(isset($result['totalCount']), true);
+        $this->assertEquals($result['totalCount'], 2);
     }
 }

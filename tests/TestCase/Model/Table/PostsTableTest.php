@@ -24,11 +24,7 @@ class PostsTableTest extends TestCase
      */
     public $fixtures = [
         'app.Posts',
-        'app.RetweetPosts',
         'app.Users',
-        'app.Comments',
-        'app.Likes',
-        'app.Notifications'
     ];
 
     /**
@@ -43,45 +39,43 @@ class PostsTableTest extends TestCase
         $this->Posts = TableRegistry::getTableLocator()->get('Posts', $config);
     }
 
-    /**
-     * tearDown method
-     *
-     * @return void
-     */
-    public function tearDown()
+    public function testSearchingWithSQLCommandWillReturnEmpty()
     {
-        unset($this->Posts);
-
-        parent::tearDown();
+        $text = 'DELETE * FROM posts';
+        $page = 1;
+        $result = $this->Posts->searchPosts($text, $page);
+        $this->assertEquals(isset($result['list']), true);
+        $this->assertEquals($result['list'], []);
     }
 
-    /**
-     * Test initialize method
-     *
-     * @return void
-     */
-    public function testInitialize()
+    public function testSearchingWithSpecialCharsWillReturnEmpty()
     {
-        $this->markTestIncomplete('Not implemented yet.');
+        $text = '(*@#&!(*#&@!\\';
+        $page = 1;
+        $result = $this->Posts->searchPosts($text, $page);
+        $this->assertEquals(isset($result['list']), true);
+        $this->assertEquals($result['list'], []);
     }
 
-    /**
-     * Test validationDefault method
-     *
-     * @return void
-     */
-    public function testValidationDefault()
+    public function testSearchValidPostWillReturnWithTitleAndBody()
     {
-        $this->markTestIncomplete('Not implemented yet.');
+        $text = 'search';
+        $page = 1;
+
+        $result = $this->Posts->searchPosts($text, $page);
+        $this->assertEquals(isset($result['list']), true);
+        $this->assertEquals(count($result['list']), 3);
+        $this->assertEquals($result['list'][0]['id'], 7);
+        $this->assertEquals($result['list'][1]['id'], 6);
+        $this->assertEquals($result['list'][2]['id'], 5);
     }
 
-    /**
-     * Test buildRules method
-     *
-     * @return void
-     */
-    public function testBuildRules()
+    public function testSearchValidPostWillReturnExpected()
     {
-        $this->markTestIncomplete('Not implemented yet.');
+        $text = 'Title Search';
+        $page = 1;
+        $result = $this->Posts->searchPosts($text, $page);
+        $this->assertEquals(isset($result['list']), true);
+        $this->assertEquals($result['totalCount'], 1);
     }
 }

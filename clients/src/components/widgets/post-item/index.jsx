@@ -40,31 +40,31 @@ const postStyle = {
 }
 
 const Minimal = ({
-    post: { User, Post },
+    post,
     history
 }) => (
     <div 
        style={{ cursor: 'pointer' }}
         onClick={() => {
-            history.push(`/posts/${Post.id}`)
+            history.push(`/posts/${post.id}`)
         }}>
         <div style={postStyle.post} className="hover-grey">
             <div 
                 style={postStyle.header}>
                 <div style={postStyle.img}>
                     <ProfileImage
-                        src={User.avatar_url}
+                        src={post.user.avatar_url}
                         size={24}
                     />
                 </div>
                 <div style={postStyle.info}>
                     <span style={postStyle.title}>
-                        {Post.title ? Post.title : 'Untitled'}
+                        {post.title ? post.title : 'Untitled'}
                     </span>
                     &nbsp;
                     &#8226;
                     &nbsp;
-                    <Username username={User.username}/>
+                    <Username username={post.user.username}/>
                 </div>
             </div>
         </div>

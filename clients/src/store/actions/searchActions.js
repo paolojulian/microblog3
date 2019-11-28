@@ -2,7 +2,7 @@ import { search } from '../../utils/search';
 
 export const apiSearch = (searchText) => async dispatch => {
     try {
-        const res = await search(`/search/index/${searchText}.json`);
+        const res = await search(`/api/search?text=${searchText}`);
         return Promise.resolve(res);
     } catch (e) {
         return Promise.reject(e);

@@ -4,6 +4,9 @@ import { useDispatch } from 'react-redux'
 import classNames from 'classnames'
 import { withRouter } from 'react-router-dom';
 
+/** Utils */
+import InitialStatus from '../../utils/initial-status';
+
 /** Redux */
 import { apiSearch } from '../../../store/actions/searchActions';
 
@@ -21,6 +24,7 @@ const SearchBar = ({ history, location }) => {
     const [isSearching, setIsSearching] = useState(false);
     const [noData, setNoData] = useState(false);
     const [hasMoreData, setHasMoreData] = useState(false);
+    const [status, setStatus] = useState(InitialStatus);
 
     useEffect(() => {
         document.body.addEventListener('click', resetState)
@@ -40,46 +44,49 @@ const SearchBar = ({ history, location }) => {
         }
     }
 
-    const handleChange = value => {
+    const handleChange = async value => {
         if (location.pathname === '/search') {
             // history.push(`/search?searchText=${getSearchText()}`)
             return;
         }
-        setIsSearching(!!value);
-        setShow(!!value);
+        setShow(value.length !== 0);
+        setNoData(false);
         if (value.length === 0) {
             setNoData(true);
             setUsers([]);
             setPosts([]);
             return;
         }
-        setNoData(false);
-        dispatch(apiSearch(searchText.current.value))
-            .then(data => {
-                // Sometimes canceling token will return undefined
-                try {
-                    if ( ! data) return;
-                } catch (e) {
-                    return;
-                }
+        setStatus({...InitialStatus.LOADING});
+        try {
+            const data = await dispatch(apiSearch(searchText.current.value))
+            if ( ! data) {
+                return;
+            }
 
-                if (
-                    data.users.list.length === 0 &&
-                    data.posts.list.length === 0
-                ) {
-                    setNoData(true);
-                }
-                if (
-                    data.users.totalLeft > 0 ||
-                    data.posts.totalLeft > 0
-                ) {
-                    setHasMoreData(true);
-                } else {
-                    setHasMoreData(false);
-                }
-                setUsers(data.users.list);
-                setPosts(data.posts.list);
-            });
+            if (
+                data.users.totalCount - data.users.list.length > 0 ||
+                data.posts.totalCount - data.posts.list.length > 0
+            ) {
+                setHasMoreData(true);
+            } else {
+                setHasMoreData(false);
+            }
+            if (
+                data.users.list.length === 0 &&
+                data.posts.list.length === 0
+            ) {
+                setNoData(true);
+            } else {
+                setNoData(false);
+            }
+            setUsers(data.users.list);
+            setPosts(data.posts.list);
+
+            setStatus({...InitialStatus.POST});
+        } catch (e) {
+            setStatus({...InitialStatus.ERROR});
+        }
     }
 
     const handleKeyPress = e => {
@@ -93,31 +100,17 @@ const SearchBar = ({ history, location }) => {
         return searchText.current.value.replace(/[\W_]+/g," ");
     }
 
-    const renderSearching = () => {
-        if (noData) return (
-            <div className="alert-disabled">
-                No data found.
-            </div>
-        );
-        return (
-            <div className="alert-disabled">
-                <i className="fa fa-spinner fa-spin"></i>
-                &nbsp;Searching..
-            </div>
-        )
-    };
-
-    const renderUsers = () => users.map(({ User: user }, i) => (
+    const renderUsers = () => users.map((user, i) => (
         <UserItem
-            key={user.id + i}
+            key={i}
             user={user}
             showFollow={false} />
     )); 
     
     const renderPosts = () => posts.map((post, i) => (
         <PostItemMinimal
+            key={i}
             post={post}
-            key={post.Post.id + i}
         />
     ));
 
@@ -146,15 +139,25 @@ const SearchBar = ({ history, location }) => {
                         />
                 </form>
                 <div className={classNames(styles.searchList, {
-                    [styles.active]: willShow && isSearching
+                    [styles.active]: willShow
                 })}
                     onClick={stopPropagate}
                 >
                     <div className={styles.searchContent}
                         style={{ overflowY: 'auto', maxHeight: '80vh' }}>
-                        {users.length === 0 && posts.length === 0 && renderSearching()}
-                        {users.length > 0 && renderUsers()}
-                        {posts.length > 0 && renderPosts()}
+                        {status.error && 
+                            <div className="alert-disabled">Oops Something went wrong.</div>
+                        }
+
+                        {status.loading && 
+                            <div className="alert-disabled">
+                                <i className="fa fa-spinner fa-spin"></i>
+                                &nbsp;Searching..
+                            </div>
+                        }
+                        {noData && <div className="alert-disabled">No data found.</div>}
+                        {status.post && users.length > 0 && renderUsers()}
+                        {status.post && posts.length > 0 && renderPosts()}
                     </div>
                     {hasMoreData && <Link to={`/search?searchText=${getSearchText()}`}>
                         <div className={styles.viewMore}>

@@ -28,7 +28,7 @@ class UsersFixture extends TestFixture
                 'avatar_url' => null,
                 'is_activated' => false,
                 'activation_key' => '70b45cd46d274bd1374324a7dcc877e4ed1600aa807188001574299686',
-                'created' => '2019-11-20 03:47:52',
+                'created' => '2019-11-19 03:47:52',
                 'modified' => '2019-11-20 03:47:52',
                 'deleted' => null
             ],
@@ -62,7 +62,7 @@ class UsersFixture extends TestFixture
                 'avatar_url' => null,
                 'is_activated' => true,
                 'activation_key' => '70b45cd46d274bd1374324a7dcc877e4ed1600aa807188001574299686',
-                'created' => '2019-11-20 03:47:52',
+                'created' => '2019-11-21 03:47:52',
                 'modified' => '2019-11-20 03:47:52',
                 'deleted' => null
             ],
@@ -79,7 +79,7 @@ class UsersFixture extends TestFixture
                 'avatar_url' => null,
                 'is_activated' => true,
                 'activation_key' => '70b45cd46d274bd1374324a7dcc877e4ed1600aa807188001574299686',
-                'created' => '2019-11-20 03:47:52',
+                'created' => '2019-11-22 03:47:52',
                 'modified' => '2019-11-20 03:47:52',
                 'deleted' => null
             ],
@@ -96,7 +96,7 @@ class UsersFixture extends TestFixture
                 'avatar_url' => null,
                 'is_activated' => true,
                 'activation_key' => '70b45cd46d274bd1374324a7dcc877e4ed1600aa807188001574299686',
-                'created' => '2019-11-20 03:47:52',
+                'created' => '2019-11-23 03:47:52',
                 'modified' => '2019-11-20 03:47:52',
                 'deleted' => null
             ],
@@ -113,7 +113,7 @@ class UsersFixture extends TestFixture
                 'avatar_url' => null,
                 'is_activated' => true,
                 'activation_key' => '70b45cd46d274bd1374324a7dcc877e4ed1600aa807188001574299686',
-                'created' => '2019-11-20 03:47:52',
+                'created' => '2019-11-24 03:47:52',
                 'modified' => '2019-11-20 03:47:52',
                 'deleted' => null
             ],
@@ -130,7 +130,7 @@ class UsersFixture extends TestFixture
                 'avatar_url' => null,
                 'is_activated' => true,
                 'activation_key' => '70b45cd46d274bd1374324a7dcc877e4ed1600aa807188001574299686',
-                'created' => '2019-11-20 03:47:52',
+                'created' => '2019-11-25 03:47:52',
                 'modified' => '2019-11-20 03:47:52',
                 'deleted' => null
             ],

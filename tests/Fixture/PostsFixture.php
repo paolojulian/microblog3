@@ -62,6 +62,50 @@ class PostsFixture extends TestFixture
                 'modified' => '2019-11-22 09:35:10',
                 'deleted' => null
             ],
+            [
+                'id' => 5,
+                'title' => 'Test',
+                'body' => 'For Searching',
+                'retweet_post_id' => null,
+                'user_id' => 200001,
+                'img_path' => null,
+                'created' => '2019-11-22 09:35:10',
+                'modified' => '2019-11-22 09:35:10',
+                'deleted' => null
+            ],
+            [
+                'id' => 6,
+                'title' => 'Test',
+                'body' => 'For Searching 2',
+                'retweet_post_id' => null,
+                'user_id' => 200001,
+                'img_path' => null,
+                'created' => '2019-11-23 09:35:10',
+                'modified' => '2019-11-22 09:35:10',
+                'deleted' => null
+            ],
+            [
+                'id' => 7,
+                'title' => 'Title Search',
+                'body' => 'Haha!',
+                'retweet_post_id' => null,
+                'user_id' => 200001,
+                'img_path' => null,
+                'created' => '2019-11-24 09:35:10',
+                'modified' => '2019-11-22 09:35:10',
+                'deleted' => null
+            ],
+            [
+                'id' => 8,
+                'title' => '',
+                'body' => 'wont show this post onsearch',
+                'retweet_post_id' => 7,
+                'user_id' => 200001,
+                'img_path' => null,
+                'created' => '2019-11-24 09:35:10',
+                'modified' => '2019-11-22 09:35:10',
+                'deleted' => null
+            ],
         ];
         parent::init();
     }

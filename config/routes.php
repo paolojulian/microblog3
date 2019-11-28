@@ -194,6 +194,7 @@ Router::prefix('api', function (RouteBuilder $routes) {
         ->setMethods(['POST']);
     });
 
+    $routes->connect('/search', ['controller' => 'Search', 'action' => 'index']);
     // Notifications
 });
 
