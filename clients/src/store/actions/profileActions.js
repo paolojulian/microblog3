@@ -10,17 +10,25 @@ import {
 } from '../types';
 
 /**
- * Get profile of current logged in user
+ * Get Profile By their username
+ * or IF NULL get current profile
  */
-export const getProfile = (username) => async dispatch => {
+export const getProfile = (username = null) => async dispatch => {
     try {
         dispatch({ type: TOGGLE_LOADING_PROFILE })
-        const res = await axios.get(`/api/users/${username}`)
+        let res;
+        if (username) {
+            res = await axios.get(`/api/users/${username}`)
+        } else {
+            res = await axios.get(`/api/auth/me`)
+        }
+        if (res.data.status !== 200) {
+            throw new Error("Invalid Status");
+        }
         dispatch({
             type: SET_PROFILE,
             payload: res.data.data
         })
-        await dispatch(fetchFollowCount(username));
         return Promise.resolve(res.data.data)
     } catch (e) {
         return Promise.reject()
@@ -32,7 +40,10 @@ export const getProfile = (username) => async dispatch => {
  */
 export const updateProfile = (data) => async dispatch => {
     try {
-        const res = await axios.put('/users/edit.json', data);
+        const res = await axios.put('/api/users', data);
+        if (res.data.status !== 200) {
+            throw new Error('Invalid Status');
+        }
         return Promise.resolve(res.data.data)
     } catch (e) {
         return Promise.reject(e)
@@ -51,7 +62,7 @@ export const uploadProfileImg = (img) => async dispatch => {
         }
         const formData = new FormData();
         formData.append('profile_img', img);
-        const res = await axios.post('/profiles/uploadimage.json', formData, config)
+        const res = await axios.post('/api/users/update-image', formData, config)
         return Promise.resolve(res.data.data)
     } catch (e) {
         return Promise.reject(e)
@@ -108,6 +119,12 @@ export const fetchFollowers = (userId, page = 1) => async dispatch => {
     try {
         const params = { page };
         const res = await axios.get(`/api/users/${userId}/followers`, { params });
+        if (res.data.status !== 200) {
+            throw new Error("Invalid status")
+        }
+        if ( ! Array.isArray(res.data.data)) {
+            throw new Error("Invalid data type")
+        }
         return Promise.resolve(res.data.data);
     } catch (e) {
         return Promise.reject(e);
@@ -123,6 +140,12 @@ export const fetchFollowing = (userId, page = 1) => async dispatch => {
     try {
         const params = { page };
         const res = await axios.get(`/api/users/${userId}/following`, { params });
+        if (res.data.status !== 200) {
+            throw new Error("Invalid status")
+        }
+        if ( ! Array.isArray(res.data.data)) {
+            throw new Error("Invalid data type")
+        }
         return Promise.resolve(res.data.data);
     } catch (e) {
         return Promise.reject(e);

@@ -40,31 +40,31 @@ const postStyle = {
 }
 
 const Minimal = ({
-    post: { User, Post },
+    post,
     history
 }) => (
     <div 
        style={{ cursor: 'pointer' }}
         onClick={() => {
-            history.push(`/posts/${Post.id}`)
+            history.push(`/posts/${post.id}`)
         }}>
         <div style={postStyle.post} className="hover-grey">
             <div 
                 style={postStyle.header}>
                 <div style={postStyle.img}>
                     <ProfileImage
-                        src={User.avatar_url}
+                        src={post.user.avatar_url}
                         size={24}
                     />
                 </div>
                 <div style={postStyle.info}>
                     <span style={postStyle.title}>
-                        {Post.title ? Post.title : 'Untitled'}
+                        {post.title ? post.title : 'Untitled'}
                     </span>
                     &nbsp;
                     &#8226;
                     &nbsp;
-                    <Username username={User.username}/>
+                    <Username username={post.user.username}/>
                 </div>
             </div>
         </div>
@@ -72,15 +72,15 @@ const Minimal = ({
 )
 
 export const PostItem = ({ post }) => {
-    const { Post, User, isShared } = post;
-    let sharedPost = null;
-    if (isShared) {
-        sharedPost = post.SharedPost;
-    }
+    // const { Post, User, isShared } = post;
+    // let sharedPost = null;
+    // if (isShared) {
+    //     sharedPost = post.SharedPost;
+    // }
 
     return (
         <PCard size="fit">
-            {isShared && <SharedPost
+            {/* {isShared && <SharedPost
                 postId={Number(sharedPost.Post.id)}
                 userId={Number(sharedPost.Post.user_id)}
                 originalUserId={Number(post.Post.user_id)}
@@ -88,21 +88,21 @@ export const PostItem = ({ post }) => {
                 avatarUrl={sharedPost.User.avatar_url}
                 username={sharedPost.User.username}
                 created={sharedPost.Post.created}
-            />}
+            />} */}
 
             <PostHeader
-                postId={Number(Post.id)}
-                title={Post.title}
-                username={User.username}
-                avatarUrl={User.avatar_url}
-                created={Post.created}
+                postId={Number(post.id)}
+                title={post.title}
+                username={post.user.username}
+                avatarUrl={post.user.avatar_url}
+                created={post.created}
             />
 
             <div style={postStyle.body}>
-                {Post.body}
+                {post.body}
             </div>
 
-            {!!Post.img_path && <PostImage imgPath={Post.img_path} title={Post.title}/>}
+            {!!post.img_path && <PostImage imgPath={post.img_path} title={post.title}/>}
         </PCard>
     )
 }

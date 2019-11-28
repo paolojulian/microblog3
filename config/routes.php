@@ -87,6 +87,34 @@ Router::prefix('api', function (RouteBuilder $routes) {
         )->setPatterns(['id' => '\d+'])
         ->setMethods(['PATCH']);
 
+        /** Add Comment */
+        $routes->connect(
+            '/:id/comments',
+            ['controller' => 'Posts', 'action' => 'addComment']
+        )->setPatterns(['id' => '\d+'])
+        ->setMethods(['POST']);
+
+        /** Fetch Comment */
+        $routes->connect(
+            '/:id/comments',
+            ['controller' => 'Posts', 'action' => 'fetchComments']
+        )->setPatterns(['id' => '\d+'])
+        ->setMethods(['GET']);
+
+        /** Fetch Likers */
+        $routes->connect(
+            '/:id/likers',
+            ['controller' => 'Posts', 'action' => 'fetchLikers']
+        )->setPatterns(['id' => '\d+'])
+        ->setMethods(['GET']);
+
+        /** Delete Comment */
+        $routes->connect(
+            '/comments/:id',
+            ['controller' => 'Comments', 'action' => 'delete']
+        )->setPatterns(['id' => '\d+'])
+        ->setMethods(['DELETE']);
+
         /** Share */
         $routes->connect(
             '/share/:id',
@@ -115,6 +143,18 @@ Router::prefix('api', function (RouteBuilder $routes) {
             '/:username',
             ['controller' => 'Users', 'action' => 'profile']
         );
+        // Update Profile
+        $routes->connect(
+            '/',
+            ['controller' => 'Users', 'action' => 'updateUser']
+        )
+        ->setMethods(['PUT']);
+        // Update Profile Image
+        $routes->connect(
+            '/update-image',
+            ['controller' => 'Users', 'action' => 'updateImage']
+        )
+        ->setMethods(['POST']);
         // Mutual
         $routes->connect(
             '/:username/mutual',
@@ -166,20 +206,21 @@ Router::prefix('api', function (RouteBuilder $routes) {
         ->setMethods(['POST']);
     });
 
+    $routes->connect('/search', ['controller' => 'Search', 'action' => 'index']);
     // Notifications
 });
 
 Router::scope('/', function (RouteBuilder $routes) {
-    // Register scoped middleware for in scopes.
-    $routes->registerMiddleware('csrf', new CsrfProtectionMiddleware([
-        'httpOnly' => true
-    ]));
+    // // Register scoped middleware for in scopes.
+    // $routes->registerMiddleware('csrf', new CsrfProtectionMiddleware([
+    //     'httpOnly' => true
+    // ]));
 
-    /**
-     * Apply a middleware to the current route scope.
-     * Requires middleware to be registered via `Application::routes()` with `registerMiddleware()`
-     */
-    $routes->applyMiddleware('csrf');
+    // /**
+    //  * Apply a middleware to the current route scope.
+    //  * Requires middleware to be registered via `Application::routes()` with `registerMiddleware()`
+    //  */
+    // $routes->applyMiddleware('csrf');
 
     $routes->connect('/', ['controller' => 'Pages', 'action' => 'display', 'home']);
     $routes->connect('/*', ['controller' => 'Pages', 'action' => 'display']);

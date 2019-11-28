@@ -37,14 +37,8 @@ const ProfileUpdate = () => {
     const [isSuccess, setSuccess] = useState(false);
     const [serverError, setServerError] = useState(false);
 
-    let successTimeout = null;
-    let errorTimeout = null;
-
     useEffect(() => {
         dispatch(getProfile())
-        return () => {
-            clearTimeout(successTimeout);
-        }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
@@ -56,6 +50,7 @@ const ProfileUpdate = () => {
             setLastName(user.last_name);
             setBirthdate(user.birthdate);
             setProfileImgSrc(user.avatar_url);
+            console.log(user);
         }
         return () => {
             mounted = false;
@@ -92,25 +87,16 @@ const ProfileUpdate = () => {
     }
 
     const handleSuccess = () => {
-        clearTimeout(successTimeout);
         dispatch(getProfile());
         setSuccess(true)
         dispatch({ type: CLEAR_ERRORS });
-        successTimeout = setTimeout(() => {
-            setSuccess(false)
-        }, 5000)
     }
 
     const handleError = (e) => {
-        clearTimeout(errorTimeout);
         setSuccess(false)
         if ( ! e || ! e.request || e.request.status !== 422) {
             setServerError(true);
         }
-        setTimeout(() => {
-            setServerError(false);
-            dispatch({ type: CLEAR_ERRORS });
-        }, 5000);
     }
 
     const renderBody = () => (

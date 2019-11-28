@@ -96,9 +96,19 @@ class AuthsController extends AppController
         return $this->redirect('/');
     }
 
+    /**
+     * [GET]
+     * [PRIVATE]
+     * 
+     * Fetches profile of current user logged in
+     * 
+     */
     public function me()
     {
         $this->request->allowMethod('get');
-        return $this->responseData($this->Auth->user());
+        $user = $this->UserModel->get($this->Auth->user('id'));
+        $user->birthdate->format('Y-m-d');
+        $user->birthdate = $user->birthdate->format('Y-m-d');
+        return $this->responseData($user);
     }
 }

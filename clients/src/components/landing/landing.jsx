@@ -23,17 +23,16 @@ const Landing = () => {
     const [isLoading, setLoading] = useState(true);
     const [isError, setError] = useState(false);
     const { refreshToken } = useSelector(state => state.refresh);
-    const { user: { username } } = useSelector(state => state.auth);
 
     useEffect(() => {
         window.scrollTo({ top: 0, left: 0 });
         const init = async () => {
             try {
                 setLoading(true);
-                await dispatch(getProfile(username));
                 await fetchHandler();
+                const user = await dispatch(getProfile());
                 dispatch(fetchNotFollowed());
-                dispatch(fetchFollowCount(username));
+                dispatch(fetchFollowCount(user.username));
             } catch (e) {
                 setError(true);
             } finally {

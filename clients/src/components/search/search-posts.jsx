@@ -21,7 +21,7 @@ const SearchPosts = ({
             </PCard>
             {posts.map((post, i) => (
                 <PostItem
-                    key={post.Post.id + i}
+                    key={i}
                     post={post}
                 />
             ))}

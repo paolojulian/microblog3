@@ -52,33 +52,75 @@ class LikesTableTest extends TestCase
         parent::tearDown();
     }
 
-    /**
-     * Test initialize method
-     *
-     * @return void
-     */
-    public function testInitialize()
+    public function testFetchLikersWillReturnArray()
     {
-        $this->markTestIncomplete('Not implemented yet.');
+        $postId = 1;
+        $query = $this->Likes->fetchByPost($postId);
+        $this->assertInstanceOf('Cake\ORM\Query', $query);
+        $result = $query->disableHydration()->toArray();
+        $expected = [
+            [
+                'user_id' => 200001,
+                'user' => [
+                    'username' => 'existingusername',
+                    'avatar_url' => '/testUrl',
+                    'first_name' => 'Julian',
+                    'last_name' => 'Paolo Vincent',
+                ]
+            ],
+            [
+                'user_id' => 200002,
+                'user' => [
+                    'username' => 'activated',
+                    'avatar_url' => null,
+                    'first_name' => 'Julian',
+                    'last_name' => 'Paolo Vincent',
+                ]
+            ],
+        ];
+        $this->assertEquals($result, $expected);
     }
 
-    /**
-     * Test validationDefault method
-     *
-     * @return void
-     */
-    public function testValidationDefault()
+    public function testFetchLikersOfNonExistingPostWillReturnEmptyArray()
     {
-        $this->markTestIncomplete('Not implemented yet.');
+        $postId = 1231;
+        $query = $this->Likes->fetchByPost($postId);
+        $this->assertInstanceOf('Cake\ORM\Query', $query);
+        $result = $query->disableHydration()->toArray();
+        $expected = [];
+        $this->assertEquals($result, $expected);
     }
 
-    /**
-     * Test buildRules method
-     *
-     * @return void
-     */
-    public function testBuildRules()
+    public function testEmptyPageWillReturnEmptyArray()
     {
-        $this->markTestIncomplete('Not implemented yet.');
+        $postId = 1;
+        $page = 3;
+        $query = $this->Likes->fetchByPost($postId, $page);
+        $this->assertInstanceOf('Cake\ORM\Query', $query);
+        $result = $query->disableHydration()->toArray();
+        $expected = [];
+        $this->assertEquals($result, $expected);
+    }
+
+    public function testRetrieveSecondPageWillDisplayExpected()
+    {
+        $postId = 1;
+        $page = 2;
+        $perPage = 1;
+        $query = $this->Likes->fetchByPost($postId, $page, $perPage);
+        $this->assertInstanceOf('Cake\ORM\Query', $query);
+        $result = $query->disableHydration()->toArray();
+        $expected = [
+            [
+                'user_id' => 200002,
+                'user' => [
+                    'username' => 'activated',
+                    'avatar_url' => null,
+                    'first_name' => 'Julian',
+                    'last_name' => 'Paolo Vincent',
+                ]
+            ],
+        ];
+        $this->assertEquals($result, $expected);
     }
 }

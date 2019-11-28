@@ -131,6 +131,33 @@ class LikesTable extends Table
     }
 
     /**
+     * Fetches all Likers of given post
+     * 
+     * @param int $postId - posts.id
+     * @param int $page - page number
+     * @param int $perPage - Max number of data to retrieve
+     * 
+     * @return array of \App\Model\Entity\Like
+     */
+    public function fetchByPost(int $postId, int $page = 1, int $perPage = 10)
+    {
+        return $this->find()
+            ->select(['Likes.user_id'])
+            ->where(['Likes.post_id' => $postId])
+            ->contain(['Users' => function ($q) {
+                return $q->select([
+                    'Users.username',
+                    'Users.avatar_url',
+                    'Users.first_name',
+                    'Users.last_name'
+                ]);
+            }])
+            ->order(['Likes.created' => 'DESC'])
+            ->limit($perPage)
+            ->page($page);
+    }
+
+    /**
      * Fetches the list of users who like the given post
      * 
      * @param int $postId - posts.id

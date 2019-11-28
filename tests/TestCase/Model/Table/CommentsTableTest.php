@@ -52,33 +52,66 @@ class CommentsTableTest extends TestCase
         parent::tearDown();
     }
 
-    /**
-     * Test initialize method
-     *
-     * @return void
-     */
-    public function testInitialize()
+    public function testAddCommentWithNoBodyWillHaveError()
     {
-        $this->markTestIncomplete('Not implemented yet.');
+        $data = ['body' => ''];
+        $entity = $this->Comments->newEntity($data);
+        $this->assertEquals($entity->hasErrors(), true);
     }
 
-    /**
-     * Test validationDefault method
-     *
-     * @return void
-     */
-    public function testValidationDefault()
+    public function testAddingCommentWithNonExistingBodyWillReturnError()
     {
-        $this->markTestIncomplete('Not implemented yet.');
+        $postId = 1;
+        $userId = 200002;
+        $data = [];
+        $result = $this->Comments->addCommentToPost($postId, $userId, $data);
+        $this->assertInstanceOf('\App\Model\Entity\Comment', $result);
+        $this->assertEquals($result->hasErrors(), true);
+        $this->assertNotEquals($result->errors(), []);
     }
 
-    /**
-     * Test buildRules method
-     *
-     * @return void
-     */
-    public function testBuildRules()
+    public function testAddingCommentWithoutBodyWillReturnError()
     {
-        $this->markTestIncomplete('Not implemented yet.');
+        $postId = 1;
+        $userId = 200002;
+        $data = ['body' => ''];
+        $result = $this->Comments->addCommentToPost($postId, $userId, $data);
+        $this->assertInstanceOf('\App\Model\Entity\Comment', $result);
+        $this->assertEquals($result->hasErrors(), true);
+        $this->assertNotEquals($result->errors(), []);
+    }
+
+    public function testWhiteSpacesWillReturnError()
+    {
+        $data = ['body' => '  '];
+        $postId = 1;
+        $userId = 200002;
+        $result = $this->Comments->addCommentToPost($postId, $userId, $data);
+        $this->assertInstanceOf('\App\Model\Entity\Comment', $result);
+        $this->assertEquals($result->hasErrors(), true);
+        $this->assertNotEquals($result->errors(), []);
+    }
+
+    public function testAddValidComment()
+    {
+        $data = ['body' => 'New Comment!'];
+
+        $entity = $this->Comments->newEntity($data);
+        $entity->post_id = 1;
+        $entity->user_id = 200002;
+        $this->assertEquals($entity->errors(), []);
+        $result = $this->Comments->save($entity);
+        $this->assertNotEquals($result, false);
+        $this->assertEquals($entity->body, 'New Comment!');
+    }
+
+    public function testAddValidCommentWillReturnEntityWithNoErrors()
+    {
+        $data = ['body' => 'New Comment!'];
+        $postId = 1;
+        $userId = 200002;
+        $result = $this->Comments->addCommentToPost($postId, $userId, $data);
+        $this->assertInstanceOf('\App\Model\Entity\Comment', $result);
+        $this->assertEquals($result->hasErrors(), false);
     }
 }

@@ -95,4 +95,33 @@ class UsersControllerTest extends ApiTestCase
         $this->assertResponseContains(200012, $result->data);
         $this->assertResponseContains('anotherActivated', $result->data);
     }
+
+    public function testUpdateProfile()
+    {
+        $data = [
+            'username' => 'newUsernameha',
+            'first_name' => 'Paolo Vincent',
+            'last_name' => 'Julian',
+            'birthdate' => '1994-07-12'
+        ];
+        $this->put('/api/users', $data);
+        $this->assertResponseOk();
+        $this->assertResponseContains('newUsernameha');
+    }
+
+    public function testUpdateProfileWPassword()
+    {
+        $data = [
+            'username' => 'newUsernameha',
+            'first_name' => 'Paolo Vincent',
+            'last_name' => 'Julian',
+            'birthdate' => '1994-07-12',
+            'old_password' => 'qwe123',
+            'password' => 'qwe123',
+            'confirm_password' => 'qwe123',
+        ];
+        $this->put('/api/users', $data);
+        $this->assertResponseOk();
+        $this->assertResponseContains('newUsernameha');
+    }
 }

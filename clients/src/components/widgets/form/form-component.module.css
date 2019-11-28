@@ -96,6 +96,14 @@
     font-family: inherit;
 }
 
+.enterToSubmit {
+    text-align: left;
+    font-size: 0.9rem;
+    line-height: 0.75rem;
+    padding-left: 0.1rem;
+    color: var(--black-disabled);
+}
+
 .form-description {
     text-align: left;
     font-size: 0.9rem;

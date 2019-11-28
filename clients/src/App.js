@@ -4,6 +4,9 @@ import { Provider } from 'react-redux'
 import jwtDecode from 'jwt-decode'
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom'
 
+/** Global Styles */
+import './assets/styles/App.css';
+
 /* Redux */
 import store from './store'
 import setTokenToAuthHeader from './utils/setTokenToAuthHeader';

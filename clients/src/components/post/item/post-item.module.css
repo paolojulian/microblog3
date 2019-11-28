@@ -74,6 +74,7 @@
 
 .sharedPostBody {
     padding: 0 1rem;
+    padding-top: 1rem;
 }
 
 .actions .like:hover,

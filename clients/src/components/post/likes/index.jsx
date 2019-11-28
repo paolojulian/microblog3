@@ -5,45 +5,53 @@ import { useDispatch } from 'react-redux';
 /** Redux */
 import { fetchLikesByPost } from '../../../store/actions/postActions';
 
+/** Utils */
+import InitialStatus from '../../utils/initial-status';
+import Pager from '../../utils/pager';
+
 /** Components */
 import PModal from '../../widgets/p-modal';
 import PLoader from '../../widgets/p-loader';
 import UserItem from '../../widgets/user';
-
-const initialStatus = {
-    error: false,
-    loading: false,
-    post: false
-}
 
 const LikesModal = ({
     postId,
     onRequestClose
 }) => {
     const dispatch = useDispatch();
-    const [status, setStatus] = useState({...initialStatus})
+    const [status, setStatus] = useState(InitialStatus.LOADING)
     const [users, setUsers] = useState([]);
+    const [pager, setPager] = useState(Pager);
+    const [isLastPage, setIsLastPage] = useState(false);
 
     useEffect(() => {
+        let mounted = true;
         const init = async () => {
-            setStatus({...initialStatus, loading: true});
+            if ( ! mounted) return;
             try {
-                const data = await dispatch(fetchLikesByPost(postId));
-                if ( ! data) throw new Error();
-                setUsers(data);
-                setStatus({...initialStatus, post: true});
+                const data = await dispatch(fetchLikesByPost(postId, pager.page));
+                if (data.length === 0) {
+                    return setIsLastPage(true);
+                }
+                setUsers([ ...users, ...data ]);
+                setStatus({...InitialStatus.POST });
             } catch (e) {
-                setStatus({...initialStatus, error: true});
+                setStatus({...InitialStatus.ERROR });
             }
         }
-        init();
+        if ( ! isLastPage) {
+            init();
+        }
+        return () => {
+            mounted = false;
+        }
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [])
+    }, [pager])
 
-    const renderLikes = () => users.map(({ User },  i) =>
+    const renderLikes = () => users.map((item,  i) =>
         <UserItem
-            key={User.id + i}
-            user={User}
+            key={i}
+            user={item.user}
             onRequestClose={onRequestClose}/>
     );
 
@@ -64,8 +72,11 @@ const LikesModal = ({
 
     return (
         <PModal
-            header="Likes"
+            enableScrollPaginate={true}
+            onScrollPaginate={page => setPager({ ...pager, page })}
+            pager={pager}
             onRequestClose={onRequestClose}
+            header="Likes"
         >
             {renderBody()}
         </PModal>

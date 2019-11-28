@@ -4,11 +4,13 @@ namespace App\Model\Table;
 use Cake\ORM\Query;
 use Cake\ORM\RulesChecker;
 use Cake\ORM\Table;
+use Cake\Auth\DefaultPasswordHasher;
 use Cake\Validation\Validator;
 use Cake\Http\Exception\BadRequestException;
+use Cake\Http\Exception\InternalErrorException;
+use Cake\Http\Exception\NotFoundException;
 use Cake\Datasource\ConnectionManager;
 use SoftDelete\Model\Table\SoftDeleteTrait;
-
 /**
  * Users Model
  *
@@ -85,8 +87,8 @@ class UsersTable extends Table
         $validator
             ->scalar('username')
             ->lengthBetween('username', [6, 20], __('6 to 20 characters only'))
-            ->requirePresence('username', 'create')
-            ->notEmptyString('username')
+            ->requirePresence('username', true)
+            ->notEmptyString('username', __('Username is required'))
             ->add('username', [
                 'unique' => [
                     'rule' => 'validateUnique',
@@ -98,7 +100,7 @@ class UsersTable extends Table
         $validator
             ->scalar('first_name')
             ->maxLength('first_name', 70)
-            ->requirePresence('first_name', 'create', __('First name is required'))
+            ->requirePresence('first_name', true, __('First name is required'))
             ->notEmptyString('first_name', __('First name is required'))
             ->add('first_name', [
                 'lettersOnly' => [
@@ -110,7 +112,7 @@ class UsersTable extends Table
         $validator
             ->scalar('last_name')
             ->maxLength('last_name', 35)
-            ->requirePresence('last_name', 'create', __('Last name is required'))
+            ->requirePresence('last_name', true, __('Last name is required'))
             ->notEmptyString('last_name', __('Last name is required'))
             ->add('last_name', [
                 'lettersOnly' => [
@@ -133,7 +135,7 @@ class UsersTable extends Table
 
         $validator
             ->date('birthdate')
-            ->requirePresence('birthdate', 'create', __('Birthdate is required'))
+            ->requirePresence('birthdate', true, __('Birthdate is required'))
             ->notEmptyDate('birthdate', __('Birthdate is required'))
             ->add('birthdate', [
                 'notExceedCurrentDate' => [
@@ -179,6 +181,38 @@ class UsersTable extends Table
         
         $validator
             ->requirePresence('confirm_password', 'create', __('Confirm password is required'))
+            ->add('confirm_password', 'no-misspelling', [
+                'rule' => ['compareWith', 'password'],
+                'message' => 'Password confirmation does not match password.'
+            ]);
+
+        return $validator;
+    }
+    
+    public function validationChangePassword(Validator $validator ) {
+        $validator = $this->validationDefault($validator);
+        $validator
+            ->add('old_password', 'custom', [
+                'rule'=>  function($value, $context){
+                    $user = $this->get($context['data']['id']);
+                    if ( ! $user) {
+                        return false;
+                    }
+                    if ( ! (new DefaultPasswordHasher)->check($value, $user->password)) {
+                        return false;
+                    }
+                    return true;
+                },
+                'message'=>'The old password does not match the current password!'
+            ]);
+        $validator
+            ->scalar('password')
+            ->maxLength('password', 255)
+            ->requirePresence('password', true, __('Password is required'))
+            ->notEmptyString('password', __('Password is required'));
+
+        $validator
+            ->requirePresence('confirm_password', true, __('Confirm password is required'))
             ->add('confirm_password', 'no-misspelling', [
                 'rule' => ['compareWith', 'password'],
                 'message' => 'Password confirmation does not match password.'
@@ -262,6 +296,75 @@ class UsersTable extends Table
     }
 
     /**
+     * Update a user
+     * 
+     * @param int $userId - users.id - user to be updated
+     * @param array $data - New data of the user
+     * 
+     * @return \App\Model\Entity\User
+     */
+    public function updateUser(int $userId, array $data)
+    {
+        $user = $this->get($userId);
+        if ( ! $user) {
+            throw new NotFoundException();
+        }
+        if (isset($data['old_password'])) {
+            $this->patchEntity($user, $data, ['validate' => 'ChangePassword']);
+        } else {
+            $this->patchEntity($user, $data);
+        }
+        if ($user->hasErrors()) {
+            return $user;
+        }
+        if ( ! $this->save($user)) {
+            throw new InternalErrorException();
+        }
+        return $user;
+    }
+
+    /**
+     * Updates the avatar_url of the given user
+     * 
+     * @param int $userId - user to be updated
+     * @param string $avatar_url - path or the updated avatar
+     * 
+     * @return \App\Model\Entity\User
+     */
+    public function updateAvatar(int $userId, string $avatarUrl)
+    {
+        $user = $this->get($userId);
+        if ( ! $user) {
+            throw new NotFoundException();
+        }
+
+        $this->patchEntity(
+            $user,
+            ['avatar_url' => $avatarUrl],
+            ['validate' => false]
+        );
+
+        if ( ! $this->save($user)) {
+            throw new InternalErrorException();
+        }
+
+        return $user;
+    }
+
+    /**
+     * Check if two passwords matches
+     * 
+     * @param string $pwd
+     * @param string $pwdToMatch
+     * 
+     * @return bool
+     */
+    public function checkPassword($pwd, $pwdToMatch)
+    {
+
+    }
+
+    /**
      * Updates the is_activated as true account column on Users table
      * 
      * @param string $key - The activation key to match the user
@@ -327,6 +430,45 @@ class UsersTable extends Table
             ->limit($perPage)
             ->page($pageNo)
             ->toList();
+    }
+
+    /**
+     * Searches user according to the passed strtext
+     * and total count
+     * 
+     * @param string $text - the string to match the users
+     * @param int $page
+     * @param int $perPage - max number of data per page
+     * 
+     * @return array
+     */
+    public function searchUser(string $text, int $page = 1, int $perPage = 5)
+    {
+        $conditions = [
+            'OR' => [
+                'username LIKE' => "%$text%",
+                "concat_ws(' ', first_name, last_name) LIKE" => "%$text%",
+            ],
+            'is_activated' => true
+        ];
+
+        $list = $this->find()
+            ->select(['id', 'username', 'first_name', 'last_name' , 'avatar_url'])
+            ->where($conditions)
+            ->order(['created' => 'DESC'])
+            ->limit($perPage)
+            ->page($page)
+            ->disableHydration()
+            ->toArray();
+
+        $totalCount = $this->find()
+            ->where($conditions)
+            ->count();
+
+        return [
+            'list' => $list,
+            'totalCount' => $totalCount
+        ];
     }
 
     /**

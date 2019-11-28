@@ -47,6 +47,7 @@ class PostsTable extends Table
         $this->setPrimaryKey('id');
 
         $this->addBehavior('Timestamp');
+        $this->addBehavior('Trimmer');
 
         $this->belongsTo('RetweetPosts', [
             'foreignKey' => 'retweet_post_id'
@@ -54,7 +55,7 @@ class PostsTable extends Table
 
         $this->belongsTo('Users', [
             'foreignKey' => 'user_id',
-            'joinType' => 'INNER'
+            'joinType' => 'LEFT'
         ]);
         $this->hasMany('Comments', [
             'foreignKey' => 'post_id'
@@ -311,6 +312,56 @@ class PostsTable extends Table
         }
 
         return $post;
+    }
+
+    /**
+     * Searches a post with given text
+     * wont search if is a shared post
+     * 
+     * @param string $text - the string to match the users
+     * @param int $page
+     * @param int $perPage - max number of data per page
+     * 
+     * @return array
+     */
+    public function searchPosts(string $text, int $page = 1, int $perPage = 5)
+    {
+        $conditions = [
+            'OR' => [
+                'title LIKE' => "%$text%",
+                'body LIKE' => "%$text%",
+            ],
+            "retweet_post_id IS NULL"
+        ];
+
+        $list = $this->find()
+            ->select([
+                'id',
+                'title',
+                'body',
+                'user_id',
+                'img_path',
+                'created'
+            ])
+            ->contain(['Users' => function($q) {
+                return $q->select(['username', 'avatar_url']);
+            }])
+            ->where($conditions)
+            ->order(['Posts.created' => 'DESC'])
+            ->limit($perPage)
+            ->page($page)
+            ->disableHydration()
+            ->toArray();
+
+        $totalCount = $this->find()
+            ->where($conditions)
+            ->contain(['Users'])
+            ->count();
+
+        return [
+            'list' => $list,
+            'totalCount' => $totalCount
+        ];
     }
 
     public function beforeSave($event, $entity, $options)

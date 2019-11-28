@@ -5,6 +5,9 @@ use Cake\ORM\Query;
 use Cake\ORM\RulesChecker;
 use Cake\ORM\Table;
 use Cake\Validation\Validator;
+use Cake\Network\Exception\InternalErrorException;
+use Cake\Network\Exception\NotFoundException;
+use SoftDelete\Model\Table\SoftDeleteTrait;
 
 /**
  * Comments Model
@@ -25,6 +28,7 @@ use Cake\Validation\Validator;
  */
 class CommentsTable extends Table
 {
+    use SoftDeleteTrait;
     /**
      * Initialize method
      *
@@ -34,6 +38,7 @@ class CommentsTable extends Table
     public function initialize(array $config)
     {
         parent::initialize($config);
+        $this->addBehavior('Trimmer');
 
         $this->setTable('comments');
         $this->setDisplayField('id');
@@ -65,8 +70,9 @@ class CommentsTable extends Table
 
         $validator
             ->scalar('body')
-            ->maxLength('body', 255)
-            ->allowEmptyString('body');
+            ->maxLength('body', 140, __('Maximum of 140 characters only'))
+            ->requirePresence('body', true, __('Please enter your message'))
+            ->notEmptyString('body', __('Please enter your message'));
 
         $validator
             ->dateTime('deleted')
@@ -89,6 +95,74 @@ class CommentsTable extends Table
 
         return $rules;
     }
+
+    /**
+     * Adds a comment to a post
+     * 
+     * @param int $postId - posts.id
+     * @param int $userId - users.id
+     * @param array $data - Data to be inserted
+     * 
+     * @return App\Model\Entity\Comment
+     */
+    public function addCommentToPost(int $postId, int $userId, array $data)
+    {
+        $comment = $this->newEntity($data);
+        $comment->post_id = $postId;
+        $comment->user_id = $userId;
+
+        if ( ! $this->Posts->exists(['id' => $postId])) {
+            throw new NotFoundException();
+        }
+
+        if ($comment->hasErrors()) {
+            return $comment;
+        }
+
+        if ( ! $this->save($comment)) {
+            throw new InternalErrorException();
+        }
+
+        return $comment;
+    }
+
+    /**
+     * Fetches comments of the given post
+     * 
+     * @param int $postId - posts.id
+     * @param int $page - page
+     * @param int $perPage
+     * 
+     * @return \Cake\ORM\Query
+     */
+    public function fetchPerPost(int $postId, int $page, int $perPage = 10)
+    {
+        return $this->find()
+            ->select(['Comments.id', 'Comments.body', 'Comments.created'])
+            ->contain(['Users' => function ($q) {
+                return $q->select(['username', 'avatar_url', 'id']);
+            }])
+            ->where(['post_id' => $postId])
+            ->order(['Comments.created' => 'DESC'])
+            ->limit($perPage)
+            ->page($page);
+    }
+
+    /**
+     * Delete a comment
+     * 
+     * @param int $commentId - comments.id - comment to delete
+     * 
+     * @return bool
+     */
+    public function deleteComment(int $commentId)
+    {
+        $comment = $this->get($commentId);
+        if ( ! $this->delete($comment)) {
+            throw new InternalErrorException();
+        }
+        return true;
+    }
         
     /**
      * Counts the number of comments in a post
@@ -101,5 +175,13 @@ class CommentsTable extends Table
         return $this->find()
             ->where(['post_id' => $postId])
             ->count();
+    }
+
+    /**
+     * Check if comment is owned by user
+     */
+    public function isOwnedBy(int $commentId, int $userId)
+    {
+        return $this->exists(['id' => $commentId, 'user_id' => $userId]);
     }
 }

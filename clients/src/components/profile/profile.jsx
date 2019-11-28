@@ -5,7 +5,12 @@ import styles from './profile.module.css'
 
 /** Redux */
 import { CLEAR_POSTS } from '../../store/types'
-import { isFollowing, getProfile, fetchMutualFriends } from '../../store/actions/profileActions'
+import {
+    isFollowing,
+    getProfile,
+    fetchMutualFriends,
+    fetchFollowCount
+} from '../../store/actions/profileActions'
 import { getUserPosts } from '../../store/actions/postActions'
 
 /** Components */
@@ -35,8 +40,8 @@ const MutualFriends = ({ mutualFriends }) => (
             {mutualFriends.length === 0 && <div className="disabled">
                 None
             </div>}
-            {mutualFriends.length > 0 && mutualFriends.map(({ User }, i) => (
-                <UserItem key={i} user={User} showFollow={false}/>
+            {mutualFriends.length > 0 && mutualFriends.map((user, i) => (
+                <UserItem key={i} user={user} showFollow={false}/>
             ))}
         </PCard>
     </div>
@@ -46,6 +51,7 @@ const Profile = (props) => {
     const { username } = props.match.params;
     const dispatch = useDispatch();
     const { user } = useSelector(state => state.auth);
+    const [userId, setUserId] = useState(null);
     const [isMounted, setIsMounted] = useState(false);
     const [mutualFriends, setMutualFriends] = useState([]);
 
@@ -59,13 +65,15 @@ const Profile = (props) => {
                     throw new Error('Not found');
                 }
 
+                setUserId(res.id);
                 await dispatch(getUserPosts(username))
-                if (user.username !== username) {
+                if (user.id !== res.id) {
                     const mutual = await dispatch(fetchMutualFriends(username));
                     setMutualFriends(mutual);
                 }
 
                 await dispatch(isFollowing(username))
+                dispatch(fetchFollowCount(username));
 
                 setIsMounted(true);
             } catch (e) {
@@ -89,7 +97,7 @@ const Profile = (props) => {
         <div className={styles.profile_wrapper}>
             <ProfileInfo/>
             <div className={styles.info}>
-                {user.username !== username
+                {user.id !== userId
                     ? <MutualFriends mutualFriends={mutualFriends}/>
                     : <div className={styles.editProfile}>
                         <Link to="/settings/update-profile">

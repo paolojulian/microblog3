@@ -172,6 +172,83 @@ class PostsController extends AppController
     }
 
     /**
+     * [POST]
+     * [PRIVATE]
+     * 
+     * Add a comment to a post
+     * 
+     * @param int $postId - posts.id
+     * 
+     * @return status created (201)
+     */
+    public function addComment()
+    {
+        $this->request->allowMethod('post');
+        $postId = $this->request->getParam('id');
+        $result = $this->Posts->Comments->addCommentToPost(
+            $postId,
+            $this->Auth->user('id'),
+            $this->request->getData()
+        );
+        if ($result->hasErrors()) {
+            return $this->responseUnprocessableEntity($result->errors());
+        }
+
+        return $this->responseCreated([
+            'commentCount' => $this->Posts->Comments->countPerPost($postId)
+        ]);
+    }
+
+    /**
+     * [GET]
+     * [PRIVATE]
+     * 
+     * TODO transfer to Posts/LikesController
+     * 
+     * Fetches users who liked of a post
+     * 
+     * @param int $postId - posts.id
+     * 
+     * @return array of Comments
+     */
+    public function fetchLikers()
+    {
+        $this->request->allowMethod('get');
+        $postId = $this->request->getParam('id');
+        $page = $this->request->getQuery('page', 1);
+        $result = $this->Posts->Likes
+            ->fetchByPost($postId, $page)
+            ->disableHydration()
+            ->toList();
+
+        return $this->responseData($result);
+    }
+
+    /**
+     * [GET]
+     * [PRIVATE]
+     * 
+     * Fetches comments of a post
+     * 
+     * @param int $postId - posts.id
+     * 
+     * @return array of Comments
+     */
+    public function fetchComments()
+    {
+        $this->request->allowMethod('get');
+        $postId = $this->request->getParam('id');
+        $page = $this->request->getQuery('page', 1);
+        $result = $this->Posts->Comments
+            ->fetchPerPost($postId, $page)
+            ->toList();
+        return $this->responseData([
+            'list' => $result,
+            'totalCount' => $this->Posts->Comments->countPerPost($postId)
+        ]);
+    }
+
+    /**
      * [GET]
      * [PRIVATE]
      * 

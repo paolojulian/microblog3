@@ -15,6 +15,7 @@ const FormTextArea = ({
     theme,
     rows,
     isRequired,
+    submitOnEnter,
     ...props
 }) => {
 
@@ -25,6 +26,11 @@ const FormTextArea = ({
     }, [error]);
 
     const handleKeyPress = e => {
+        if (!!submitOnEnter && e.key === 'Enter' && e.shiftKey) {
+            e.preventDefault();
+            e.stopPropagation();
+            submitOnEnter();
+        }
         if (stateError) {
             return setError(false);
         }
@@ -49,6 +55,7 @@ const FormTextArea = ({
                 onKeyPress={handleKeyPress}
                 {...props}
             ></textarea>
+            {!!submitOnEnter && <div className={styles.enterToSubmit}>Press Shift + Enter to submit</div>}
             {info && <div className={styles.formInfo}>{info}</div>}
             <ErrorMsg error={stateError}/>
         </div>
@@ -64,7 +71,8 @@ FormTextArea.propTypes = {
     error: PropTypes.any,
     disabled: PropTypes.bool,
     theme: PropTypes.string,
-    rows: PropTypes.number
+    rows: PropTypes.number,
+    submitOnEnter: PropTypes.func
 }
 
 FormTextArea.defaultProps = {
@@ -73,6 +81,7 @@ FormTextArea.defaultProps = {
     refs: null,
     rows: 4,
     isRequired: false,
+    submitOnEnter: false,
 }
 
 export default FormTextArea;
