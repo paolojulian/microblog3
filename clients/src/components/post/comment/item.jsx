@@ -25,7 +25,7 @@ const CommentItem = ({
 
     return (
         <div className={styles.commentItem}>
-            <div className={styles.itemBody}>
+            <div className={styles.itemHeader}>
                 <div className={styles.profileImg}>
                     <ProfileImage
                         size={24}
@@ -37,22 +37,22 @@ const CommentItem = ({
                         @{username}&nbsp;
                     </Link>
                 </div>
-                <div className={styles.commentBody}>
-                    {body}
-                </div>
                 {Number(loggedIn.id) === userId && <ModalConsumer>
                     {({ showModal, hideModal }) => (
-                        <div className={styles.deleteBtn}
-                            onClick={() => showModal(CommentDelete, {
-                                id,
-                                onRequestClose: hideModal,
-                                onRequestSuccess: reloadPost
-                            })}
-                        >
-                            <i className="fa fa-trash"/>
+                        <div className={styles.deleteBtn}>
+                            <i className="fa fa-trash"
+                                onClick={() => showModal(CommentDelete, {
+                                    id,
+                                    onRequestClose: hideModal,
+                                    onRequestSuccess: reloadPost
+                                })}
+                            />
                         </div>
                     )}
                 </ModalConsumer>}
+            </div>
+            <div className={styles.commentBody}>
+                {body}
             </div>
         </div>
     );

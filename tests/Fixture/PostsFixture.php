@@ -106,6 +106,17 @@ class PostsFixture extends TestFixture
                 'modified' => '2019-11-22 09:35:10',
                 'deleted' => null
             ],
+            [
+                'id' => 9,
+                'title' => '',
+                'body' => 'wont show this post onsearch',
+                'retweet_post_id' => '',
+                'user_id' => 200002,
+                'img_path' => null,
+                'created' => '2019-11-24 09:35:10',
+                'modified' => '2019-11-22 09:35:10',
+                'deleted' => null
+            ],
         ];
         parent::init();
     }

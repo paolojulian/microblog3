@@ -207,7 +207,12 @@ Router::prefix('api', function (RouteBuilder $routes) {
     });
 
     $routes->connect('/search', ['controller' => 'Search', 'action' => 'index']);
-    // Notifications
+
+    $routes->connect(
+        '/notifications/unread',
+        ['controller' => 'Notifications', 'action' => 'unread']
+    )
+    ->setMethods(['GET']);
 });
 
 Router::scope('/', function (RouteBuilder $routes) {
