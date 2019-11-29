@@ -25,6 +25,7 @@ class NotificationsTableTest extends TestCase
     public $fixtures = [
         'app.Notifications',
         'app.Users',
+        'app.Posts',
     ];
 
     /**
@@ -123,5 +124,35 @@ class NotificationsTableTest extends TestCase
             ])
             ->count();
         $this->assertEquals($totalCount, 0);
+    }
+
+    public function testAddingNotificationWithSameWillReturnFalse()
+    {
+        $postId = 9;
+        $userId = 200002;
+        $receiverId = $userId;
+        $data = [
+            'type' => 'commented',
+            'receiver_id' => $receiverId,
+            'post_id' => $postId,
+            'user_id' => $userId,
+        ];
+        $result = $this->Notifications->addNotification($data);
+        $this->assertEquals($result, false);
+    }
+
+    public function testAddingNotification()
+    {
+        $postId = 9;
+        $userId = 200001;
+        $receiverId = 26;
+        $data = [
+            'type' => 'commented',
+            'receiver_id' => $receiverId,
+            'post_id' => $postId,
+            'user_id' => $userId,
+        ];
+        $result = $this->Notifications->addNotification($data);
+        $this->assertEquals($result, true);
     }
 }

@@ -16,7 +16,7 @@ const VNotificationItem = ({
     showCloseBtn,
     onRead,
     onClose,
-    ...props
+    history,
 }) => {
 
     const handleClose = useCallback(e => {
@@ -62,27 +62,36 @@ const VNotificationItem = ({
         )
     }
 
+    const handleClick = e => {
+        if (e) {
+            e.stopPropagation();
+            e.preventDefault();
+        }
+        history.push(link);
+        onRead(notificationId, index)
+    }
+
     return (
-        <Link to={link} onClick={() => onRead(notificationId, index)}>
-            <div className={styles.body}>
-                <ProfileImage
-                    src={avatarUrl}
-                    size={32}
-                />
-                <div className={styles.info}>
-                    <Username username={username}/>
-                    <div className={styles.message}>
-                        {message()}
-                    </div>
+        <div className={styles.body}
+            onClick={handleClick}
+        >
+            <ProfileImage
+                src={avatarUrl}
+                size={32}
+            />
+            <div className={styles.info}>
+                <Username username={username}/>
+                <div className={styles.message}>
+                    {message()}
                 </div>
-                {showCloseBtn && <div className={styles.close}
-                    type="button"
-                    onClick={handleClose}
-                >
-                    &times;
-                </div>}
             </div>
-        </Link>
+            {showCloseBtn && <div className={styles.close}
+                type="button"
+                onClick={handleClose}
+            >
+                &times;
+            </div>}
+        </div>
     )
 }
 

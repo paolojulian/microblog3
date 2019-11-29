@@ -7,6 +7,7 @@ use Cake\ORM\Table;
 use Cake\Validation\Validator;
 use Cake\I18n\FrozenTime;
 use Cake\Http\Exception\InternalErrorException;
+use App\Model\Entity\Notification;
 
 /**
  * Notifications Model
@@ -203,10 +204,75 @@ class NotificationsTable extends Table
     }
 
     /**
+     * Adds a notification entity
+     * 
+     * @param array $data
+     */
+    public function addNotification(array $data)
+    {
+        if ($data['user_id'] === $data['receiver_id']) {
+            return false;
+        }
+        $notification = $this->newEntity($data);
+        if ($notification->hasErrors()) {
+            return false;
+        }
+        if ( ! $this->save($notification)) {
+            throw new InternalErrorException();
+        }
+        $this->notifyWebsocket($notification);
+        return true;
+    }
+
+    /**
+     * TODO: add websocket implementation on realtime comments displaying
+     * Change the route to 127.0.0.1:4567 to 127.0.0.1:4567/notification
+     * add API_KEY
+     * 
+     * Used in notifying user using websockets,
+     * will send a post data to the http socket of node
+     * and sends notification to user through the websocket connection
+     * 
+     * @param \App\Model\Entity\Notification
+     */
+    public function notifyWebsocket(Notification $notification)
+    {
+        $user = $this->Users->get($notification->user_id, [
+            'fields' => ['username', 'avatar_url']
+        ]);
+
+        try {
+            $ch = curl_init('http://127.0.0.1:4567');
+            curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
+            $jsonData = json_encode([
+                'id' => $notification->id,
+                'receiverId' => $notification->receiver_id,
+                'userId' => $notification->user_id,
+                'user' => $user,
+                'postId' => $notification->post_id,
+                'type' => $notification->type,
+            ]);
+            $query = http_build_query(['data' => $jsonData]);
+            curl_setopt($ch, CURLOPT_POSTFIELDS, $query);
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+            curl_setopt($ch, CURLOPT_VERBOSE, true);
+            $result = curl_exec($ch);
+            if (curl_error ($ch)) {
+                echo curl_error ($ch);
+            }
+            curl_close($ch);
+            return true;
+        } catch (Exception $e) {
+            return false;
+        }
+    }
+
+    /**
      * Checks if Entity is owned by the user
      */
     public function isOwnedBy($notificationId, $userId)
     {
         return $this->exists(['id' => $notificationId, 'receiver_id' => $userId]);
     }
+
 }

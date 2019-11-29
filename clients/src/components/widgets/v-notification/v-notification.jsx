@@ -83,7 +83,10 @@ const VNotification = () => {
             });
     }
 
-    const handleOnClose = (index) => {
+    const handleOnClose = (e, index) => {
+        if (e) {
+            e.stopPropagation();
+        }
        dispatch(removePopupNotifications(index));
     }
 
@@ -94,19 +97,24 @@ const VNotification = () => {
             {popupNotifications.map((notification, i) => {
                 try {
                     return (
-                        <div className={styles.notification}>
+                        <div className={styles.notification} key={i}>
                             <VNotificationItem
-                                key={i}
                                 index={i}
                                 notificationId={notification.id}
                                 type={notification.type}
                                 postId={notification.postId}
                                 username={notification.user.username}
                                 avatarUrl={notification.user.avatar_url}
-                                showCloseBtn={true}
                                 onRead={handleOnRead}
                                 onClose={handleOnClose}
                                 />
+
+                            <div className={styles.close}
+                                type="button"
+                                onClick={e => handleOnClose(e, i)}
+                            >
+                                &times;
+                            </div>
                         </div>
                     )
                 } catch (e) {

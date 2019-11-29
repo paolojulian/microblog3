@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { withRouter } from 'react-router-dom';
 import styles from './notifications.module.css';
 
 /** Redux */
@@ -24,7 +23,7 @@ const EmptyNotifications = () => (
 )
 
 const Notifications = ({
-    onRequestClose
+    onRequestClose,
 }) => {
     const dispatch = useDispatch();
     const [status, setStatus] = useState(InitialStatus.LOADING);
@@ -36,7 +35,7 @@ const Notifications = ({
         let mounted = true;
         const fetchNotifications = async () => {
             try {
-                const res = await dispatch(fetchUnreadNotifications(pager.page, 10));
+                const res = await dispatch(fetchUnreadNotifications(pager.page, 8));
                 if ( ! mounted) return;
                 if (res.length === 0) {
                     return setIsLastPage(true);
@@ -112,4 +111,4 @@ const Notifications = ({
     );
 }
 
-export default withRouter(Notifications);
+export default Notifications;
