@@ -59,4 +59,22 @@ class NotificationsControllerTest extends ApiTestCase
         $this->get('/api/notifications/unread/count');
         $this->assertResponseOk();
     }
+
+    public function testReadAll()
+    {
+        $this->post('/api/notifications/read');
+        $this->assertResponseOk();
+    }
+
+    public function testReadNotOwnedNotification()
+    {
+        $this->post('/api/notifications/read/3');
+        $this->assertResponseCode(403);
+    }
+
+    public function testReadOwnedNotification()
+    {
+        $this->post('/api/notifications/read/1');
+        $this->assertResponseOk();
+    }
 }

@@ -4,9 +4,13 @@ import { NOTIFICATION } from '../types'
 /**
  * Fetch the unread notifications of the user
  */
-export const fetchUnreadNotifications = (page = 1) => async dispatch => {
+export const fetchUnreadNotifications = (page = 1, limit = 5) => async dispatch => {
     try {
-        const res = await axios.get(`/api/notifications/unread?notifications[page]=${page}`);
+        const params = {
+            page,
+            limit
+        };
+        const res = await axios.get(`/api/notifications/unread`, { params });
         if (page === 1) {
             dispatch({
                 type: NOTIFICATION.set,
@@ -49,10 +53,13 @@ export const countUnreadNotifications = () => async dispatch => {
  */
 export const readNotification = (id) => async dispatch => {
     try {
-        const res = await axios.post(`/notifications/read/${id}.json`);
+        const res = await axios.post(`/api/notifications/read/${id}`);
+        if (res.data.status !== 200) {
+            throw new Error('Invalid status');
+        }
         return await Promise.resolve(res.data.data);
     } catch (e) {
-        return await Promise.reject()
+        return await Promise.reject(e)
     }
 }
 
@@ -61,10 +68,13 @@ export const readNotification = (id) => async dispatch => {
  */
 export const readAllNotification = () => async dispatch => {
     try {
-        const res = await axios.post(`/notifications/readAll.json`);
+        const res = await axios.post(`/api/notifications/read`);
+        if (res.data.status !== 200) {
+            throw new Error('Invalid Status');
+        }
         return await Promise.resolve(res.data.data);
     } catch (e) {
-        return await Promise.reject()
+        return await Promise.reject(e)
     }
 }
 

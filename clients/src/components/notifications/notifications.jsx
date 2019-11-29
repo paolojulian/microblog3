@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useReducer, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 import styles from './notifications.module.css';
@@ -20,6 +20,20 @@ import PModal from '../widgets/p-modal';
 import VNotificationItem from '../widgets/v-notification/v-notification-item';
 import NotificationLoading from './loader';
 
+const InitialPaginator = {
+    page: 1,
+    totalPage: 0,
+    totalLeft: 0
+}
+function paginatorReducer(state, action) {
+    switch (action.type) {
+        case 'addPage':
+            return {...state, page: state.page + 1}
+        default:
+            throw new Error('Invalid Action');
+    }
+}
+
 const EmptyNotifications = () => (
     <div className="disabled">No new notification/s</div>
 )
@@ -28,44 +42,35 @@ const Notifications = ({
     onRequestClose
 }) => {
     const dispatch = useDispatch();
-    const [status, setStatus] = useState(InitialStatus);
-    const { notifications, notificationCount } = useSelector(state => state.notification);
+    const [status, setStatus] = useState(InitialStatus.LOADING);
+    const { notifications } = useSelector(state => state.notification);
     const [pager, setPager] = useState(Pager);
-    const [isMounted, setMounted] = useState(false);
+    const [paginator, dispatchPaginator] = useReducer(paginatorReducer, InitialPaginator);
+    const [isLastPage, setIsLastPage] = useState(false);
 
     useEffect(() => {
-        const init = async () => {
+        let mounted = true;
+        const fetchNotifications = async () => {
             try {
-                await handleFetch();
-                setMounted(true);
+                const res = await dispatch(fetchUnreadNotifications(pager.page, 10));
+                if ( ! mounted) return;
+                if (res.length === 0) {
+                    return setIsLastPage(true);
+                }
+                setStatus({ ...InitialStatus.POST });
             } catch (e) {
                 setStatus({ ...InitialStatus.ERROR });
             }
         }
-        init();
-        // TODO Add if mounted cancel all setters
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [])
 
-    /**
-     * Handles the fetching of the data to be displayed
-     */
-    const handleFetch = async(pageNo = 1) => {
-        try {
-            setStatus({ ...InitialStatus.LOADING });
-            const notifications = await dispatch(fetchUnreadNotifications(pageNo));
-            await dispatch(countUnreadNotifications());
-            setPager({ ...pager,
-                page: pageNo,
-                more: notificationCount - notifications.length
-            });
-            setStatus({ ...InitialStatus.POST });
-            return Promise.resolve(notifications);
-        } catch (e) {
-            setStatus({ ...InitialStatus.ERROR });
-            return Promise.reject(e);
+        if ( ! isLastPage) {
+            fetchNotifications();
         }
-    }
+        return () => {
+            mounted = false;
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [pager])
 
     const handleOnRead = (id) => {
         onRequestClose();
@@ -99,7 +104,7 @@ const Notifications = ({
         );
     }
 
-    if ( ! isMounted) {
+    if (status.loading) {
         return (
             <PModal
                 onRequestClose={onRequestClose}
@@ -114,7 +119,7 @@ const Notifications = ({
         <PModal
             enableScrollPaginate={true}
             pager={pager}
-            onScrollPaginate={handleFetch}
+            onScrollPaginate={page => setPager({ ...pager, page })}
             onRequestClose={onRequestClose}
             header="Notifications"
         >

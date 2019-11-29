@@ -225,6 +225,19 @@ Router::prefix('api', function (RouteBuilder $routes) {
         ['controller' => 'Notifications', 'action' => 'fetchRead']
     )
     ->setMethods(['GET']);
+
+    $routes->connect(
+        '/notifications/read',
+        ['controller' => 'Notifications', 'action' => 'readAll']
+    )
+    ->setMethods(['POST']);
+
+    $routes->connect(
+        '/notifications/read/:id',
+        ['controller' => 'Notifications', 'action' => 'readOne']
+    )
+    ->setPatterns(['id' => '\d+'])
+    ->setMethods(['POST']);
 });
 
 Router::scope('/', function (RouteBuilder $routes) {

@@ -74,7 +74,7 @@ const Notifications = ({
                         className={`disabled ${styles.viewMore}`}
                         onClick={() => showModal(NotificationModal)}
                     >
-                        View more ({notificationCount - 3})
+                        View more ({notificationCount - 5})
                     </div>
                 )}
             </ModalConsumer>}

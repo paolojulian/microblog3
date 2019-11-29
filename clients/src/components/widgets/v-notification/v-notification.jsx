@@ -28,6 +28,9 @@ const VNotification = () => {
             return;
         }
         closeWebsocket();
+        return () => {
+            closeWebsocket();
+        }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [isAuthenticated])
 

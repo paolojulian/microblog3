@@ -201,4 +201,12 @@ class NotificationsTable extends Table
         ];
         $this->updateAll($fields, $conditions);
     }
+
+    /**
+     * Checks if Entity is owned by the user
+     */
+    public function isOwnedBy($notificationId, $userId)
+    {
+        return $this->exists(['id' => $notificationId, 'receiver_id' => $userId]);
+    }
 }
