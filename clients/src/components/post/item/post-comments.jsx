@@ -4,7 +4,6 @@ import styles from './post-item.module.css';
 
 /** Utils */
 import InitialStatus from '../../utils/initial-status';
-import Pager from '../../utils/pager';
 
 /** Redux */
 import { getCommentsByPost } from '../../../store/actions/postActions';
@@ -48,6 +47,7 @@ const PostComments = ({
         if (page) {
             fetchComments(page);
         }
+        // eslint-disable-next-line
     }, [page])
 
     const renderStatus = () => {

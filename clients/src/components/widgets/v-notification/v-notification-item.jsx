@@ -22,7 +22,7 @@ const VNotificationItem = ({
     const handleClose = useCallback(e => {
         e.stopPropagation();
         onClose(index);
-    }, [index])
+    }, [index, onClose])
 
     let link;
 

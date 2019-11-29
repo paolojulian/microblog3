@@ -1,4 +1,4 @@
-import React, { useEffect, useReducer, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 import styles from './notifications.module.css';
@@ -7,8 +7,7 @@ import styles from './notifications.module.css';
 import {
     fetchUnreadNotifications,
     readNotification,
-    addNotificationCount,
-    countUnreadNotifications
+    addNotificationCount
 } from '../../store/actions/notificationActions';
 
 /** Utils */
@@ -19,20 +18,6 @@ import Pager from '../utils/pager';
 import PModal from '../widgets/p-modal';
 import VNotificationItem from '../widgets/v-notification/v-notification-item';
 import NotificationLoading from './loader';
-
-const InitialPaginator = {
-    page: 1,
-    totalPage: 0,
-    totalLeft: 0
-}
-function paginatorReducer(state, action) {
-    switch (action.type) {
-        case 'addPage':
-            return {...state, page: state.page + 1}
-        default:
-            throw new Error('Invalid Action');
-    }
-}
 
 const EmptyNotifications = () => (
     <div className="disabled">No new notification/s</div>
@@ -45,7 +30,6 @@ const Notifications = ({
     const [status, setStatus] = useState(InitialStatus.LOADING);
     const { notifications } = useSelector(state => state.notification);
     const [pager, setPager] = useState(Pager);
-    const [paginator, dispatchPaginator] = useReducer(paginatorReducer, InitialPaginator);
     const [isLastPage, setIsLastPage] = useState(false);
 
     useEffect(() => {

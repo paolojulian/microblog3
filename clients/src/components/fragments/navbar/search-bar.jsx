@@ -34,6 +34,7 @@ const SearchBar = ({ history, location }) => {
         return () => {
             document.body.removeEventListener('click', resetState)
         };
+        // eslint-disable-next-line
     }, [])
 
     const resetState = () => {

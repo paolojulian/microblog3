@@ -27,16 +27,13 @@ const ModalScrollPaginate = ({
         } catch (e) {
             setIsLast(true);
         }
+        // eslint-disable-next-line
     }, [page, isLoading, isLast]);
 
     useEffect(() => {
         if ( ! isLast && ! isLoading) {
             bodyRef.current.addEventListener('scroll', listenOnScroll);
         } else {
-            bodyRef.current.removeEventListener('scroll', listenOnScroll);
-        }
-
-        return () => {
             bodyRef.current.removeEventListener('scroll', listenOnScroll);
         }
     }, [listenOnScroll, isLast, isLoading])
