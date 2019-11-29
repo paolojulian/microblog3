@@ -38,7 +38,25 @@ class NotificationsControllerTest extends ApiTestCase
     {
         $this->get('/api/notifications/unread?notifications[page]=100');
         $this->assertResponseOk();
+
         $this->assertResponseContains('status');
         $this->assertResponseContains(200);
+    }
+
+    public function testFetchReadNotificationsShouldContainReadMessagesOnly()
+    {
+        $this->get('/api/notifications/read?notifications[page]=1');
+        $this->assertResponseOk();
+
+        $this->assertResponseContains('This is a read post');
+
+        $this->assertResponseNotContains('Chefpipz liked your post');
+        $this->assertResponseNotContains('Another post');
+    }
+
+    public function testCountUnreadNotifications()
+    {
+        $this->get('/api/notifications/unread/count');
+        $this->assertResponseOk();
     }
 }

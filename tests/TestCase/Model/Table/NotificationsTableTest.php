@@ -61,4 +61,40 @@ class NotificationsTableTest extends TestCase
         ];
         $this->assertEquals($result, $expected);
     }
+
+    public function testReadNotifications()
+    {
+        $userId = 200002;
+        $query = $this->Notifications->fetchReadNotifications($userId);
+        $this->assertInstanceOf('\Cake\ORM\Query', $query);
+        $result = $query->disableHydration()->toArray();
+        $expected = [
+            [
+                'id' => 2,
+                'message' => 'This is a read post',
+                'user_id' => 200013,
+                'user' => [
+                    'username' => 'tobeFollowed',
+                    'avatar_url' => null,
+                ],
+                'post_id' => 9,
+                'link' => '/posts/1',
+                'type' => 'liked',
+            ],
+        ];
+        $this->assertEquals($result, $expected);
+    }
+
+    public function testCountUnreadNotifications()
+    {
+        $userId = 200002;
+        $totalCount = $this->Notifications->countUnreadNotifications($userId);
+        $expected = $this->Notifications->find()
+            ->where([
+                'receiver_id' => $userId,
+                'is_read IS NULL'
+            ])
+            ->count();
+        $this->assertEquals($totalCount, $expected);
+    }
 }

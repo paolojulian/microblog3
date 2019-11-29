@@ -210,7 +210,19 @@ Router::prefix('api', function (RouteBuilder $routes) {
 
     $routes->connect(
         '/notifications/unread',
-        ['controller' => 'Notifications', 'action' => 'unread']
+        ['controller' => 'Notifications', 'action' => 'fetchUnread']
+    )
+    ->setMethods(['GET']);
+
+    $routes->connect(
+        '/notifications/unread/count',
+        ['controller' => 'Notifications', 'action' => 'countUnread']
+    )
+    ->setMethods(['GET']);
+
+    $routes->connect(
+        '/notifications/read',
+        ['controller' => 'Notifications', 'action' => 'fetchRead']
     )
     ->setMethods(['GET']);
 });

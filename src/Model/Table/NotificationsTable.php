@@ -122,4 +122,48 @@ class NotificationsTable extends Table
                 'is_read IS NULL'
             ]);
     }
+
+    /**
+     * Fetches the read notifications of the user
+     * 
+     * @param int $userId - notifications.receiver_id
+     * @return \Cake\ORM\Query
+     */
+    public function fetchReadNotifications(int $userId)
+    {
+        return $this->find()
+            ->select([
+                'Notifications.id',
+                'Notifications.message',
+                'Notifications.user_id',
+                'Notifications.post_id',
+                'Notifications.link',
+                'Notifications.type',
+                'Users.username',
+                'Users.avatar_url',
+            ])
+            ->contain(['Users'])
+            ->where([
+                'receiver_id' => $userId,
+                'is_read IS NOT NULL'
+            ]);
+    }
+
+    /**
+     * Fetches the total count of unread notifications
+     * of the given user
+     * 
+     * @param int $userId - notifications.receiver_id
+     * 
+     * @return int - Total count
+     */
+    public function countUnreadNotifications(int $userId)
+    {
+        return $this->find()
+            ->where([
+                'receiver_id' => $userId,
+                'is_read IS NULL'
+            ])
+            ->count();
+    }
 }
