@@ -100,11 +100,12 @@ class LikesTable extends Table
                 'user_id' => $userId
             ])
             ->first();
+
         if ($like) {
             if ( ! $this->delete($like)) {
                 throw new InternalErrorException();
             }
-            return;
+            return false;
         }
 
         $like = $this->newEntity();
@@ -113,7 +114,7 @@ class LikesTable extends Table
         if ( ! $this->save($like)) {
             throw new InternalErrorException();
         }
-        return;
+        return $like;
     }
 
     /**
@@ -124,9 +125,7 @@ class LikesTable extends Table
     public function countByPost(int $postId)
     {
         return $this->find()
-            ->where([
-                'post_id' => $postId
-            ])
+            ->where(['post_id' => $postId])
             ->count();
     }
 

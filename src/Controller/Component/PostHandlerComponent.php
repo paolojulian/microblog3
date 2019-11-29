@@ -3,11 +3,14 @@ namespace App\Controller\Component;
 
 use Cake\Controller\Component;
 use Cake\Controller\ComponentRegistry;
+use Cake\ORM\TableRegistry;
 use App\Lib\Utils\ImageResizerHelper;
+use App\Lib\DTO\NotificationDTO;
+use App\Model\Entity\Like;
 
 class PostHandlerComponent extends Component
 {
-    public $components = ['UploadImgHandler'];
+    public $components = ['UploadImgHandler', 'NotificationHandler'];
     /**
      * Default configuration.
      *
@@ -30,5 +33,18 @@ class PostHandlerComponent extends Component
         );
 
         return $uploadedFile['basePath'];
+    }
+
+    public function notifyAfterLike(Like $like)
+    {
+        $this->Posts = TableRegistry::get('Posts');
+        $post = $this->Posts->get($like->post_id, ['fields' => ['user_id']]);
+        $notificationDTO = new NotificationDTO(
+            $this->NotificationHandler::LIKED,
+            $like->user_id,
+            $post->user_id,
+            $like->post_id
+        );
+        $this->NotificationHandler->notifyUser($notificationDTO);
     }
 }

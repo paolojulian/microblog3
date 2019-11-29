@@ -144,10 +144,18 @@ class PostsController extends AppController
     public function like()
     {
         $this->request->allowMethod('patch');
+
+        $this->loadComponent('PostHandler');
+
         $postId = (int) $this->request->getParam('id');
         $userId = (int) $this->Auth->user('id');
-        $this->Posts->Likes->toggleLike($userId, $postId);
+        $like = $this->Posts->Likes->toggleLike($userId, $postId);
         $totalCount = $this->Posts->Likes->countByPost($postId);
+
+        if ($like) {
+            $this->PostHandler->notifyAfterLike($like);
+        }
+
         return $this->responseCreated(['totalCount' => $totalCount]);
     }
 
