@@ -19,7 +19,7 @@ export const TextInputMock = (props) => (
 )
 
 export const TextMock = () => {
-    let width = Math.random() * 50 + 50 + '%';
+    let width = (Math.random() * 50 + 50) + '%';
     return (
         <div style={{
             backgroundColor: 'var(--grey-dark)',

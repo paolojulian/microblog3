@@ -97,4 +97,31 @@ class NotificationsTableTest extends TestCase
             ->count();
         $this->assertEquals($totalCount, $expected);
     }
+
+    public function testReadOne()
+    {
+        $userId = 200001;
+        $notificationId = 3;
+        $this->Notifications->read($notificationId);
+        $totalCount = $this->Notifications->find()
+            ->where([
+                'id' => $notificationId,
+                'is_read IS NULL'
+            ])
+            ->count();
+        $this->assertEquals($totalCount, 0);
+    }
+
+    public function testReadAll()
+    {
+        $userId = 200002;
+        $this->Notifications->readAll($userId);
+        $totalCount = $this->Notifications->find()
+            ->where([
+                'receiver_id' => $userId,
+                'is_read IS NULL'
+            ])
+            ->count();
+        $this->assertEquals($totalCount, 0);
+    }
 }

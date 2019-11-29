@@ -5,6 +5,8 @@ use Cake\ORM\Query;
 use Cake\ORM\RulesChecker;
 use Cake\ORM\Table;
 use Cake\Validation\Validator;
+use Cake\I18n\FrozenTime;
+use Cake\Http\Exception\InternalErrorException;
 
 /**
  * Notifications Model
@@ -165,5 +167,38 @@ class NotificationsTable extends Table
                 'is_read IS NULL'
             ])
             ->count();
+    }
+
+    /**
+     * Reads a notification
+     * 
+     * @param int $notificationId - notifications.id
+     * 
+     * @return void
+     */
+    public function read(int $notificationId)
+    {
+        $notification = $this->get($notificationId);
+        $notification->is_read = FrozenTime::now();
+        if ( ! $this->save($notification)) {
+            throw new InternalErrorException();
+        }
+    }
+
+    /**
+     * Reads all notifications of given user
+     * 
+     * @param int $userId - notifications.receiver_id
+     * 
+     * @return void
+     */
+    public function readAll(int $userId)
+    {
+        $fields = ['is_read' => FrozenTime::now()];
+        $conditions = [
+            'receiver_id' => $userId,
+            'is_read IS NULL'
+        ];
+        $this->updateAll($fields, $conditions);
     }
 }
