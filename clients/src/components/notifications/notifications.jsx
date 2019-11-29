@@ -53,7 +53,7 @@ const Notifications = ({
     const handleFetch = async(pageNo = 1) => {
         try {
             setStatus({ ...InitialStatus.LOADING });
-            const notifications = await dispatch(fetchUnreadNotifications(pageNo, 10));
+            const notifications = await dispatch(fetchUnreadNotifications(pageNo));
             await dispatch(countUnreadNotifications());
             setPager({ ...pager,
                 page: pageNo,
@@ -73,16 +73,16 @@ const Notifications = ({
             .then(() => dispatch(addNotificationCount(-1)))
     }
 
-    const renderNotifications = notifications.map(({ Notification, User }, i) => (
+    const renderNotifications = notifications.map((notification, i) => (
         <div className={styles.item} key={`vnotificationitem_${i}`}>
             <VNotificationItem
                 key={`notificationItem_${i}`}
                 index={i}
-                notificationId={Notification.id}
-                type={Notification.type}
-                postId={Notification.post_id}
-                username={User.username}
-                avatarUrl={User.avatar_url}
+                notificationId={notification.id}
+                type={notification.type}
+                postId={notification.post_id}
+                username={notification.user.username}
+                avatarUrl={notification.user.avatar_url}
                 onRead={handleOnRead}
                 />
         </div>

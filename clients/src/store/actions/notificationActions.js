@@ -4,9 +4,9 @@ import { NOTIFICATION } from '../types'
 /**
  * Fetch the unread notifications of the user
  */
-export const fetchUnreadNotifications = (page = 1, limit = 3) => async dispatch => {
+export const fetchUnreadNotifications = (page = 1) => async dispatch => {
     try {
-        const res = await axios.get(`/notifications/unread.json?page=${page}&limit=${limit}`);
+        const res = await axios.get(`/api/notifications/unread?notifications[page]=${page}`);
         if (page === 1) {
             dispatch({
                 type: NOTIFICATION.set,
@@ -29,15 +29,18 @@ export const fetchUnreadNotifications = (page = 1, limit = 3) => async dispatch 
  */
 export const countUnreadNotifications = () => async dispatch => {
     try {
-        return Promise.resolve(1);
-        const res = await axios.get('/notifications/unreadCount.json');
+        const res = await axios.get('/api/notifications/unread/count');
         dispatch({
             type: NOTIFICATION.setCount,
             payload: res.data.data
         });
         return Promise.resolve(res.data.data);
     } catch (e) {
-        return Promise.reject(e)
+        dispatch({
+            type: NOTIFICATION.setCount,
+            payload: 0
+        });
+        return Promise.resolve(0);
     }
 }
 

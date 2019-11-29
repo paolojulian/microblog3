@@ -14,9 +14,9 @@ import {
 } from '../../../store/actions/notificationActions';
 
 /** Components */
-import PLoader from '../../widgets/p-loader';
 import VNotificationItem from '../../widgets/v-notification/v-notification-item';
 import NotificationModal from '../../notifications/index';
+import UserWireframe from '../../widgets/wireframes/user';
 
 /** Consumer */
 import { ModalConsumer } from '../../widgets/p-modal/p-modal-context';
@@ -38,7 +38,11 @@ const Notifications = ({
         return <div className="disabled italic">Something went wrong</div>
     }
     if (status.loading) {
-        return <PLoader />
+        return (
+            <>
+                <UserWireframe />
+            </>
+        )
     }
     if (notifications.length === 0) {
         return <div className="disabled italic">No new notification/s</div>
@@ -50,15 +54,16 @@ const Notifications = ({
             >
                 <span onClick={onReadAll}>Read All</span>
             </div>}
-            {notifications.map(({Notification, User}, i) => (
+            {notifications.map((notification, i) => (
                <div className={styles.item} key={i}>
                     <VNotificationItem
+                        key={`notificationItem_${i}`}
                         index={i}
-                        notificationId={Notification.id}
-                        type={Notification.type}
-                        postId={Notification.post_id}
-                        username={User.username}
-                        avatarUrl={User.avatar_url}
+                        notificationId={notification.id}
+                        type={notification.type}
+                        postId={notification.post_id}
+                        username={notification.user.username}
+                        avatarUrl={notification.user.avatar_url}
                         onRead={onRead}
                         />
                 </div>
