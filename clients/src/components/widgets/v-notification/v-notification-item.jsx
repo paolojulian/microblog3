@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import styles from './v-notification-item.module.css';
-import { Link } from 'react-router-dom';
+import { withRouter, Link } from 'react-router-dom';
 
 /** Components */
 import ProfileImage from '../profile-image';
@@ -15,8 +15,14 @@ const VNotificationItem = ({
     postId,
     showCloseBtn,
     onRead,
-    onClose
+    onClose,
+    ...props
 }) => {
+
+    const handleClose = useCallback(e => {
+        e.stopPropagation();
+        onClose(index);
+    }, [index])
 
     let link;
 
@@ -52,33 +58,31 @@ const VNotificationItem = ({
                 return '';
         }
         return (
-            <Link to={link} onClick={() => onRead(notificationId, index)}>
-                <span>{text}</span>
-            </Link>
+            <span>{text}</span>
         )
     }
 
     return (
-        <div className={styles.body}>
-            <ProfileImage
-                src={avatarUrl}
-                size={32}
-            />
-            <div className={styles.info}>
-                <Username username={username}
-                    onClick={() => onRead(notificationId, index)}
+        <Link to={link} onClick={() => onRead(notificationId, index)}>
+            <div className={styles.body}>
+                <ProfileImage
+                    src={avatarUrl}
+                    size={32}
                 />
-                <div className={styles.message}>
-                    {message()}
+                <div className={styles.info}>
+                    <Username username={username}/>
+                    <div className={styles.message}>
+                        {message()}
+                    </div>
                 </div>
+                {showCloseBtn && <div className={styles.close}
+                    type="button"
+                    onClick={handleClose}
+                >
+                    &times;
+                </div>}
             </div>
-            {showCloseBtn && <div className={styles.close}
-                type="button"
-                onClick={() => onClose(index)}
-            >
-                &times;
-            </div>}
-        </div>
+        </Link>
     )
 }
 
@@ -87,4 +91,4 @@ VNotificationItem.defaultProps = {
     onClose: () => {}
 }
 
-export default VNotificationItem
+export default withRouter(VNotificationItem);
