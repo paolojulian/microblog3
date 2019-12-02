@@ -61,8 +61,8 @@ const PSearch = (props) => {
             const data = await dispatch(apiSearch(trimmedStr))
             if (data) {
                 setUsers(data.users.list)
-                const usersTotalLeft = data.users.totalCount - users.length;
-                const postsTotalLeft = data.posts.totalCount - posts.length;
+                const usersTotalLeft = data.users.totalCount - data.users.list.length;
+                const postsTotalLeft = data.posts.totalCount - data.posts.list.length;
                 setUserPager({
                     ...userPager,
                     totalLeft: usersTotalLeft
@@ -87,9 +87,10 @@ const PSearch = (props) => {
             const res = await dispatch(apiSearchUsers(searchText, userPager.page + 1))
             if (res.list.length > 0) {
                 setUsers([ ...users, ...res.list ]);
+                const length = users.length + res.list.length;
                 setUserPager({
                     page: userPager.page + 1,
-                    totalLeft: res.totalCount - users.length
+                    totalLeft: res.totalCount - length
                 })
             }
         } catch (e) {
@@ -104,9 +105,10 @@ const PSearch = (props) => {
             console.log(res);
             if (res.list.length > 0) {
                 setPosts([ ...posts, ...res.list ]);
+                const length = posts.length + res.list.length;
                 setPostPager({
                     page: postPager.page + 1,
-                    totalLeft: res.totalCount - posts.length
+                    totalLeft: res.totalCount - length
                 })
             }
         } catch (e) {
