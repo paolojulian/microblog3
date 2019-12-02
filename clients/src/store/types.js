@@ -27,7 +27,9 @@ export const GET_POST_COMMENTS = "GET_POST_COMMENTS";
 /** TODO Follow */
 export const FOLLOW = {
     setFollow: "SET_FOLLOW",
-    setIsFollowing: "SET_IS_FOLLOWING"
+    setIsFollowing: "SET_IS_FOLLOWING",
+    setFollowers: "SET_FOLLOWERS",
+    setFollowing: "SET_FOLLOWING"
 }
 
 /** Notifications */

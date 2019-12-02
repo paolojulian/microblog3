@@ -42,6 +42,16 @@ export default (state = initialState, action) => {
                 ...state,
                 isFollowing: !!action.payload
             }
+        case FOLLOW.setFollowers:
+            return {
+                ...state,
+                totalFollowers: action.payload
+            }
+        case FOLLOW.setFollowing:
+            return {
+                ...state,
+                totalFollowing: action.payload
+            }
         case SET_NOT_FOLLOWED:
             return {
                 ...state,
