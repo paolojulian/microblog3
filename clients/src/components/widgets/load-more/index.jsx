@@ -3,7 +3,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 const LoadMore = ({ onRequestLoad, totalLeft }) => {
-    if ( ! totalLeft || totalLeft === 0) {
+    if ( ! totalLeft || totalLeft <= 0) {
         return '';
     }
 
@@ -17,8 +17,8 @@ const LoadMore = ({ onRequestLoad, totalLeft }) => {
             cursor: 'pointer',
         }}
         onClick={onRequestLoad}>
-            View more result{!!totalLeft && totalLeft.length > 1 ? '/s ': ' '}
-            {!!totalLeft ? `(${totalLeft})` : ''}
+            View more result{totalLeft > 1 ? '/s ': ' '}
+            {`(${totalLeft})`}
         </div>
     )
 }

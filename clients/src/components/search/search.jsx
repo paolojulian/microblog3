@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import queryString from 'query-string'
 import styles from './search.module.css'
 import { useDispatch } from 'react-redux'
@@ -49,7 +49,7 @@ const PSearch = (props) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [props.location.search])
 
-    const searchUsersAndPosts = async str => {
+    const searchUsersAndPosts = useCallback(async str => {
         const trimmedStr = str.trim();
         if ( ! trimmedStr) {
             setPosts([])
@@ -61,14 +61,16 @@ const PSearch = (props) => {
             const data = await dispatch(apiSearch(trimmedStr))
             if (data) {
                 setUsers(data.users.list)
+                const usersTotalLeft = data.users.totalCount - users.length;
+                const postsTotalLeft = data.posts.totalCount - posts.length;
                 setUserPager({
                     ...userPager,
-                    totalLeft: data.users.totalLeft
+                    totalLeft: usersTotalLeft
                 })
                 setPosts(data.posts.list)
                 setPostPager({
                     ...postPager,
-                    totalLeft: data.posts.totalLeft
+                    totalLeft: postsTotalLeft
                 })
             }
             return Promise.resolve();
@@ -78,7 +80,7 @@ const PSearch = (props) => {
             setPosts([]);
             return Promise.reject(e);
         }
-    }
+    }, [users])
 
     const searchUsers = async () => {
         try {
@@ -87,7 +89,7 @@ const PSearch = (props) => {
                 setUsers([ ...users, ...res.list ]);
                 setUserPager({
                     page: userPager.page + 1,
-                    totalLeft: res.totalLeft
+                    totalLeft: res.totalCount - users.length
                 })
             }
         } catch (e) {
@@ -99,11 +101,12 @@ const PSearch = (props) => {
     const searchPosts = async () => {
         try {
             const res = await dispatch(apiSearchPosts(searchText, postPager.page + 1))
+            console.log(res);
             if (res.list.length > 0) {
                 setPosts([ ...posts, ...res.list ]);
                 setPostPager({
                     page: postPager.page + 1,
-                    totalLeft: res.totalLeft
+                    totalLeft: res.totalCount - posts.length
                 })
             }
         } catch (e) {

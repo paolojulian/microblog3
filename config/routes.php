@@ -207,6 +207,8 @@ Router::prefix('api', function (RouteBuilder $routes) {
     });
 
     $routes->connect('/search', ['controller' => 'Search', 'action' => 'index']);
+    $routes->connect('/search/users', ['controller' => 'Search', 'action' => 'users']);
+    $routes->connect('/search/posts', ['controller' => 'Search', 'action' => 'posts']);
 
     $routes->connect(
         '/notifications/unread',

@@ -37,23 +37,23 @@ const Notifications = ({
     if (status.error) {
         return <div className="disabled italic">Something went wrong</div>
     }
+
     if (status.loading) {
-        return (
-            <>
-                <UserWireframe />
-            </>
-        )
+        return <UserWireframe />;
     }
+
     if (notifications.length === 0) {
         return <div className="disabled italic">No new notification/s</div>
     }
+
     return (
         <div className={styles.notificationWrapper}>
-            {notifications.length > 0 && <div
-                className={"disabled " + styles.readAll}
-            >
+
+            {notifications.length > 0 &&
+            <div className={"disabled " + styles.readAll}>
                 <span onClick={onReadAll}>Read All</span>
             </div>}
+
             {notifications.map((notification, i) => (
                <div className={styles.item} key={i}>
                     <VNotificationItem
@@ -68,6 +68,7 @@ const Notifications = ({
                         />
                 </div>
             ))}
+
             {notificationCount > 3 && <ModalConsumer>
                 {({ showModal }) => (
                     <div
@@ -101,7 +102,7 @@ const NotificationBell = ({ notificationCount }) => {
             await dispatch(countUnreadNotifications());
             setStatus({ ...initialStatus, post: true });
         } catch (e) {
-            setStatus({ ...initialStatus, error: true })
+            setStatus({ ...initialStatus, error: true });
         }
     }
 
@@ -120,10 +121,14 @@ const NotificationBell = ({ notificationCount }) => {
             onClick={showNotifications}
         >
             <i className="fa fa-bell"/>
-            {notificationCount > 0 && ! isDisplay && <span className={styles.bell}>
+
+            {notificationCount > 0 && ! isDisplay &&
+            <span className={styles.bell}>
                 {notificationCount}
             </span>}
-            {isDisplay && <div className={styles.content}>
+
+            {isDisplay &&
+            <div className={styles.content}>
                 <Notifications
                     status={status}
                     notifications={notifications}
@@ -132,6 +137,7 @@ const NotificationBell = ({ notificationCount }) => {
                     onReadAll={handleOnReadAll}
                     />
             </div>}
+
         </div>
     )
 }

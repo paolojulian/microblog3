@@ -57,6 +57,10 @@ nav.top ul {
     border-radius: 5px;
 }
 
+.notification {
+    position: relative;
+}
+
 .searchList {
     position: absolute;
     top: 2rem;

@@ -21,7 +21,9 @@ const makeRequestCreator = () => {
 
       const result = res.data.data;
       // Store response
-      resources[query] = result;
+      if (res.data.data.length > 0) {
+        resources[query] = result;
+      }
 
       return result;
     } catch (error) {
