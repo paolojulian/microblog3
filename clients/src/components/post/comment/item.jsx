@@ -1,4 +1,5 @@
 import React from 'react';
+import moment from 'moment';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 import { useSelector } from 'react-redux';
@@ -10,6 +11,7 @@ import CommentDelete from './delete';
 
 /** Consumers */
 import { ModalConsumer } from '../../widgets/p-modal/p-modal-context';
+import Username from '../../widgets/username';
 
 const CommentItem = ({
     id,
@@ -32,11 +34,13 @@ const CommentItem = ({
                         src={avatarUrl}
                     />
                 </div>
-                <div className="username">
-                    <Link to={`/profiles/${username}`}>
-                        @{username}&nbsp;
-                    </Link>
-                </div>
+                <Username username={username}/>
+                <span className={styles.time}>
+                    &nbsp;
+                    &#8226;
+                    &nbsp;
+                    {moment(created).fromNow()}
+                </span>
                 {Number(loggedIn.id) === userId && <ModalConsumer>
                     {({ showModal, hideModal }) => (
                         <div className={styles.deleteBtn}>

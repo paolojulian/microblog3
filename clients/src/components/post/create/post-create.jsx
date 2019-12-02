@@ -2,6 +2,7 @@ import React, { useRef, useState, useEffect, useContext } from 'react'
 import styles from './post-create.module.css'
 import { useDispatch, connect } from 'react-redux'
 import { withRouter } from 'react-router-dom';
+import classnames from 'classnames';
 
 /** Redux Actions */
 import { CLEAR_ERRORS } from '../../../store/types'
@@ -47,6 +48,14 @@ const PostCreate = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
+    useEffect(() => {
+        if (false === willCreate) {
+            setWillCreate(false)
+            setErrors({ ...initialError })
+            dispatch({ type: CLEAR_ERRORS })
+        }
+    }, [willCreate])
+
     const handleSubmit = e => {
         if (e) {
             e.preventDefault();
@@ -71,7 +80,7 @@ const PostCreate = ({
 
     const handleSuccess = () => {
         context.notify.success('Your post was successfully created!');
-        closeCreate()
+        setWillCreate(false);
     }
 
     const handleError = (e) => {
@@ -91,86 +100,71 @@ const PostCreate = ({
         }
     }
 
-    const closeCreate = () => {
-        setWillCreate(false)
-        setErrors({ ...initialError })
-        dispatch({ type: CLEAR_ERRORS })
-    }
+    return (
+        <div className={willCreate ? styles.wrapper: ''}>
+            {willCreate && <div className={styles.overlay}></div>}
 
-    if ( ! willCreate) {
-        return (
-            <PCard>
+            <PCard className={classnames(styles.card, {[styles.focus]: willCreate})}>
                 <span className="text-link italic"
-                    onClick={() => setWillCreate(true)}
+                    onClick={() => setWillCreate(!willCreate)}
                 >
                     Write a post&nbsp;
                     <i className="fa fa-edit"/>
                 </span>
+                <form
+                    className="form"
+                    onSubmit={handleSubmit}
+                >
+                    <FormInput
+                        placeholder="Title"
+                        name="title"
+                        refs={title}
+                        info="The title of your post (Optional)"
+                        error={errors.title}
+                    />
+                    <FormTextarea
+                        placeholder="Body"
+                        name="body"
+                        refs={body}
+                        info="What's on your mind?"
+                        error={errors.body}
+                        isRequired={true}
+                    />
+
+                    <FormImage
+                        name="profile_image"
+                        refs={img}
+                        error={errors.img}
+                    />
+
+                    <br />
+
+                    {isLoading
+                        ? <div className={styles.action_btns}><PLoader/></div>
+                        : (
+                            <div className={styles.action_btns}>
+                                <PFab
+                                    type="submit"
+                                    theme="primary"
+                                    className={styles.action_btn}
+                                >
+                                    <i className="fa fa-check"/>
+                                </PFab>
+
+                                <PFab
+                                    theme="secondary"
+                                    onClick={() => setWillCreate(false)}
+                                    className={styles.action_btn}
+                                >
+                                    &#10006;
+                                </PFab>
+                            </div>
+                        )
+                    }
+
+                </form>
             </PCard>
-        )
-    }
-
-    return (
-        <PCard>
-            <span className="text-link italic"
-                onClick={closeCreate}
-            >
-                Write a post&nbsp;
-                <i className="fa fa-edit"/>
-            </span>
-            <form
-                className="form"
-                onSubmit={handleSubmit}
-            >
-                <FormInput
-                    placeholder="Title"
-                    name="title"
-                    refs={title}
-                    info="The title of your post (Optional)"
-                    error={errors.title}
-                />
-                <FormTextarea
-                    placeholder="Body"
-                    name="body"
-                    refs={body}
-                    info="What's on your mind?"
-                    error={errors.body}
-                    isRequired={true}
-                />
-
-                <FormImage
-                    name="profile_image"
-                    refs={img}
-                    error={errors.img}
-                />
-
-                <br />
-
-                {isLoading
-                    ? <div className={styles.action_btns}><PLoader/></div>
-                    : (
-                        <div className={styles.action_btns}>
-                            <PFab
-                                type="submit"
-                                theme="primary"
-                                className={styles.action_btn}
-                            >
-                                <i className="fa fa-check"/>
-                            </PFab>
-
-                            <PFab
-                                theme="secondary"
-                                onClick={() => closeCreate()}
-                                className={styles.action_btn}
-                            >
-                                &#10006;
-                            </PFab>
-                        </div>
-                    )
-                }
-
-            </form>
-        </PCard>
+        </div>
     )
 }
 

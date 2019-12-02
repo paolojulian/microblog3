@@ -12,7 +12,7 @@ import {
     clearProfile
 } from '../../store/actions/profileActions';
 import { getPostsForLanding } from '../../store/actions/postActions';
-import { CLEAR_POSTS, PROFILES } from '../../store/types';
+import { CLEAR_POSTS } from '../../store/types';
 
 /** Components */
 import PCard from '../widgets/p-card';

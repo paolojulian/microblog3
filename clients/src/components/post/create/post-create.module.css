@@ -1,6 +1,49 @@
 .action_btns {
     text-align: right;
 }
+
 .action_btn {
     margin: 0 0.175rem;
+}
+
+.wrapper {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 1000;
+}
+
+.overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    background-color: rgba(0, 0, 0, 0.75);
+}
+
+.card.focus {
+    position: fixed;
+    top: 3rem;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 30rem;
+}
+
+.card form {
+    display: none;
+}
+
+.card.focus form {
+    display: block;
+    animation: slide 300ms;
+}
+
+@keyframes slide {
+    0% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 1;
+    }
 }
