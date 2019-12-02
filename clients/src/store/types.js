@@ -36,6 +36,11 @@ export const FOLLOW = {
     setFollowing: "SET_FOLLOWING"
 }
 
+export const RECOMMENDED = {
+    setList: "SET_RECOMMENDED_LIST",
+    setTotalCount: "SET_RECOMMENDED_TOTALCOUNT"
+}
+
 /** Notifications */
 export const NOTIFICATION = {
     set:  "SET_NOTIFICATIONS",

@@ -5,6 +5,7 @@ import profile from './profileReducer';
 import post from './postReducer';
 import notification from './notificationReducer';
 import refresh from './refreshReducer';
+import recommended from './recommendedReducer';
 
 export default combineReducers({
     auth,
@@ -12,5 +13,6 @@ export default combineReducers({
     profile,
     post,
     notification,
-    refresh
+    refresh,
+    recommended
 });

@@ -1,6 +1,6 @@
 import React, { useCallback } from 'react';
 import styles from './v-notification-item.module.css';
-import { withRouter, Link } from 'react-router-dom';
+import { withRouter } from 'react-router-dom';
 
 /** Components */
 import ProfileImage from '../profile-image';

@@ -1,7 +1,6 @@
 import React from 'react';
 import moment from 'moment';
 import PropTypes from 'prop-types';
-import { Link } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import styles from './post-comment.module.css';
 

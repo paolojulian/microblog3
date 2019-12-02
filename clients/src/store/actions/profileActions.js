@@ -1,11 +1,11 @@
 import axios from 'axios';
 import { search } from '../../utils/search';
 import {
-    SET_NOT_FOLLOWED,
     SET_PROFILE,
     TOGGLE_LOADING_PROFILE,
     ADD_FOLLOWING,
     ADD_FOLLOWER,
+    RECOMMENDED,
     PROFILES,
     FOLLOW
 } from '../types';
@@ -181,10 +181,17 @@ export const fetchFollowCount = (username) => async dispatch => {
  */
 export const fetchNotFollowed = (page = 1) => async dispatch => {
     try {
-        const res = await axios.get(`/api/users/follow/recommended?pageNo=${page}`);
+        const res = await axios.get(`/api/users/follow/recommended?page=${page}`);
+        if (res.data.status !== 200) {
+            throw new Error();
+        }
         dispatch({
-            type: SET_NOT_FOLLOWED,
-            payload: res.data.data
+            type: RECOMMENDED.setList,
+            payload: res.data.data.list
+        });
+        dispatch({
+            type: RECOMMENDED.setTotalCount,
+            payload: res.data.data.totalCount
         });
         return Promise.resolve(res.data.data);
     } catch (e) {

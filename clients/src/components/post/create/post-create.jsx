@@ -54,7 +54,7 @@ const PostCreate = ({
             setErrors({ ...initialError })
             dispatch({ type: CLEAR_ERRORS })
         }
-    }, [willCreate])
+    }, [willCreate, dispatch])
 
     const handleSubmit = e => {
         if (e) {

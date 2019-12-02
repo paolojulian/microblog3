@@ -6,10 +6,10 @@ use App\Model\Entity\Follower;
 
 /**
  * Api/User/Users Controller
- *
- *
- * @method \App\Model\Entity\Api/User/User[]|\Cake\Datasource\ResultSetInterface paginate($object = null, array $settings = [])
+ * @author Pipz <paolovincent.yns@gmail.com>
+ * @license mit
  */
+
 class UsersController extends AppController
 {
 
@@ -17,8 +17,7 @@ class UsersController extends AppController
      * Fetches the profile
      * of the given username
      * 
-     * @param string username - users.username
-     * @return object User Entity
+     * @return App\Model\Entity\User
      */
     public function profile()
     {
@@ -76,7 +75,6 @@ class UsersController extends AppController
     /**
      * Fetches the mutual following with the given user
      * 
-     * @param string username - users.username
      * @return array - of User
      */
     public function mutual()
@@ -94,20 +92,33 @@ class UsersController extends AppController
         return $this->responseData($users);
     }
 
+    /**
+     * Fetches the followers of passed user
+     * 
+     * @return array
+     */
     public function fetchFollowers()
     {
         $this->request->allowMethod('get');
         $id = $this->request->getParam('id');
         $page = $this->request->getQuery('page', 1);
-        return $this->responseData($this->Users->Followers->fetchFollowers($id, $page));
+        return $this->responseData(
+            $this->Users->Followers->fetchFollowers($id, $page)
+        );
     }
 
+    /**
+     * Fetches the users being followed by the given user
+     * 
+     * @return array
+     */
     public function fetchFollowing()
     {
         $this->request->allowMethod('get');
         $id = $this->request->getParam('id');
         $page = $this->request->getQuery('page', 1);
-        return $this->responseData($this->Users->Followers->fetchFollowing($id, $page));
+        $users = $this->Users->Followers->fetchFollowing($id, $page);
+        return $this->responseData($users);
     }
 
     /**
@@ -115,15 +126,19 @@ class UsersController extends AppController
      * [PRIVATE]
      * Fetches recommended users of the current user logged in
      * 
-     * @param string - username
-     * @return array - list of users
+     * @return object
      */
     public function recommended()
     {
         $this->request->allowMethod('get');
-        return $this->responseData(
-            $this->Users->fetchRecommendedUsers($this->Auth->user('id'))
-        );
+        $page = $this->request->getQuery('page', 1);
+        $users = $this->Users->fetchRecommendedUsers($this->Auth->user('id'), $page);
+        $totalCount = $this->Users->countRecommendedUsers($this->Auth->user('id'));
+        $data = [
+            'list' => $users,
+            'totalCount' => $totalCount
+        ];
+        return $this->responseData($data);
     }
 
     /**
@@ -131,7 +146,6 @@ class UsersController extends AppController
      * [PRIVATE]
      * Fetches the number of followers based on the given user
      * 
-     * @param string - username
      * @return int - number of users
      */
     public function countFollowers()
@@ -139,9 +153,10 @@ class UsersController extends AppController
         $this->request->allowMethod('get');
         $username = $this->request->getParam('username');
         $userId = $this->Users->fetchByUsername($username, 'Users.id')->id;
-        return $this->responseData([
+        $returnData = [
             'count' => $this->Users->Followers->countFollowers($userId)
-        ]);
+        ];
+        return $this->responseData($returnData);
     }
 
     /**
@@ -149,7 +164,6 @@ class UsersController extends AppController
      * [PRIVATE]
      * Fetches the number of users being followed by the given user
      * 
-     * @param string - username
      * @return int - number of users
      */
     public function countFollowing()
@@ -157,9 +171,10 @@ class UsersController extends AppController
         $this->request->allowMethod('get');
         $username = $this->request->getParam('username');
         $userId = $this->Users->fetchByUsername($username, 'Users.id')->id;
-        return $this->responseData([
+        $returnData = [
             'count' => $this->Users->Followers->countFollowing($userId)
-        ]);
+        ];
+        return $this->responseData($returnData);
     }
 
     /**
@@ -168,7 +183,6 @@ class UsersController extends AppController
      * Fetches the number of users being followed by the given user
      * and the number of followers of the user
      * 
-     * @param string - username
      * @return array - list of users
      */
     public function countFollow()
@@ -176,10 +190,11 @@ class UsersController extends AppController
         $this->request->allowMethod('get');
         $username = $this->request->getParam('username');
         $userId = $this->Users->fetchByUsername($username, ['Users.id'])->id;
-        return $this->responseData([
+        $returnData = [
             'followerCount' => $this->Users->Followers->countFollowers($userId),
             'followingCount' => $this->Users->Followers->countFollowing($userId)
-        ]);
+        ];
+        return $this->responseData($returnData);
     }
 
     /**
@@ -187,9 +202,7 @@ class UsersController extends AppController
      * [PRIVATE]
      * Follow a user
      * 
-     * @param int - users.id
-     * @return int - the updated count of followers of the given user
-     * @return int - the updated count of users the current user is following
+     * @return object
      */
     public function follow()
     {
@@ -205,10 +218,11 @@ class UsersController extends AppController
             $this->UserHandler->notifyAfterFollow($follower);
         }
 
-        return $this->responseCreated([
+        $returnData = [
             'followerCount' => $this->Users->Followers->countFollowers($userId),
             'followingCount' => $this->Users->Followers->countFollowing($userId)
-        ]);
+        ];
+        return $this->responseCreated($returnData);
     }
 
     /**
@@ -216,7 +230,6 @@ class UsersController extends AppController
      * [PRIVATE]
      * Check if user passed is being followed by the user
      * 
-     * @param string - users.username
      * @return bool
      */
     public function isFollowing()
