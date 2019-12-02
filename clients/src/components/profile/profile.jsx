@@ -9,7 +9,8 @@ import {
     isFollowing,
     getProfile,
     fetchMutualFriends,
-    fetchFollowCount
+    fetchFollowCount,
+    clearProfile
 } from '../../store/actions/profileActions'
 import { getUserPosts } from '../../store/actions/postActions'
 
@@ -83,6 +84,7 @@ const Profile = (props) => {
         init();
         return () => {
             dispatch({ type: CLEAR_POSTS })
+            dispatch(clearProfile());
         };
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [props.match.params])

@@ -207,7 +207,7 @@ class UsersController extends AppController
 
         return $this->responseCreated([
             'followerCount' => $this->Users->Followers->countFollowers($userId),
-            'followingCount' => $this->Users->Followers->countFollowers($this->Auth->user('id'))
+            'followingCount' => $this->Users->Followers->countFollowing($userId)
         ]);
     }
 

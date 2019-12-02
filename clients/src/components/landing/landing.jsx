@@ -5,9 +5,14 @@ import styles from './landing.module.css';
 import WithNavbar from '../hoc/with-navbar';
 
 /** Redux */
-import { getProfile, fetchFollowCount, fetchNotFollowed } from '../../store/actions/profileActions';
+import {
+    getProfile,
+    fetchFollowCount,
+    fetchNotFollowed,
+    clearProfile
+} from '../../store/actions/profileActions';
 import { getPostsForLanding } from '../../store/actions/postActions';
-import { CLEAR_POSTS } from '../../store/types';
+import { CLEAR_POSTS, PROFILES } from '../../store/types';
 
 /** Components */
 import PCard from '../widgets/p-card';
@@ -42,6 +47,7 @@ const Landing = () => {
         init();
         return () => {
             dispatch({ type: CLEAR_POSTS })
+            dispatch(clearProfile());
         }
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [refreshToken])

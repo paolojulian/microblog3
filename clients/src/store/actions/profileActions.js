@@ -6,6 +6,7 @@ import {
     TOGGLE_LOADING_PROFILE,
     ADD_FOLLOWING,
     ADD_FOLLOWER,
+    PROFILES,
     FOLLOW
 } from '../types';
 
@@ -251,4 +252,11 @@ export const setFollowersCount = (n) => dispatch => {
  */
 export const setFollowingCount = (n) => dispatch => {
     dispatch({ type: FOLLOW.setFollowing, payload: n })
+}
+
+/**
+ * Resets the current profile
+ */
+export const clearProfile = () => dispatch => {
+    dispatch({ type: PROFILES.clearProfile })
 }
