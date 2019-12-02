@@ -52,9 +52,10 @@ const PostItem = ({
             isLiked: isLiked
         }
         try {
+            setLikeCount(likeCount + (isLiked ? -1 : 1));
+            setIsLiked(!isLiked);
             const { totalCount } = await dispatch(likePost(id));
             setLikeCount(totalCount);
-            setIsLiked(!isLiked);
         } catch (e) {
             setLikeCount(orig.count);
             setIsLiked(orig.isLiked);
