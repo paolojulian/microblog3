@@ -4,13 +4,15 @@ namespace App\Controller\Component;
 use Cake\Controller\Component;
 use Cake\Controller\ComponentRegistry;
 use App\Lib\Utils\ImageResizerHelper;
+use App\Lib\DTO\NotificationDTO;
+use App\Model\Entity\Follower;
 
 /**
  * UserHandler component
  */
 class UserHandlerComponent extends Component
 {
-    public $components = ['MailHandler', 'UploadImgHandler'];
+    public $components = ['MailHandler', 'UploadImgHandler', 'NotificationHandler'];
     /**
      * Default configuration.
      *
@@ -55,5 +57,15 @@ class UserHandlerComponent extends Component
         }
 
         return $uploadedFile['basePath'];
+    }
+
+    public function notifyAfterFollow(Follower $follower)
+    {
+        $notificationDTO = new NotificationDTO();
+        $notificationDTO->setFollowed(
+            $follower->user_id,
+            $follower->following_id
+        );
+        $this->NotificationHandler->notifyUser($notificationDTO);
     }
 }

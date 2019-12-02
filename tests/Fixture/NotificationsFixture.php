@@ -55,6 +55,18 @@ class NotificationsFixture extends TestFixture
                 'created' => '2019-11-29 09:21:59',
                 'modified' => '2019-11-29 09:21:59'
             ],
+            [
+                'id' => 4,
+                'message' => 'Read Post',
+                'user_id' => 321,
+                'receiver_id' => 123,
+                'post_id' => 8,
+                'link' => '/posts/1',
+                'is_read' => '2019-11-30 09:21:59',
+                'type' => 'liked',
+                'created' => '2019-11-29 09:21:59',
+                'modified' => '2019-11-29 09:21:59'
+            ],
         ];
         parent::init();
     }

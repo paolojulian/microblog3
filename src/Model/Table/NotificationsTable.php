@@ -205,8 +205,11 @@ class NotificationsTable extends Table
 
     /**
      * Adds a notification entity
+     * Checks if the new notification will be inserted
+     * Curls to The Websocket after create
      * 
      * @param array $data
+     * @return bool
      */
     public function addNotification(array $data)
     {
@@ -217,11 +220,43 @@ class NotificationsTable extends Table
         if ($notification->hasErrors()) {
             return false;
         }
+
+        if ( ! $this->willNotify($notification)) {
+            return false;
+        }
+
         if ( ! $this->save($notification)) {
             throw new InternalErrorException();
         }
         $this->notifyWebsocket($notification);
         return true;
+    }
+
+    /** 
+     * Checks if system will notify user
+     * used to negate spamming
+     * Wont notify if notification already exists
+     * that hasn't exists yet
+     * 
+     * @param Notification - the data to be checked
+     * 
+     * @return bool - yes if will notify else no
+     */
+    public function willNotify(Notification $notification)
+    {
+        $checkData = [
+            'user_id' => $notification->user_id,
+            'receiver_id' => $notification->receiver_id,
+            'type' => $notification->type,
+            'is_read IS NULL'
+        ];
+        if (property_exists($notification, 'post_id') && !!$notification->post_id) {
+            $checkData['post_id'] = $notification->post_id;
+        } else {
+            $checkData[] = 'post_id IS NULL';
+        }
+
+        return ! $this->exists($checkData);
     }
 
     /**

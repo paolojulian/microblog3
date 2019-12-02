@@ -203,7 +203,7 @@ class FollowersTable extends Table
             if ( ! $this->delete($followEntity)) {
                 throw new InternalErrorException();
             }
-            return true;
+            return false;
         }
 
         $followEntity = $this->newEntity();
@@ -213,7 +213,7 @@ class FollowersTable extends Table
             throw new InternalErrorException();
         }
 
-        return true;
+        return $followEntity;
     }
 
     /**

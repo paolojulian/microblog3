@@ -2,6 +2,7 @@
 namespace App\Test\TestCase\Model\Table;
 
 use App\Model\Table\NotificationsTable;
+use App\Model\Entity\Notification;
 use Cake\ORM\TableRegistry;
 use Cake\TestSuite\TestCase;
 
@@ -153,6 +154,54 @@ class NotificationsTableTest extends TestCase
             'user_id' => $userId,
         ];
         $result = $this->Notifications->addNotification($data);
+        $this->assertEquals($result, true);
+    }
+
+    public function testAddingSameNotificationWillNotSave()
+    {
+        $data = [
+            'user_id' => 200013,
+            'receiver_id' => 200001,
+            'post_id' => 8,
+            'is_read IS NULL',
+            'type' => 'liked',
+        ];
+        $result = $this->Notifications->exists($data);
+        $this->assertEquals($result, true);
+    }
+
+    public function testAddingSameNotificationThatHasBeenReadWillNotify()
+    {
+        $data = [
+            'user_id' => 321,
+            'receiver_id' => 123,
+            'post_id' => 8,
+            'is_read IS NULL',
+            'type' => 'liked',
+        ];
+        $result = $this->Notifications->exists($data);
+        $this->assertEquals($result, false);
+    }
+
+    public function testNotifyExistingNotification()
+    {
+        $notification = new Notification();
+        $notification->user_id = 200013;
+        $notification->receiver_id = 200001;
+        $notification->post_id = 8;
+        $notification->type = 'liked';
+        $result = $this->Notifications->willNotify($notification);
+        $this->assertEquals($result, false);
+    }
+
+    public function testNotifyNonExistingNotification()
+    {
+        $notification = new Notification();
+        $notification->user_id = 321;
+        $notification->receiver_id = 123;
+        $notification->post_id = 8;
+        $notification->type = 'liked';
+        $result = $this->Notifications->willNotify($notification);
         $this->assertEquals($result, true);
     }
 }

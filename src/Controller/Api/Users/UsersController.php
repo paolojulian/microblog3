@@ -2,6 +2,7 @@
 namespace App\Controller\Api\Users;
 
 use App\Controller\Api\AppController;
+use App\Model\Entity\Follower;
 
 /**
  * Api/User/Users Controller
@@ -194,10 +195,16 @@ class UsersController extends AppController
     {
         $this->request->allowMethod('post');
         $userId = $this->request->getParam('id');
-        $this->Users->Followers->toggleFollowUser(
+        $follower = $this->Users->Followers->toggleFollowUser(
             (int) $userId,
             (int) $this->Auth->user('id')
         );
+
+        if ($follower instanceof Follower) {
+            $this->loadComponent('UserHandler');
+            $this->UserHandler->notifyAfterFollow($follower);
+        }
+
         return $this->responseCreated([
             'followerCount' => $this->Users->Followers->countFollowers($userId),
             'followingCount' => $this->Users->Followers->countFollowers($this->Auth->user('id'))

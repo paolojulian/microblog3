@@ -105,7 +105,7 @@ class LikesTable extends Table
             if ( ! $this->delete($like)) {
                 throw new InternalErrorException();
             }
-            return false;
+            return true;
         }
 
         $like = $this->newEntity();
