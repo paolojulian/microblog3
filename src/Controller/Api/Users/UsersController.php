@@ -14,6 +14,9 @@ class UsersController extends AppController
 {
 
     /**
+     * [GET]
+     * [PRIVATE]
+     * 
      * Fetches the profile
      * of the given username
      * 
@@ -73,7 +76,9 @@ class UsersController extends AppController
     }
 
     /**
-     * Fetches the mutual following with the given user
+     * [GET]
+     * [PRIVATE]
+     * Fetches followed users who followed the given user
      * 
      * @return array - of User
      */
@@ -93,6 +98,8 @@ class UsersController extends AppController
     }
 
     /**
+     * [GET]
+     * [PRIVATE]
      * Fetches the followers of passed user
      * 
      * @return array
@@ -108,6 +115,8 @@ class UsersController extends AppController
     }
 
     /**
+     * [GET]
+     * [PRIVATE]
      * Fetches the users being followed by the given user
      * 
      * @return array
@@ -228,7 +237,7 @@ class UsersController extends AppController
     /**
      * [GET]
      * [PRIVATE]
-     * Check if user passed is being followed by the user
+     * Checks if username passed is being followed by the current user logged in
      * 
      * @return bool
      */

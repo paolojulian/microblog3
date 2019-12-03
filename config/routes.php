@@ -47,10 +47,14 @@ Router::defaultRouteClass(DashedRoute::class);
 Router::prefix('api', function (RouteBuilder $routes) {
 
     $routes->setExtensions(['json']);
+
     $routes->prefix('auth', function (RouteBuilder $routes) {
-        $routes->connect('/login', ['controller' => 'Auths', 'action' => 'login']);
-        $routes->connect('/register', ['controller' => 'Auths', 'action' => 'register']);
-        $routes->connect('/activate/:key', ['controller' => 'Auths', 'action' => 'activate']);
+        $routes->connect('/login', ['controller' => 'Auths', 'action' => 'login'])
+            ->setMethods(['POST']);
+        $routes->connect('/register', ['controller' => 'Auths', 'action' => 'register'])
+            ->setMethods(['POST']);
+        $routes->connect('/activate/:key', ['controller' => 'Auths', 'action' => 'activate'])
+            ->setMethods(['GET']);
         $routes->connect('/me', ['controller' => 'Auths', 'action' => 'me']);
     });
 
@@ -149,7 +153,8 @@ Router::prefix('api', function (RouteBuilder $routes) {
         $routes->connect(
             '/:username',
             ['controller' => 'Users', 'action' => 'profile']
-        );
+        )
+        ->setMethods(['GET']);
         // Update Profile
         $routes->connect(
             '/',
@@ -166,7 +171,8 @@ Router::prefix('api', function (RouteBuilder $routes) {
         $routes->connect(
             '/:username/mutual',
             ['controller' => 'Users', 'action' => 'mutual']
-        );
+        )
+        ->setMethods(['GET']);
         // Followers
         $routes->connect(
             '/:username/is-following',
@@ -176,7 +182,8 @@ Router::prefix('api', function (RouteBuilder $routes) {
         $routes->connect(
             '/follow/recommended',
             ['controller' => 'Users', 'action' => 'recommended']
-        );
+        )
+        ->setMethods(['GET']);
 
         $routes->connect(
             '/:id/followers',

@@ -224,7 +224,7 @@ class PostsController extends AppController
      * 
      * @param int $postId - posts.id
      * 
-     * @return array of Comments
+     * @return array of Users
      */
     public function fetchLikers()
     {
