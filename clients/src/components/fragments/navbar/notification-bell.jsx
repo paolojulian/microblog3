@@ -69,7 +69,7 @@ const Notifications = ({
                 </div>
             ))}
 
-            {notificationCount > 3 && <ModalConsumer>
+            {notificationCount > 5 && <ModalConsumer>
                 {({ showModal }) => (
                     <div
                         className={`disabled ${styles.viewMore}`}

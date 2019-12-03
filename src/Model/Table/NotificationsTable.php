@@ -250,7 +250,8 @@ class NotificationsTable extends Table
             'type' => $notification->type,
             'is_read IS NULL'
         ];
-        if (property_exists($notification, 'post_id') && !!$notification->post_id) {
+
+        if (isset($notification->post_id)) {
             $checkData['post_id'] = $notification->post_id;
         } else {
             $checkData[] = 'post_id IS NULL';

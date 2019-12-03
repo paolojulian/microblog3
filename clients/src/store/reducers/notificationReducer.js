@@ -57,8 +57,16 @@ export default function(state = initialState, action) {
                 popupNotifications
             }
         case NOTIFICATION.popup.add:
+            console.log(state);
+            if (state.notifications.length >= 5) {
+                state.notifications.splice(-1, 1);
+            }
             return {
                 ...state,
+                notifications: [
+                    action.payload,
+                    ...state.notifications,
+                ],
                 popupNotifications: [
                     ...state.popupNotifications,
                     action.payload
