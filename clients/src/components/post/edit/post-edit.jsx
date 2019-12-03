@@ -92,6 +92,7 @@ const PostEdit = ({
     return (
         <PModal
             type="submit"
+            size="30rem"
             header="Edit your post"
             isLoading={status.loading}
             onRequestClose={onRequestClose}

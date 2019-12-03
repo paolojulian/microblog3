@@ -14,6 +14,7 @@ const PModal = ({
     onRequestClose,
     onRequestSubmit,
     isLoading,
+    size,
     type,
     ...props
 }) => {
@@ -37,7 +38,11 @@ const PModal = ({
     )
 
     const body = () => (
-        <div className={styles.modal}>
+        <div className={styles.modal}
+            style={{
+                width: size
+            }}
+        >
             <div className={styles.header}>
                 {props.header ? props.header : 'Notification'}
             </div>
@@ -85,7 +90,8 @@ PModal.propTypes = {
     onRequestClose: PropTypes.func.isRequired,
     onRequestSubmit: PropTypes.func,
     isLoading: PropTypes.bool,
-    type: PropTypes.string
+    type: PropTypes.string,
+    size: PropTypes.string
 }
 
 PModal.defaultProps = {
@@ -93,7 +99,8 @@ PModal.defaultProps = {
     isLoading: false,
     enableScrollPaginate: false,
     onScrollPaginate: () => {},
-    pager: {}
+    pager: {},
+    size: '400px'
 }
 
 export default PModal;
