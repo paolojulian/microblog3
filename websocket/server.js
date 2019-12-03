@@ -1,7 +1,7 @@
 const http = require('http');
 const url = require('url');
 const WebSocketServerPort = 4567;
-const WebSocketServer = require('websocket').server;
+const WebSocket = require('ws');
 let server = http.createServer((request, response) => {
     /**
      * Receives POST parameter for notification
@@ -49,11 +49,12 @@ const wssNotif = new WebSocket.Server({ noServer: true });
 const wssChat = new WebSocket.Server({ noServer: true });
 
 wssNotif.on('connection', ws => {
-    console.log(ws);
 })
 
-wssChat.on('connection', ws => {
-    console.log(ws);
+wssChat.on('connection', (ws, request) => {
+    console.log(request);
+    const { query: { id }} = url.parse(request.resource, true);
+    console.log(id);
 })
 
 server.on('upgrade', function upgrade(request, socket, head) {
