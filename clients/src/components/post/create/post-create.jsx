@@ -127,6 +127,7 @@ const PostCreate = ({
                         info="The title of your post (Optional)"
                         error={errors.title}
                     />
+                    
                     <FormTextarea
                         placeholder="Body"
                         name="body"
