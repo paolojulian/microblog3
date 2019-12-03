@@ -53,7 +53,7 @@ export default function(state = initialState, action) {
                 ...state,
                 users: newUsers
             }
-        
+
         /**
          * Sets the messages
          */
@@ -65,7 +65,7 @@ export default function(state = initialState, action) {
                 ...state,
                 messages: action.payload
             }
-        
+
         /**
          * Sets the messages
          */
@@ -77,7 +77,7 @@ export default function(state = initialState, action) {
                 ...state,
                 messages: [...state.messages, ...action.payload]
             }
-        
+
         /**
          * Add a message to the first of array
          */

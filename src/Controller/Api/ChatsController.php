@@ -26,35 +26,43 @@ class ChatsController extends AppController
     /**
      * [GET]
      * [PRIVATE]
-     * 
+     *
      * Fetches chat buddies with ther User Entity
-     * 
+     *
      * @return array - App\Model\Entity\User
      */
     public function index()
     {
-
+        $this->request->allowMethod('get');
+        $query = $this->Chats->fetchUsersToMessage($this->Auth->user('id'));
+        $result = $query->disableHydration()->toArray();
+        return $this->responseData($result);
     }
 
     /**
      * [GET]
      * [PRIVATE]
-     * 
+     *
      * Fetches all messages with the given user
-     * 
+     *
      * @return array - App\Model\Entity\Chat
      */
     public function view()
     {
-
+        $this->request->allowMethod('get');
+        $messages = $this->paginate($this->Chats->fetchMessages(
+            $this->Auth->user('id'),
+            $this->request->getParam('id')
+        ));
+        return $this->responseData($messages);
     }
 
     /**
      * [POST]
      * [PRIVATE]
-     * 
+     *
      * Sends a message to the given user
-     * 
+     *
      * @return object - App\Model\Entity\Chat
      */
     public function add()
@@ -64,6 +72,7 @@ class ChatsController extends AppController
         $requestData = $this->request->getData();
         $requestData['user_id'] = $this->Auth->user('id');
         $requestData['receiver_id'] = $id;
-        $this->Chats->addMessage($requestData);
+        $chat = $this->Chats->addMessage($requestData);
+        return $this->responseData($chat);
     }
 }

@@ -85,9 +85,9 @@ class ChatsTable extends Table
 
     /**
      * Adds a message entity
-     * 
+     *
      * @param array $data - Data to be saved
-     * 
+     *
      * @return object App\Model\Entity\Chat
      */
     public function addMessage(array $data)
@@ -106,39 +106,50 @@ class ChatsTable extends Table
 
     /**
      * Fetches messages of the given user
-     * 
+     *
      * @param int $userId - the user who sent the message
      * @param int $receiverId - the user who received the message
-     * 
+     *
      * @return object Cake\ORM\Query
      */
-    public function fetchMessage(int $userId, int $receiverId) {
+    public function fetchMessages(int $userId, int $receiverId) {
         return $this->find()
             ->where([
                 'user_id' => $userId,
                 'receiver_id' => $receiverId
-            ])
-            ->disableHydration()
-            ->toArray();
+            ]);
     }
 
     /**
      * Fetches Users who has message with current user
-     * 
-     * @param int $userId - the user who sent the message
-     * @param int $receiverId - the user who received the message
-     * 
+     *
+     * @param int $userId - current user logged in
+     *
      * @return object Cake\ORM\Query
      */
-    public function fetchUsersToMessage(int $userId, int $receiverId) {
+    public function fetchUsersToMessage(int $userId) {
+        /**
+         * SELECT users
+         * FROM users
+         * INNER JOIN chats
+         * ON (users.id = chats.user_id OR users.id = chats.receiver_id)
+         * ORDER BY chats.created DESC
+         */
         return $this->find()
+            ->select([
+                'Chats.id',
+                'Chats.message',
+                'Chats.user_id',
+                'Chats.receiver_id',
+            ])
             ->where([
                 'OR' => [
                     'user_id' => $userId,
-                    'receiver_id' => $receiverId
+                    'receiver_id' => $userId
                 ]
             ])
-            ->disableHydration()
-            ->toArray();
+            ->contain(['Receivers' => function ($q) {
+                return $q->select(['username', 'avatar_url']);
+            }]);
     }
 }

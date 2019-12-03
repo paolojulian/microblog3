@@ -1,13 +1,32 @@
-import React, { useCallback, useState } from 'react';
+import React, { useEffect, useCallback, useState } from 'react';
 import styles from './chat.module.css';
 import classnames from 'classnames';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+
+/** Redux */
+import {
+    fetchUsersToChatAPI,
+    fetchMessagesAPI,
+    addMessageAPI
+} from '../../store/actions/chatActions';
 
 /** HOC */
 import withNavbar from '../hoc/with-navbar';
 
 const Users = () => {
+    const dispatch = useDispatch();
     const { users } = useSelector(state => state.chat);
+    const [page, setPage] = useState(1);
+    const [isLast, setIsLast] = useState(false);
+
+    const handleClick = useCallback(async (userId) => {
+        dispatch(fetchMessagesAPI(userId));
+    });
+
+    useEffect(() => {
+        dispatch(fetchUsersToChatAPI(page));
+    }, [page]);
+
     return (
         <div className={styles.usersWrapper}>
             <div className={styles.searchUser}>Search</div>
@@ -15,6 +34,7 @@ const Users = () => {
                 {users.map((item, i) => (
                     <div className={styles.user}
                         key={i}
+                        onClick={() => handleClick(item.user_id)}
                     >
                         {item.user.username}
                         {/* {`${user.first_name} ${user.last_name}`} */}
@@ -26,13 +46,24 @@ const Users = () => {
 }
 
 const Messages = () => {
+    const dispatch = useDispatch();
     const { userInfo, messages } = useSelector(state => state.chat);
     const { user } = useSelector(state => state.auth);
     const [message, setMessage] = useState('');
 
-    const handleSubmit = useCallback(e => {
+    const handleSubmit = useCallback(async e => {
         if (e) {
             e.preventDefault();
+        }
+        const data = {
+            message,
+            user_id: user.id,
+            receiver_id: userInfo.user.id
+        }
+        try {
+            await dispatch(addMessageAPI(data));
+        } catch (e) {
+
         }
     }, [message]);
 

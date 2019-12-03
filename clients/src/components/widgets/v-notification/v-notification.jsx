@@ -68,7 +68,7 @@ const VNotification = () => {
             websocket.close();
         }
     }
-    
+
     const showNotification = (data) => {
         dispatch(addPopupNotifications(data))
         // Add notif count on message pop
