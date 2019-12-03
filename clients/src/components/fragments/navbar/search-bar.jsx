@@ -94,14 +94,15 @@ const SearchBar = ({ history, location }) => {
     }
 
     const handleKeyPress = e => {
-        const re = /^[a-z0-9_ ]*$/i
-        if (!re.test(e.key)) {
-            e.preventDefault();
-        }
+        // const re = /^[a-z0-9_ ]*$/i
+        // if (!re.test(e.key)) {
+        //     e.preventDefault();
+        // }
     }
 
     const getSearchText = () => {
-        return searchText.current.value.replace(/[\W_]+/g," ");
+        // return searchText.current.value.replace(/[\W_]+/g," ");
+        return searchText.current.value;
     }
 
     const renderUsers = () => users.map((user, i) => (
