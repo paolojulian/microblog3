@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import queryString from 'query-string'
 import styles from './search.module.css'
 import { useDispatch } from 'react-redux'
