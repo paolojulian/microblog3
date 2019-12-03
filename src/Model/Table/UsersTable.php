@@ -89,6 +89,7 @@ class UsersTable extends Table
             ->lengthBetween('username', [6, 20], __('6 to 20 characters only'))
             ->requirePresence('username', true)
             ->notEmptyString('username', __('Username is required'))
+            ->alphaNumeric('username', __('Alphanumeric characters only'))
             ->add('username', [
                 'unique' => [
                     'rule' => 'validateUnique',

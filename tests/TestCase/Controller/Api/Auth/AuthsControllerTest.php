@@ -118,6 +118,17 @@ class AuthsControllerTest extends ApiTestCase
         $this->assertResponseContains('Invalid Sex');
     }
 
+    public function testLoginWithNonAlphaNumericUsername()
+    {
+        $data = [
+            'username' => '<script>'
+        ];
+        $this->post('/api/auth/register', $data);
+        $this->assertResponseCode(422);
+        $this->assertResponseContains('username');
+        $this->assertResponseContains('Alphanumeric characters only');
+    }
+
     /**
      * [POST]
      * [INVALID]
