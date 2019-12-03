@@ -35,7 +35,6 @@ const VNotification = () => {
     }, [isAuthenticated])
 
     const connectWebSocket = (userId) => {
-        let websocket = null;
         if (process.env.NODE_ENV === 'production') {
             websocket = new WebSocket(`ws://dev1.ynsdev.pw:4567?id=${userId}`);
         } else {
@@ -53,7 +52,7 @@ const VNotification = () => {
         websocket.onclose = (e) => {
             setTimeout(() => {
                 connectWebSocket(userId);
-            }, 10000);
+            }, 1000);
         };
         websocket.onerror = (err) => {
             if (process.env.NODE_ENV !== 'production') {

@@ -17,7 +17,6 @@
  * @link          https://cakephp.org CakePHP(tm) Project
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
-use Cake\Http\Middleware\CsrfProtectionMiddleware;
 use Cake\Routing\RouteBuilder;
 use Cake\Routing\Router;
 use Cake\Routing\Route\DashedRoute;
@@ -47,13 +46,17 @@ Router::defaultRouteClass(DashedRoute::class);
 
 Router::prefix('api', function (RouteBuilder $routes) {
 
-    $routes->setExtensions(['json', 'xml']);
+    $routes->setExtensions(['json']);
     $routes->prefix('auth', function (RouteBuilder $routes) {
         $routes->connect('/login', ['controller' => 'Auths', 'action' => 'login']);
         $routes->connect('/register', ['controller' => 'Auths', 'action' => 'register']);
         $routes->connect('/activate/:key', ['controller' => 'Auths', 'action' => 'activate']);
         $routes->connect('/me', ['controller' => 'Auths', 'action' => 'me']);
     });
+
+    /************************
+     * POSTS
+     */
     $routes->prefix('posts', function (RouteBuilder $routes) {
         /** Fetch Posts to display */
         $routes->connect(
@@ -137,6 +140,10 @@ Router::prefix('api', function (RouteBuilder $routes) {
         ->setMethods(['DELETE']);
 
     });
+
+    /************************
+     * USERS
+     */
     $routes->prefix('users', function (RouteBuilder $routes) {
         // Profiles
         $routes->connect(
@@ -206,10 +213,17 @@ Router::prefix('api', function (RouteBuilder $routes) {
         ->setMethods(['POST']);
     });
 
+    /************************
+     * SEARCH
+     */
     $routes->connect('/search', ['controller' => 'Search', 'action' => 'index']);
     $routes->connect('/search/users', ['controller' => 'Search', 'action' => 'users']);
     $routes->connect('/search/posts', ['controller' => 'Search', 'action' => 'posts']);
+    $routes->connect('/search/test', ['controller' => 'Search', 'action' => 'test']);
 
+    /************************
+     * NOTIFICATIONS
+     */
     $routes->connect(
         '/notifications/unread',
         ['controller' => 'Notifications', 'action' => 'fetchUnread']
@@ -243,17 +257,6 @@ Router::prefix('api', function (RouteBuilder $routes) {
 });
 
 Router::scope('/', function (RouteBuilder $routes) {
-    // // Register scoped middleware for in scopes.
-    // $routes->registerMiddleware('csrf', new CsrfProtectionMiddleware([
-    //     'httpOnly' => true
-    // ]));
-
-    // /**
-    //  * Apply a middleware to the current route scope.
-    //  * Requires middleware to be registered via `Application::routes()` with `registerMiddleware()`
-    //  */
-    // $routes->applyMiddleware('csrf');
-
     $routes->connect('/', ['controller' => 'Pages', 'action' => 'display', 'home']);
     $routes->connect('/*', ['controller' => 'Pages', 'action' => 'display']);
 

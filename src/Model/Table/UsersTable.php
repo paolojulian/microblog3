@@ -418,7 +418,10 @@ class UsersTable extends Table
             ->where(['user_id' => $userId]);
 
         return $this->find()
-            ->where(['id NOT IN' => $subquery])
+            ->where([
+                'id NOT IN' => $subquery,
+                'id <>' => $userId
+            ])
             ->count();
     }
 

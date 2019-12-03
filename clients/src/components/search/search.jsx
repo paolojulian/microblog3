@@ -49,7 +49,7 @@ const PSearch = (props) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [props.location.search])
 
-    const searchUsersAndPosts = useCallback(async str => {
+    const searchUsersAndPosts = async str => {
         const trimmedStr = str.trim();
         if ( ! trimmedStr) {
             setPosts([])
@@ -80,7 +80,7 @@ const PSearch = (props) => {
             setPosts([]);
             return Promise.reject(e);
         }
-    }, [users])
+    }
 
     const searchUsers = async () => {
         try {

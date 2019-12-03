@@ -37,6 +37,7 @@ const PostCreate = ({
     const [willCreate, setWillCreate] = useState(false)
     const [errors, setErrors] = useState({ ...initialError })
     const [isLoading, setLoading] = useState(false)
+    const form = useRef('')
     const title = useRef('')
     const body = useRef('')
     const img = useRef('')
@@ -53,7 +54,9 @@ const PostCreate = ({
             setWillCreate(false)
             setErrors({ ...initialError })
             dispatch({ type: CLEAR_ERRORS })
+            return;
         }
+
     }, [willCreate, dispatch])
 
     const handleSubmit = e => {
@@ -111,7 +114,9 @@ const PostCreate = ({
                     Write a post&nbsp;
                     <i className="fa fa-edit"/>
                 </span>
+                {willCreate && 
                 <form
+                    ref={form}
                     className="form"
                     onSubmit={handleSubmit}
                 >
@@ -135,6 +140,7 @@ const PostCreate = ({
                         name="profile_image"
                         refs={img}
                         error={errors.img}
+                        height="15rem"
                     />
 
                     <br />
@@ -162,7 +168,7 @@ const PostCreate = ({
                         )
                     }
 
-                </form>
+                </form>}
             </PCard>
         </div>
     )

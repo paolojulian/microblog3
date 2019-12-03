@@ -28,6 +28,7 @@
     left: 50%;
     transform: translateX(-50%);
     width: 30rem;
+    max-height: calc(100% - 3rem - 3rem);
 }
 
 .card form {

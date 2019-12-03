@@ -17,7 +17,7 @@ const LoadMore = ({ onRequestLoad, totalLeft }) => {
             cursor: 'pointer',
         }}
         onClick={onRequestLoad}>
-            View more result{totalLeft > 1 ? '/s ': ' '}
+            View more result{totalLeft > 1 ? 's ': ' '}
             {`(${totalLeft})`}
         </div>
     )

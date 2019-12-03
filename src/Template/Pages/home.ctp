@@ -7,7 +7,7 @@
 	<meta http-equiv="Cache-control" content="public">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<meta http-equiv="X-UA-Compatible" content="ie=edge">
-	<title>Microblog 2</title>
+	<title>LaCosina</title>
 	<?php echo $this->Html->css('card') ?>
 	<?php echo $this->Html->css('scrollbar') ?>
 	<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">

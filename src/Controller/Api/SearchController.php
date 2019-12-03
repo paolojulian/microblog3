@@ -9,6 +9,7 @@ use Cake\ORM\TableRegistry;
  */
 class SearchController extends AppController
 {
+
     /**
      * [GET]
      * [PRIVATE] - for logged in users only
@@ -28,6 +29,7 @@ class SearchController extends AppController
             'posts' => $this->PostModel->searchPosts($text, $page)
         ]);
     }
+
     /**
      * [GET]
      * [PRIVATE] - for logged in users only
@@ -42,6 +44,7 @@ class SearchController extends AppController
         $this->UserModel = TableRegistry::getTableLocator()->get('Users');
         $this->responseData($this->UserModel->searchUser($text, $page));
     }
+
     /**
      * [GET]
      * [PRIVATE] - for logged in users only
@@ -55,5 +58,14 @@ class SearchController extends AppController
         $page = $this->request->getQuery('page', 1);
         $this->PostModel = TableRegistry::getTableLocator()->get('Posts');
         $this->responseData($this->PostModel->searchPosts($text, $page));
+    }
+
+    /**
+     * 
+     */
+    public function test()
+    {
+        $this->request->allowMethod('get');
+        return $this->responseOk();
     }
 }
