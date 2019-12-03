@@ -57,5 +57,14 @@ export const NOTIFICATION = {
     }
 }
 
+/** Chat */
+export const CHAT = {
+    setUsers: "SET_CHAT_USERS",
+    setUserToFirst: "SET_CHAT_USER_FIRST",
+    setMessages: "SET_CHAT_MESSAGES",
+    addMessages: "SET_CHAT_ADD_MESSAGE",
+    addMessageToFirst: "SET_CHAT_ADD_MESSAGE_TO_FIRST"
+}
+
 /** Refresh */
 export const REFRESH = "REFRESH";

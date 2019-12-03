@@ -261,6 +261,17 @@ Router::prefix('api', function (RouteBuilder $routes) {
     )
     ->setPatterns(['id' => '\d+'])
     ->setMethods(['POST']);
+
+    /************************
+     * CHAT
+     */
+    $routes->connect('/chats', ['controller' => 'Search', 'action' => 'index']);
+    $routes->connect('/chats/:id', ['controller' => 'Search', 'action' => 'view'])
+        ->setPatterns(['id' => '\d+'])
+        ->setMethods(['GET']);
+    $routes->connect('/chats/:id', ['controller' => 'Search', 'action' => 'add'])
+        ->setPatterns(['id' => '\d+'])
+        ->setMethods(['POST']);
 });
 
 Router::scope('/', function (RouteBuilder $routes) {

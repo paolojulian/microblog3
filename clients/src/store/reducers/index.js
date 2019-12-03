@@ -6,6 +6,7 @@ import post from './postReducer';
 import notification from './notificationReducer';
 import refresh from './refreshReducer';
 import recommended from './recommendedReducer';
+import chat from './chatReducer';
 
 export default combineReducers({
     auth,
@@ -14,5 +15,6 @@ export default combineReducers({
     post,
     notification,
     refresh,
-    recommended
+    recommended,
+    chat
 });

@@ -30,6 +30,7 @@ const ProfileUpdate = lazy(() => import('./components/profile/update'));
 const PostEdit = lazy(() => import('./components/post/edit'));
 const PostView = lazy(() => import('./components/post/view'));
 const PSearch = lazy(() => import('./components/search'));
+const PChat = lazy(() => import('./components/chat'));
 
 if (localStorage.jwtToken) {
     try {
@@ -110,6 +111,8 @@ const App = () => {
                         
                         
                             <PrivateRoute exact path="/search" component={PSearch}/>
+
+                            <PrivateRoute exact path="/chat" component={PChat}/>
                         
                             <Route exact path="/not-found" component={NoMatch} />
                             <Route path="*" component={NoMatch}/>
