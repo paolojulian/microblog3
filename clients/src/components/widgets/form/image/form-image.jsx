@@ -42,8 +42,9 @@ const FormImage = ({
     return (
         <div className={styles.formImage}>
             {!!imgSrc && <div className={styles.img} style={{
-                height: height,
-                width: 'auto',
+                maxHeight: height,
+                height: 'auto',
+                width: '100%',
                 margin: 'auto',
             }}>
                 <PFab
@@ -54,6 +55,7 @@ const FormImage = ({
                     &#10006;
                 </PFab>
                 <img
+                    style={{maxHeight: height, width: '100%'}}
                     src={imgSrc}
                     alt={name}
                     accept="image/png, image/jpeg"

@@ -4,7 +4,12 @@ import { useDispatch, useSelector } from 'react-redux';
 import styles from './profile-info.module.css';
 
 /** Redux */
-import { followUser, addFollower } from '../../../store/actions/profileActions';
+import {
+    followUser,
+    addFollower,
+    setFollowersCount,
+    setFollowingCount,
+} from '../../../store/actions/profileActions';
 
 /** Context */
 import { ModalContext } from '../../widgets/p-modal/p-modal-context';
@@ -27,18 +32,31 @@ const ProfileInfo = () => {
         setstateIsFollowing(isFollowing);
     }, [isFollowing])
 
-    const handleFollow = () => {
-        dispatch(followUser(profile.id))
-            .then(() => {
-                setstateIsFollowing(!stateIsFollowing);
-                dispatch(addFollower(stateIsFollowing ? -1: 1));
-                if ( ! stateIsFollowing) {
-                    context.notify.success(`You have successfully followed ${profile.username}`)
-                } else {
-                    context.notify.success(`You have successfully unfollowed ${profile.username}`)
-                }
-            })
-            .catch(() => context.notify.serverError())
+    const handleFollow = async () => {
+        const orig = {
+            totalFollowers: totalFollowers,
+            totalFollowing: totalFollowing,
+            isFollowing: stateIsFollowing
+        }
+        try {
+            setstateIsFollowing(!stateIsFollowing);
+            dispatch(addFollower(stateIsFollowing ? -1: 1));
+            const res = await dispatch(followUser(profile.id))
+            dispatch(setFollowersCount(res.followerCount))
+            dispatch(setFollowingCount(res.followingCount))
+            if ( ! stateIsFollowing) {
+                context.notify.success(`You have successfully followed ${profile.username}`)
+            } else {
+                context.notify.success(`You have successfully unfollowed ${profile.username}`)
+            }
+
+        } catch (e) {
+            // Reset state on fail
+            dispatch(setFollowersCount(orig.totalFollowers));
+            dispatch(setFollowingCount(orig.totalFollowing));
+            setstateIsFollowing(isFollowing);
+            context.notify.serverError();
+        }
     }
 
     const renderBody = () => (

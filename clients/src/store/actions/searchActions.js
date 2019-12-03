@@ -11,7 +11,7 @@ export const apiSearch = (searchText) => async dispatch => {
 
 export const apiSearchUsers = (searchText, page = 1) => async dispatch => {
     try {
-        const res = await search(`/search/users/${searchText}.json?page=${page}`);
+        const res = await search(`/api/search/users?text=${searchText}&page=${page}`);
         return Promise.resolve(res);
     } catch (e) {
         return Promise.reject(e);
@@ -20,7 +20,7 @@ export const apiSearchUsers = (searchText, page = 1) => async dispatch => {
 
 export const apiSearchPosts = (searchText, page = 1) => async dispatch => {
     try {
-        const res = await search(`/search/posts/${searchText}.json?page=${page}`);
+        const res = await search(`/api/search/posts?text=${searchText}&page=${page}`);
         return Promise.resolve(res);
     } catch (e) {
         return Promise.reject(e);

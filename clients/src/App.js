@@ -44,7 +44,6 @@ if (localStorage.jwtToken) {
             window.location.href = '/login'
         }
     } catch (e) {
-        console.error(e);
         store.dispatch(logoutUser());
         window.location.href = '/login'
     }

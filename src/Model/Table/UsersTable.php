@@ -407,6 +407,25 @@ class UsersTable extends Table
     }
 
     /**
+     * Counts the total number of recommended users of the given user
+     * 
+     * @param int $userId
+     */
+    public function countRecommendedUsers(int $userId)
+    {
+        $subquery = $this->Followers->find()
+            ->select(['following_id'])
+            ->where(['user_id' => $userId]);
+
+        return $this->find()
+            ->where([
+                'id NOT IN' => $subquery,
+                'id <>' => $userId
+            ])
+            ->count();
+    }
+
+    /**
      * Fetches users that is not yet followed by the user given
      * 
      * @param int $userId - users.id

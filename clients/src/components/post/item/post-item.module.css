@@ -95,6 +95,23 @@
     margin: 0 0.175rem;
 }
 
+.commentsTitle {
+    padding: 0.5rem 2rem;
+    font-weight: 500;
+    letter-spacing: 1px;
+    margin-bottom: 0.5rem;
+    text-transform: uppercase;
+    text-align: center;
+    border-top: 1px solid rgba(0, 0, 0, 0.15);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.15);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
+}
+
+.comments {
+    max-height: 30rem;
+    overflow-y: auto;
+}
+
 .closeComment {
     padding: 0.5rem 0;
     text-align: center;

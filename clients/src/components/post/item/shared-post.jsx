@@ -36,9 +36,9 @@ const SharedPost = ({
                 avatarUrl={avatarUrl}
                 created={created}
             />
-            <div className={styles.sharedPostBody}>
+            {!!body && <div className={styles.sharedPostBody}>
                 {body}
-            </div>
+            </div>}
         </div>
     )
 }

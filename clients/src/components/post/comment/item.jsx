@@ -1,6 +1,6 @@
 import React from 'react';
+import moment from 'moment';
 import PropTypes from 'prop-types';
-import { Link } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import styles from './post-comment.module.css';
 
@@ -10,6 +10,7 @@ import CommentDelete from './delete';
 
 /** Consumers */
 import { ModalConsumer } from '../../widgets/p-modal/p-modal-context';
+import Username from '../../widgets/username';
 
 const CommentItem = ({
     id,
@@ -25,34 +26,36 @@ const CommentItem = ({
 
     return (
         <div className={styles.commentItem}>
-            <div className={styles.itemBody}>
+            <div className={styles.itemHeader}>
                 <div className={styles.profileImg}>
                     <ProfileImage
                         size={24}
                         src={avatarUrl}
                     />
                 </div>
-                <div className="username">
-                    <Link to={`/profiles/${username}`}>
-                        @{username}&nbsp;
-                    </Link>
-                </div>
-                <div className={styles.commentBody}>
-                    {body}
-                </div>
+                <Username username={username}/>
+                <span className={styles.time}>
+                    &nbsp;
+                    &#8226;
+                    &nbsp;
+                    {moment(created).fromNow()}
+                </span>
                 {Number(loggedIn.id) === userId && <ModalConsumer>
                     {({ showModal, hideModal }) => (
-                        <div className={styles.deleteBtn}
-                            onClick={() => showModal(CommentDelete, {
-                                id,
-                                onRequestClose: hideModal,
-                                onRequestSuccess: reloadPost
-                            })}
-                        >
-                            <i className="fa fa-trash"/>
+                        <div className={styles.deleteBtn}>
+                            <i className="fa fa-trash"
+                                onClick={() => showModal(CommentDelete, {
+                                    id,
+                                    onRequestClose: hideModal,
+                                    onRequestSuccess: reloadPost
+                                })}
+                            />
                         </div>
                     )}
                 </ModalConsumer>}
+            </div>
+            <div className={styles.commentBody}>
+                {body}
             </div>
         </div>
     );

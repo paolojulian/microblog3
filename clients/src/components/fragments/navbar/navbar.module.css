@@ -45,12 +45,8 @@ nav.top ul {
 }
 
 .search {
-    position: absolute;
-    left: 50%;
-    top: 50%;
-    transform: translate(-50%, -50%);
-    flex: 1;
-    display: block;
+    position: relative;
+    margin: 0 1rem;
     max-width: 100%;
 }
 
@@ -61,12 +57,14 @@ nav.top ul {
     border-radius: 5px;
 }
 
+.notification {
+    position: relative;
+}
+
 .searchList {
     position: absolute;
     top: 2rem;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 30rem;
+    width: 100%;
     max-width: 100%;
     box-shadow: 1px 0 5px rgba(0, 0, 0, 0.25);
 
@@ -101,10 +99,6 @@ nav.top ul {
 @media screen and (min-width: 1000px) {
     .logo {
         display: block;
-        position: absolute;
-        left: 1rem;
-        top: 50%;
-        transform: translateY(-50%);
     }
 
     .search input {
@@ -114,7 +108,7 @@ nav.top ul {
     nav.top ul {
         height: 100%;
         display: flex;
-        justify-content: flex-end;
+        justify-content: center;
         align-items: center;
     }
 

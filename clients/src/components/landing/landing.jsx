@@ -5,7 +5,13 @@ import styles from './landing.module.css';
 import WithNavbar from '../hoc/with-navbar';
 
 /** Redux */
-import { getProfile, fetchFollowCount, fetchNotFollowed } from '../../store/actions/profileActions';
+import {
+    getProfile,
+    fetchFollowCount,
+    fetchNotFollowed,
+    clearProfile
+} from '../../store/actions/profileActions';
+
 import { getPostsForLanding } from '../../store/actions/postActions';
 import { CLEAR_POSTS } from '../../store/types';
 
@@ -29,9 +35,9 @@ const Landing = () => {
         const init = async () => {
             try {
                 setLoading(true);
+                dispatch(fetchNotFollowed());
                 await fetchHandler();
                 const user = await dispatch(getProfile());
-                dispatch(fetchNotFollowed());
                 dispatch(fetchFollowCount(user.username));
             } catch (e) {
                 setError(true);
@@ -42,6 +48,7 @@ const Landing = () => {
         init();
         return () => {
             dispatch({ type: CLEAR_POSTS })
+            dispatch(clearProfile());
         }
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [refreshToken])

@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import styles from './v-notification-item.module.css';
-import { Link } from 'react-router-dom';
+import { withRouter } from 'react-router-dom';
 
 /** Components */
 import ProfileImage from '../profile-image';
@@ -15,8 +15,14 @@ const VNotificationItem = ({
     postId,
     showCloseBtn,
     onRead,
-    onClose
+    onClose,
+    history,
 }) => {
+
+    const handleClose = useCallback(e => {
+        e.stopPropagation();
+        onClose(index);
+    }, [index, onClose])
 
     let link;
 
@@ -52,29 +58,36 @@ const VNotificationItem = ({
                 return '';
         }
         return (
-            <Link to={link} onClick={() => onRead(notificationId, index)}>
-                <span>{text}</span>
-            </Link>
+            <span>{text}</span>
         )
     }
 
+    const handleClick = e => {
+        if (e) {
+            e.stopPropagation();
+            e.preventDefault();
+        }
+        history.push(link);
+        onRead(notificationId, index)
+    }
+
     return (
-        <div className={styles.body}>
+        <div className={styles.body}
+            onClick={handleClick}
+        >
             <ProfileImage
                 src={avatarUrl}
                 size={32}
             />
             <div className={styles.info}>
-                <Username username={username}
-                    onClick={() => onRead(notificationId, index)}
-                />
+                <Username username={username}/>
                 <div className={styles.message}>
                     {message()}
                 </div>
             </div>
             {showCloseBtn && <div className={styles.close}
                 type="button"
-                onClick={() => onClose(index)}
+                onClick={handleClose}
             >
                 &times;
             </div>}
@@ -87,4 +100,4 @@ VNotificationItem.defaultProps = {
     onClose: () => {}
 }
 
-export default VNotificationItem
+export default withRouter(VNotificationItem);

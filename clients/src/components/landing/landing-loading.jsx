@@ -34,6 +34,46 @@ const Post = () => (
 
 const Right = () => (
     <div className={styles.right}>
+        <div className={styles.rightHeader}>
+
+        </div>
+        <div className={styles.rightBody}>
+            <div className={styles.user}>
+                <RoundedMock size="36px"/>
+                <div className={styles.postTitle}>
+                    <TextMock/>
+                    <TextMock/>
+                </div>
+            </div>
+            <div className={styles.user}>
+                <RoundedMock size="36px"/>
+                <div className={styles.postTitle}>
+                    <TextMock/>
+                    <TextMock/>
+                </div>
+            </div>
+            <div className={styles.user}>
+                <RoundedMock size="36px"/>
+                <div className={styles.postTitle}>
+                    <TextMock/>
+                    <TextMock/>
+                </div>
+            </div>
+            <div className={styles.user}>
+                <RoundedMock size="36px"/>
+                <div className={styles.postTitle}>
+                    <TextMock/>
+                    <TextMock/>
+                </div>
+            </div>
+            <div className={styles.user}>
+                <RoundedMock size="36px"/>
+                <div className={styles.postTitle}>
+                    <TextMock/>
+                    <TextMock/>
+                </div>
+            </div>
+        </div>
     </div>
 )
 
@@ -58,6 +98,7 @@ const LandingLoading = () => {
         <div
             style={{ visibility: mounted ? 'visible': 'hidden' }}
             className={styles.landing}>
+            <div className={styles.overlay}></div>
             <Profile/>
             <div className={styles.container}>
                 <Post/>

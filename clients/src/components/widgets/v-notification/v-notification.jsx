@@ -28,11 +28,13 @@ const VNotification = () => {
             return;
         }
         closeWebsocket();
+        return () => {
+            closeWebsocket();
+        }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [isAuthenticated])
 
     const connectWebSocket = (userId) => {
-        let websocket = null;
         if (process.env.NODE_ENV === 'production') {
             websocket = new WebSocket(`ws://dev1.ynsdev.pw:4567?id=${userId}`);
         } else {
@@ -50,7 +52,7 @@ const VNotification = () => {
         websocket.onclose = (e) => {
             setTimeout(() => {
                 connectWebSocket(userId);
-            }, 10000);
+            }, 1000);
         };
         websocket.onerror = (err) => {
             if (process.env.NODE_ENV !== 'production') {
@@ -80,7 +82,10 @@ const VNotification = () => {
             });
     }
 
-    const handleOnClose = (index) => {
+    const handleOnClose = (e, index) => {
+        if (e) {
+            e.stopPropagation();
+        }
        dispatch(removePopupNotifications(index));
     }
 
@@ -91,19 +96,24 @@ const VNotification = () => {
             {popupNotifications.map((notification, i) => {
                 try {
                     return (
-                        <div className={styles.notification}>
+                        <div className={styles.notification} key={i}>
                             <VNotificationItem
-                                key={i}
                                 index={i}
                                 notificationId={notification.id}
                                 type={notification.type}
                                 postId={notification.postId}
                                 username={notification.user.username}
                                 avatarUrl={notification.user.avatar_url}
-                                showCloseBtn={true}
                                 onRead={handleOnRead}
                                 onClose={handleOnClose}
                                 />
+
+                            <div className={styles.close}
+                                type="button"
+                                onClick={e => handleOnClose(e, i)}
+                            >
+                                &times;
+                            </div>
                         </div>
                     )
                 } catch (e) {

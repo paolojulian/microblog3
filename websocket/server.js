@@ -61,6 +61,10 @@ const websocketRequest = request => {
         console.log(`New Connection ${id}`)
         // save the connection for future reference
         clients[Number(id)] = connection;
+
+        connection.on('close', function(reasonCode, description) {
+            console.log((new Date()) + ' Peer ' + connection.remoteAddress + ' disconnected.');
+        });
     } catch (e) {
         console.log('Unable to start a connection');
         console.error(e);

@@ -12,7 +12,6 @@ export const loginUser = (userCredentials, history) => async dispatch => {
     setTokenToAuthHeader(token);
     const decoded = jwtDecode(token);
     dispatch(setCurrentUser(decoded));
-    return history.push("/landing");
 }
 
 export const registerUser = (user, history) => async dispatch => {

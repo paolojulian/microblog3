@@ -72,7 +72,7 @@ FormTextArea.propTypes = {
     disabled: PropTypes.bool,
     theme: PropTypes.string,
     rows: PropTypes.number,
-    submitOnEnter: PropTypes.func
+    submitOnEnter: PropTypes.any
 }
 
 FormTextArea.defaultProps = {

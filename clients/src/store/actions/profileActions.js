@@ -1,11 +1,12 @@
 import axios from 'axios';
 import { search } from '../../utils/search';
 import {
-    SET_NOT_FOLLOWED,
     SET_PROFILE,
     TOGGLE_LOADING_PROFILE,
     ADD_FOLLOWING,
     ADD_FOLLOWER,
+    RECOMMENDED,
+    PROFILES,
     FOLLOW
 } from '../types';
 
@@ -76,6 +77,9 @@ export const uploadProfileImg = (img) => async dispatch => {
 export const followUser = (userId) => async dispatch => {
     try {
         const res = await axios.post(`/api/users/${userId}/follow`);
+        if (res.data.status !== 201) {
+            throw new Error('Invalid Status');
+        }
         return Promise.resolve(res.data.data);
     } catch (e) {
         return Promise.reject(e);
@@ -177,10 +181,17 @@ export const fetchFollowCount = (username) => async dispatch => {
  */
 export const fetchNotFollowed = (page = 1) => async dispatch => {
     try {
-        const res = await axios.get(`/api/users/follow/recommended?pageNo=${page}`);
+        const res = await axios.get(`/api/users/follow/recommended?page=${page}`);
+        if (res.data.status !== 200) {
+            throw new Error();
+        }
         dispatch({
-            type: SET_NOT_FOLLOWED,
-            payload: res.data.data
+            type: RECOMMENDED.setList,
+            payload: res.data.data.list
+        });
+        dispatch({
+            type: RECOMMENDED.setTotalCount,
+            payload: res.data.data.totalCount
         });
         return Promise.resolve(res.data.data);
     } catch (e) {
@@ -232,4 +243,27 @@ export const addFollower = (n = 1) => dispatch => {
  */
 export const addFollowing = (n = 1) => dispatch => {
     dispatch({ type: ADD_FOLLOWING, payload: n })
+}
+
+/**
+ * Sets the total follower count
+ * @param n - number to add
+ */
+export const setFollowersCount = (n) => dispatch => {
+    dispatch({ type: FOLLOW.setFollowers, payload: n })
+}
+
+/**
+ * Sets the total following count
+ * @param n - number to add
+ */
+export const setFollowingCount = (n) => dispatch => {
+    dispatch({ type: FOLLOW.setFollowing, payload: n })
+}
+
+/**
+ * Resets the current profile
+ */
+export const clearProfile = () => dispatch => {
+    dispatch({ type: PROFILES.clearProfile })
 }

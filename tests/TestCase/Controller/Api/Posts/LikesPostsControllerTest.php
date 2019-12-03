@@ -15,7 +15,7 @@ class LikesPostsControllerTest extends ApiTestCase
 {
     use IntegrationTestTrait;
 
-    public $fixtures = ['app.Users', 'app.Posts'];
+    public $fixtures = ['app.Users', 'app.Posts', 'app.Likes'];
     protected $requireToken = true;
     protected $loggedInUser = 200002;
 
@@ -25,12 +25,12 @@ class LikesPostsControllerTest extends ApiTestCase
     public function testLikingPostWillToggleStatusInDB()
     {
         $this->patch($this->likePostURL . $this->postId);
-        $this->assertResponseCode(200);
+        $this->assertResponseOk();
         $likesModel = TableRegistry::getTableLocator()->get('Likes');
         $doesExists = $likesModel->exists([
             'post_id' => $this->postId,
             'user_id' => $this->loggedInUser
         ]);
-        $this->assertEquals($doesExists, true);
+        $this->assertEquals($doesExists, false);
     }
 }

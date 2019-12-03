@@ -26,7 +26,6 @@ const CommentCreate = ({
     const context = useContext(ModalContext);
     const comment = useRef('');
     const [errors, setErrors] = useState(initialError);
-    const [isLoading, setLoading] = useState(false);
 
     const handleSubmit = useCallback(e => {
         if (e) {
@@ -36,11 +35,10 @@ const CommentCreate = ({
         const form = {
             body: comment.current.value
         }
-        setLoading(true);
         dispatch(addComment(postId, form))
             .then(handleSuccess)
             .catch(handleError)
-            .then(() => setLoading(false));
+        // eslint-disable-next-line
     }, [comment])
 
     const handleSuccess = () => {

@@ -2,6 +2,7 @@
 namespace App\Controller\Api\Posts;
 
 use App\Controller\Api\AppController;
+use App\Model\Entity\Like;
 use Cake\Event\Event;
 
 /**
@@ -130,6 +131,10 @@ class PostsController extends AppController
         if ($post->hasErrors()) {
             return $this->responseUnprocessableEntity($post->errors());
         }
+
+        $this->loadComponent('PostHandler');
+        $this->PostHandler->notifyAfterShare($post);
+
         return $this->responseCreated($post);
     }
 
@@ -146,8 +151,14 @@ class PostsController extends AppController
         $this->request->allowMethod('patch');
         $postId = (int) $this->request->getParam('id');
         $userId = (int) $this->Auth->user('id');
-        $this->Posts->Likes->toggleLike($userId, $postId);
+        $like = $this->Posts->Likes->toggleLike($userId, $postId);
         $totalCount = $this->Posts->Likes->countByPost($postId);
+
+        if ($like instanceof Like) {
+            $this->loadComponent('PostHandler');
+            $this->PostHandler->notifyAfterLike($like);
+        }
+
         return $this->responseCreated(['totalCount' => $totalCount]);
     }
 
@@ -179,20 +190,24 @@ class PostsController extends AppController
      * 
      * @param int $postId - posts.id
      * 
-     * @return status created (201)
+     * @return int Comment Count
      */
     public function addComment()
     {
         $this->request->allowMethod('post');
         $postId = $this->request->getParam('id');
-        $result = $this->Posts->Comments->addCommentToPost(
+        $comment = $this->Posts->Comments->addCommentToPost(
             $postId,
             $this->Auth->user('id'),
             $this->request->getData()
         );
-        if ($result->hasErrors()) {
-            return $this->responseUnprocessableEntity($result->errors());
+
+        if ($comment->hasErrors()) {
+            return $this->responseUnprocessableEntity($comment->errors());
         }
+
+        $this->loadComponent('PostHandler');
+        $this->PostHandler->notifyAfterComment($comment);
 
         return $this->responseCreated([
             'commentCount' => $this->Posts->Comments->countPerPost($postId)

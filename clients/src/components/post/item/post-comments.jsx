@@ -4,7 +4,6 @@ import styles from './post-item.module.css';
 
 /** Utils */
 import InitialStatus from '../../utils/initial-status';
-import Pager from '../../utils/pager';
 
 /** Redux */
 import { getCommentsByPost } from '../../../store/actions/postActions';
@@ -48,6 +47,7 @@ const PostComments = ({
         if (page) {
             fetchComments(page);
         }
+        // eslint-disable-next-line
     }, [page])
 
     const renderStatus = () => {
@@ -72,17 +72,22 @@ const PostComments = ({
                 }}
                 onRequestClose={onRequestClose}
             />
-            <PostComment
-                comments={comments}
-                reloadPost={() => {
-                    setPage(false);
-                    setPage(1);
-                }}
-            />
-            <LoadMore
-                totalLeft={totalLeft}
-                onRequestLoad={() => setPage(page + 1)}
+            {comments.length > 0 && <div className={styles.commentsTitle}>
+                Comments:
+            </div>}
+            <div className={styles.comments}>
+                <PostComment
+                    comments={comments}
+                    reloadPost={() => {
+                        setPage(false);
+                        setPage(1);
+                    }}
                 />
+                <LoadMore
+                    totalLeft={totalLeft}
+                    onRequestLoad={() => setPage(page + 1)}
+                    />
+            </div>
             <div className={styles.status}>
                 {renderStatus()}
             </div>

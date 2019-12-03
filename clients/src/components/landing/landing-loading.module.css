@@ -2,6 +2,7 @@
     position: relative;
     width: 100%;
     height: auto;
+    opacity: 0.75;
 }
 
 .container {
@@ -85,7 +86,24 @@
         transform: translateX(-50%);
         background-color: var(--grey);
         width: 20rem;
-        height: 30.5rem;
         max-width: 70%;
+    }
+
+    .rightHeader {
+        height: 3rem;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.30);
+    }
+
+    .rightBody {
+        padding: 1rem 1.5rem;
+    }
+
+    .user {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 3rem;
+        margin: 1rem 0;
+        width: 100%;
     }
 }

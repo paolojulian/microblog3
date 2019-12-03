@@ -1,10 +1,10 @@
 import {
     SET_NOT_FOLLOWED,
     SET_PROFILE,
-    CLEAR_CURRENT_PROFILE,
     TOGGLE_LOADING_PROFILE,
     ADD_FOLLOWER,
     ADD_FOLLOWING,
+    PROFILES,
     FOLLOW
 } from '../types';
 
@@ -42,12 +42,22 @@ export default (state = initialState, action) => {
                 ...state,
                 isFollowing: !!action.payload
             }
+        case FOLLOW.setFollowers:
+            return {
+                ...state,
+                totalFollowers: action.payload
+            }
+        case FOLLOW.setFollowing:
+            return {
+                ...state,
+                totalFollowing: action.payload
+            }
         case SET_NOT_FOLLOWED:
             return {
                 ...state,
                 notFollowed: action.payload
             }
-        case CLEAR_CURRENT_PROFILE:
+        case PROFILES.clearProfile:
             return initialState
         case ADD_FOLLOWER:
             return {

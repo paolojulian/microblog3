@@ -36,9 +36,9 @@ const Navbar = ({
     return (
         <>
             <nav className={styles.top}>
-                <SearchBar/>
-                <div className={styles.logo}>LaCosina</div>
                 <ul className={styles.container}>
+                    <div className={styles.logo}>LaCosina</div>
+                    <SearchBar/>
                     <li
                         className={styles.home}
                         onClick={reloadOrNavigate}>

@@ -4,9 +4,13 @@ import { NOTIFICATION } from '../types'
 /**
  * Fetch the unread notifications of the user
  */
-export const fetchUnreadNotifications = (page = 1, limit = 3) => async dispatch => {
+export const fetchUnreadNotifications = (page = 1, limit = 5) => async dispatch => {
     try {
-        const res = await axios.get(`/notifications/unread.json?page=${page}&limit=${limit}`);
+        const params = {
+            page,
+            limit
+        };
+        const res = await axios.get(`/api/notifications/unread`, { params });
         if (page === 1) {
             dispatch({
                 type: NOTIFICATION.set,
@@ -29,15 +33,18 @@ export const fetchUnreadNotifications = (page = 1, limit = 3) => async dispatch 
  */
 export const countUnreadNotifications = () => async dispatch => {
     try {
-        return Promise.resolve(1);
-        const res = await axios.get('/notifications/unreadCount.json');
+        const res = await axios.get('/api/notifications/unread/count');
         dispatch({
             type: NOTIFICATION.setCount,
             payload: res.data.data
         });
         return Promise.resolve(res.data.data);
     } catch (e) {
-        return Promise.reject(e)
+        dispatch({
+            type: NOTIFICATION.setCount,
+            payload: 0
+        });
+        return Promise.resolve(0);
     }
 }
 
@@ -46,10 +53,13 @@ export const countUnreadNotifications = () => async dispatch => {
  */
 export const readNotification = (id) => async dispatch => {
     try {
-        const res = await axios.post(`/notifications/read/${id}.json`);
+        const res = await axios.post(`/api/notifications/read/${id}`);
+        if (res.data.status !== 200) {
+            throw new Error('Invalid status');
+        }
         return await Promise.resolve(res.data.data);
     } catch (e) {
-        return await Promise.reject()
+        return await Promise.reject(e)
     }
 }
 
@@ -58,10 +68,13 @@ export const readNotification = (id) => async dispatch => {
  */
 export const readAllNotification = () => async dispatch => {
     try {
-        const res = await axios.post(`/notifications/readAll.json`);
+        const res = await axios.post(`/api/notifications/read`);
+        if (res.data.status !== 200) {
+            throw new Error('Invalid Status');
+        }
         return await Promise.resolve(res.data.data);
     } catch (e) {
-        return await Promise.reject()
+        return await Promise.reject(e)
     }
 }
 

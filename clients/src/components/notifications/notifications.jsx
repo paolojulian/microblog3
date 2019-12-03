@@ -1,14 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { withRouter } from 'react-router-dom';
 import styles from './notifications.module.css';
 
 /** Redux */
 import {
     fetchUnreadNotifications,
     readNotification,
-    addNotificationCount,
-    countUnreadNotifications
+    addNotificationCount
 } from '../../store/actions/notificationActions';
 
 /** Utils */
@@ -25,47 +23,37 @@ const EmptyNotifications = () => (
 )
 
 const Notifications = ({
-    onRequestClose
+    onRequestClose,
 }) => {
     const dispatch = useDispatch();
-    const [status, setStatus] = useState(InitialStatus);
-    const { notifications, notificationCount } = useSelector(state => state.notification);
+    const [status, setStatus] = useState(InitialStatus.LOADING);
+    const { notifications } = useSelector(state => state.notification);
     const [pager, setPager] = useState(Pager);
-    const [isMounted, setMounted] = useState(false);
+    const [isLastPage, setIsLastPage] = useState(false);
 
     useEffect(() => {
-        const init = async () => {
+        let mounted = true;
+        const fetchNotifications = async () => {
             try {
-                await handleFetch();
-                setMounted(true);
+                const res = await dispatch(fetchUnreadNotifications(pager.page, 8));
+                if ( ! mounted) return;
+                if (res.length === 0) {
+                    return setIsLastPage(true);
+                }
+                setStatus({ ...InitialStatus.POST });
             } catch (e) {
                 setStatus({ ...InitialStatus.ERROR });
             }
         }
-        init();
-        // TODO Add if mounted cancel all setters
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [])
 
-    /**
-     * Handles the fetching of the data to be displayed
-     */
-    const handleFetch = async(pageNo = 1) => {
-        try {
-            setStatus({ ...InitialStatus.LOADING });
-            const notifications = await dispatch(fetchUnreadNotifications(pageNo, 10));
-            await dispatch(countUnreadNotifications());
-            setPager({ ...pager,
-                page: pageNo,
-                more: notificationCount - notifications.length
-            });
-            setStatus({ ...InitialStatus.POST });
-            return Promise.resolve(notifications);
-        } catch (e) {
-            setStatus({ ...InitialStatus.ERROR });
-            return Promise.reject(e);
+        if ( ! isLastPage) {
+            fetchNotifications();
         }
-    }
+        return () => {
+            mounted = false;
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [pager])
 
     const handleOnRead = (id) => {
         onRequestClose();
@@ -73,16 +61,16 @@ const Notifications = ({
             .then(() => dispatch(addNotificationCount(-1)))
     }
 
-    const renderNotifications = notifications.map(({ Notification, User }, i) => (
+    const renderNotifications = notifications.map((notification, i) => (
         <div className={styles.item} key={`vnotificationitem_${i}`}>
             <VNotificationItem
                 key={`notificationItem_${i}`}
                 index={i}
-                notificationId={Notification.id}
-                type={Notification.type}
-                postId={Notification.post_id}
-                username={User.username}
-                avatarUrl={User.avatar_url}
+                notificationId={notification.id}
+                type={notification.type}
+                postId={notification.post_id}
+                username={notification.user.username}
+                avatarUrl={notification.user.avatar_url}
                 onRead={handleOnRead}
                 />
         </div>
@@ -99,7 +87,7 @@ const Notifications = ({
         );
     }
 
-    if ( ! isMounted) {
+    if (status.loading) {
         return (
             <PModal
                 onRequestClose={onRequestClose}
@@ -114,7 +102,7 @@ const Notifications = ({
         <PModal
             enableScrollPaginate={true}
             pager={pager}
-            onScrollPaginate={handleFetch}
+            onScrollPaginate={page => setPager({ ...pager, page })}
             onRequestClose={onRequestClose}
             header="Notifications"
         >
@@ -123,4 +111,4 @@ const Notifications = ({
     );
 }
 
-export default withRouter(Notifications);
+export default Notifications;

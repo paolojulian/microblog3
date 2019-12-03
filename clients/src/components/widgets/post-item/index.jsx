@@ -5,7 +5,6 @@ import PCard from '../p-card';
 import ProfileImage from '../profile-image';
 import PostImage from '../post-image';
 import Username from '../username';
-import SharedPost from '../../post/item/shared-post';
 import PostHeader from '../../post/header';
 
 const postStyle = {

@@ -1,8 +1,12 @@
-import React from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { Link } from 'react-router-dom';
 
+/** Redux  */
+import { fetchNotFollowed } from '../../store/actions/profileActions';
+
+/** Components */
 import PCard from '../widgets/p-card/p-card';
 import ProfileImage from '../widgets/profile-image/profile-image';
 
@@ -59,19 +63,61 @@ const MutualUser = ({
     </div>
 )
 
+const perPage = 5;
+
 const PeopleYouMayKnow = () => {
-    const { notFollowed } = useSelector(state => state.profile);
+    const { list, totalCount } = useSelector(state => state.recommended);
+    const dispatch = useDispatch();
+    const [page, setPage] = useState(1);
+
+    /**
+     * Goes to prev page if is the first page
+     * go to the last page instead
+     */
+    const prevPage = useCallback(() => {
+        if (page <= 1) {
+            return setPage(Math.ceil(totalCount / perPage))
+        }
+        setPage(page - 1)
+        // eslint-disable-next-line
+    }, [page]);
+
+    /**
+     * Goes to the next page or if is last page
+     * will go to first page
+     */
+    const nextPage = useCallback(() => {
+        if (page * perPage >= totalCount) {
+            return setPage(1);
+        }
+        setPage(page + 1)
+        // eslint-disable-next-line
+    }, [page]);
+
+    /**
+     * Next page every 5 seconds
+     */
+    useEffect(() => {
+        let timeout = setTimeout(nextPage, 5000);
+        return () => {
+            clearTimeout(timeout)
+        }
+    }, [nextPage])
+
+    useEffect(() => {
+        dispatch(fetchNotFollowed(page));
+    }, [page, dispatch])
 
     return (
         <PCard size="fit"
             header={<Header/>}
         >
-            {notFollowed.length === 0 && (
+            {list.length === 0 && (
                 <div className="disabled">
                     No User/s Yet
                 </div>
             )}
-            {notFollowed.map((data, i) => {
+            {list.map((data, i) => {
                 let mutual = data && data.hasOwnProperty('mutual')
                     ? data.mutual
                     : 0
@@ -83,6 +129,24 @@ const PeopleYouMayKnow = () => {
                     />
                 )
             })}
+            {totalCount > 5 &&
+                <div style={{
+                    fontSize: '1.5rem',
+                    userSelect: 'none'
+                }}>
+                    <span
+                        style={{ cursor: 'pointer' }}
+                        onClick={prevPage}>
+                        &#171;
+                    </span>
+                    &nbsp;
+                    <span
+                        style={{ cursor: 'pointer' }}
+                        onClick={nextPage}>
+                        &#187;
+                    </span>
+                </div>
+            }
         </PCard>
     )
 }

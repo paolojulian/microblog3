@@ -14,6 +14,10 @@ export const SET_NOT_FOLLOWED = "SET_NOT_FOLLOWED";
 export const ADD_FOLLOWER = "ADD_FOLLOWER";
 export const ADD_FOLLOWING = "ADD_FOLLOWING";
 
+export const PROFILES = {
+    clearProfile: "CLEAR_CURRENT_PROFILE"
+}
+
 /** TODO Posts */
 export const SET_PAGE = "SET_PAGE";
 export const SET_POSTS = "SET_POSTS";
@@ -27,7 +31,14 @@ export const GET_POST_COMMENTS = "GET_POST_COMMENTS";
 /** TODO Follow */
 export const FOLLOW = {
     setFollow: "SET_FOLLOW",
-    setIsFollowing: "SET_IS_FOLLOWING"
+    setIsFollowing: "SET_IS_FOLLOWING",
+    setFollowers: "SET_FOLLOWERS",
+    setFollowing: "SET_FOLLOWING"
+}
+
+export const RECOMMENDED = {
+    setList: "SET_RECOMMENDED_LIST",
+    setTotalCount: "SET_RECOMMENDED_TOTALCOUNT"
 }
 
 /** Notifications */
