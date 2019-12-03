@@ -25,13 +25,14 @@ ___
 ## Dependencies and Libraries
 
 1. Composer
-    - JWT
-    - Soft Deletable
+    - [JWT | admad/cakephp-jwt-auth](https://github.com/ADmad/cakephp-jwt-auth)
+    - [SoftDelete](https://github.com/PGBI/cakephp3-soft-delete)
 
 2. Node
-    - WebSocket
-    - React
-    - Redux
+    - [WebSocket](https://github.com/websockets/ws)
+    - [React](https://reactjs.org/)
+    - [React Hooks](https://reactjs.org/docs/hooks-intro.html)
+    - [Redux](https://redux.js.org/)
 
 ___
 ## API
