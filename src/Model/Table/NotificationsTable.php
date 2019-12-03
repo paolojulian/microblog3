@@ -282,6 +282,10 @@ class NotificationsTable extends Table
             curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
             $jsonData = json_encode([
                 'id' => $notification->id,
+                'link' => null,
+                'message' => null,
+                'post_id' => $notification->post_id,
+                'user_id' => $notification->user_id,
                 'receiverId' => $notification->receiver_id,
                 'userId' => $notification->user_id,
                 'user' => $user,

@@ -57,6 +57,7 @@ export const readNotification = (id) => async dispatch => {
         if (res.data.status !== 200) {
             throw new Error('Invalid status');
         }
+        dispatch(removePopupNotifications(id));
         return await Promise.resolve(res.data.data);
     } catch (e) {
         return await Promise.reject(e)
@@ -122,9 +123,9 @@ export const addPopupNotifications = (notification) => dispatch => {
 /**
  * Remove a certain popup notification
  */
-export const removePopupNotifications = (index) => dispatch => {
+export const removePopupNotifications = (notificationId) => dispatch => {
     dispatch({
         type: NOTIFICATION.popup.remove,
-        payload: index
+        payload: notificationId
     })
 }

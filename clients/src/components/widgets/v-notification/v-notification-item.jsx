@@ -63,10 +63,6 @@ const VNotificationItem = ({
     }
 
     const handleClick = e => {
-        if (e) {
-            e.stopPropagation();
-            e.preventDefault();
-        }
         history.push(link);
         onRead(notificationId, index)
     }

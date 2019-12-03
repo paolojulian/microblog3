@@ -31,6 +31,7 @@ const PostComments = ({
         const fetchComments = async () => {
             try {
                 const res = await dispatch(getCommentsByPost(postId, page))
+
                 if (page === 1) {
                     setComments(res.list)
                     setTotalLeft(res.totalCount - res.list.length);
@@ -44,11 +45,11 @@ const PostComments = ({
                 setStatus({ ...InitialStatus, error: true })
             }
         }
-        if (page) {
+        if (page && !!postId) {
             fetchComments(page);
         }
         // eslint-disable-next-line
-    }, [page])
+    }, [page, postId])
 
     const renderStatus = () => {
         if (status.error) {

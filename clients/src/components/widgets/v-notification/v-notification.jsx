@@ -75,18 +75,18 @@ const VNotification = () => {
         dispatch(addNotificationCount())
     }
     const handleOnRead = (notificationId, index) => {
-        handleOnClose(index);
+        handleOnClose('', notificationId);
         dispatch(readNotification(notificationId))
             .then(() => {
                 dispatch(addNotificationCount(-1))
             });
     }
 
-    const handleOnClose = (e, index) => {
+    const handleOnClose = (e, notificationId) => {
         if (e) {
             e.stopPropagation();
         }
-       dispatch(removePopupNotifications(index));
+       dispatch(removePopupNotifications(notificationId));
     }
 
     return (
@@ -105,12 +105,11 @@ const VNotification = () => {
                                 username={notification.user.username}
                                 avatarUrl={notification.user.avatar_url}
                                 onRead={handleOnRead}
-                                onClose={handleOnClose}
                                 />
 
                             <div className={styles.close}
                                 type="button"
-                                onClick={e => handleOnClose(e, i)}
+                                onClick={e => handleOnClose(e, notification.id)}
                             >
                                 &times;
                             </div>

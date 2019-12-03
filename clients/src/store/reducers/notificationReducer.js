@@ -50,16 +50,20 @@ export default function(state = initialState, action) {
             return {...initialState}
 
         case NOTIFICATION.popup.remove:
-            let popupNotifications = [...state.popupNotifications];
-            popupNotifications.splice(action.payload, 1);
+            // let popupNotifications = [...state.popupNotifications];
+            let popupNotifications = state.popupNotifications.filter(item => {
+                return Number(item.id) !== Number(action.payload);
+            })
             return {
                 ...state,
                 popupNotifications
             }
         case NOTIFICATION.popup.add:
-            console.log(state);
             if (state.notifications.length >= 5) {
                 state.notifications.splice(-1, 1);
+            }
+            if (state.popupNotifications.length >= 5) {
+                state.popupNotifications.splice(-1, 1);
             }
             return {
                 ...state,

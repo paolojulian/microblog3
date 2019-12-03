@@ -40,3 +40,9 @@
     word-break: break-all;
     color: #333333;
 }
+
+.time {
+    font-size: 0.75rem;
+    font-style: italic;
+    color: var(--black-disabled);
+}
