@@ -65,10 +65,10 @@ class AuthsController extends AppController
         try {
             // TODO add a page if mail failed,
             // should display resend link
-            // $this->UserHandler->sendActivationMail(
-            //     $this->request->getData(),
-            //     Router::url('/api/auth/activate', true)
-            // );
+            $this->UserHandler->sendActivationMail(
+                $this->request->getData(),
+                Router::url('/api/auth/activate', true)
+            );
         } catch (Exception $e) {
             throw new InternalErrorException(__($e->getMessage()));
         }
