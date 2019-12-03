@@ -57,6 +57,12 @@ nav.top ul {
     border-radius: 5px;
 }
 
+.usersLabel,
+.postsLabel {
+    background-color: #eaeaea;
+    padding: 0.375rem 0;
+}
+
 .notification {
     position: relative;
 }

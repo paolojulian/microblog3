@@ -140,7 +140,6 @@ const SearchBar = ({ history, location }) => {
                         onChange={e => handleChange(e.target.value)}
                         onKeyPress={handleKeyPress}
                         autoComplete="off"
-                        onPaste={e => e.preventDefault()}
                         />
                 </form>
                 <div className={classNames(styles.searchList, {
@@ -161,8 +160,18 @@ const SearchBar = ({ history, location }) => {
                             </div>
                         }
                         {noData && <div className="alert-disabled">No data found.</div>}
-                        {status.post && users.length > 0 && renderUsers()}
-                        {status.post && posts.length > 0 && renderPosts()}
+
+                        {status.post && users.length > 0 &&
+                        <div className={styles.users}>
+                            <div className={styles.usersLabel}>Users</div>
+                            {renderUsers()}
+                        </div>}
+
+                        {status.post && posts.length > 0 &&
+                        <div className={styles.posts}>
+                            <div className={styles.postsLabel}>Posts</div>
+                            {renderPosts()}
+                        </div>}
                     </div>
                     {hasMoreData && <Link to={`/search?searchText=${getSearchText()}`}>
                         <div className={styles.viewMore}>
