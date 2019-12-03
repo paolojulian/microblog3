@@ -61,7 +61,7 @@ const PFollowModal = ({
     const renderBody = () => {
         if (isError) return <div className="disabled">Oops. Something went wrong</div>
         if (isLoading) return <PLoader/>
-        if ( ! users && users.length === 0) return <div className="disabled">No User/s</div>
+        if (users.length === 0) return <div className="disabled">No User/s</div>
         return (
             <>
                 {users.map(({ user, ...item }, i) => {
