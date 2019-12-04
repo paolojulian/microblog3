@@ -1,5 +1,6 @@
 const http = require('http');
 const url = require('url');
+const queryString = require('query-string');
 const WebSocketServerPort = 4567;
 const WebSocket = require('ws');
 let server = http.createServer((request, response) => {
@@ -48,25 +49,28 @@ global.clients = {}; // store the connections
 const wssNotif = new WebSocket.Server({ noServer: true });
 const wssChat = new WebSocket.Server({ noServer: true });
 
-wssNotif.on('connection', ws => {
+wssNotif.on('connection', (ws, request, { id }) => {
+    notifClients[Number(id)] = ws;
 })
 
-wssChat.on('connection', (ws, request) => {
-    console.log(request);
-    const { query: { id }} = url.parse(request.resource, true);
-    console.log(id);
+wssChat.on('connection', (ws, request, { id }) => {
+    chatClients[Number(id)] = ws;
+    ws.on('message', data => {
+        messageUser(JSON.parse(data));
+    })
 })
 
 server.on('upgrade', function upgrade(request, socket, head) {
     const pathname = url.parse(request.url).pathname;
+    const { query } = queryString.parseUrl(request.url);
 
-    if (pathname === '/notif') {
+    if (pathname === '/') {
         wssNotif.handleUpgrade(request, socket, head, function done(ws) {
-            wssNotif.emit('connection', ws, request);
+            wssNotif.emit('connection', ws, request, query);
         });
     } else if (pathname === '/chat') {
         wssChat.handleUpgrade(request, socket, head, function done(ws) {
-            wssChat.emit('connection', ws, request);
+            wssChat.emit('connection', ws, request, query);
         });
     } else {
         socket.destroy();
@@ -107,14 +111,18 @@ server.listen(WebSocketServerPort, () => {
 
 const notifyUser = (data) => {
     console.log(data.receiverId);
-	if (clients[Number(data.receiverId)]) {
-		clients[Number(data.receiverId)].sendUTF(JSON.stringify(data))
+	if (notifClients[Number(data.receiverId)]) {
+		notifClients[Number(data.receiverId)].send(JSON.stringify(data))
 	}
 }
 
 const messageUser = (data) => {
-    const receiverId = Number(data.receiverId);
-    if (clients[receiverId]) {
-        clients[receiverId].sendUTF(data);
+    const receiver_id = Number(data.receiver_id);
+    if ( ! chatClients[receiver_id]) return;
+
+    if (chatClients[receiver_id].readyState !== chatClients[receiver_id].OPEN) {
+        delete chatClients.receiver_id;
+        return;
     }
+    chatClients[receiver_id].send(JSON.stringify(data));
 }

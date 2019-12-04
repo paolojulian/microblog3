@@ -2,7 +2,6 @@
 namespace App\Controller\Api;
 
 use App\Controller\Api\AppController;
-use Cake\ORM\TableRegistry;
 use Cake\Http\Exception\NotFoundException;
 
 /**
@@ -35,7 +34,6 @@ class ChatsController extends AppController
     {
         $this->request->allowMethod('get');
         $result = $this->Chats->fetchUsersToMessage($this->Auth->user('id'));
-        // $result = $query->disableHydration()->toArray();
         return $this->responseData($result);
     }
 

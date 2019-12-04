@@ -4,6 +4,7 @@ namespace App\Model\Table;
 use Cake\ORM\Query;
 use Cake\ORM\RulesChecker;
 use Cake\ORM\Table;
+use Cake\Datasource\ConnectionManager;
 use Cake\Validation\Validator;
 use Cake\Network\Exception\InternalErrorException;
 
@@ -126,38 +127,18 @@ class ChatsTable extends Table
      * Fetches Users who has message with current user
      *
      * @param int $userId - current user logged in
+     * @param int $page - page number
+     * @param int $perPage - number of data per page
      *
      * @return object Cake\ORM\Query
      */
-    public function fetchUsersToMessage(int $userId) {
-        /**
-         * SELECT users
-         * FROM users
-         * LEFT JOIN chats
-         * ON (users.id = chats.user_id OR users.id = chats.receiver_id)
-         * ORDER BY chats.created DESC
-         */
-        return $this->Users->Followers->fetchFollowers($userId);
-        return $this->Users->find()
-            ->select([
-                'Users.id',
-                'Users.username',
-                'Users.avatar_url',
-            ])
-            ->leftJoinWith('Chats', function ($q) use ($userId) {
-                return $q
-                    ->select(['message', 'receiver_id', 'user_id'])
-                    ->where([
-                        'OR' => [
-                            'user_id' => $userId,
-                            'receiver_id' => $userId
-                        ]
-                    ]);
-            })
-            ->order([
-                'Chats.created' => 'desc',
-                'Users.created' => 'desc'
-            ])
-            ->group(['Users.id']);
+    public function fetchUsersToMessage(int $userId, int $page = 1, int $perPage = 20) {
+        $this->connection = ConnectionManager::get('default');
+        $offset = ($page - 1) * $perPage;
+        $results = $this->connection->execute(
+            'CALL fetchUsersToChat(?, ?, ?)', 
+            [$userId, $perPage, $offset]
+        )->fetchAll('assoc');
+        return $results;
     }
 }

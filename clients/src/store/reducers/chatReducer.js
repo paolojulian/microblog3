@@ -1,6 +1,7 @@
 import { CHAT } from '../types';
 
 const initialState = {
+    ws: null,
     users: [],
     userInfo: {},
     messages: [],
@@ -13,6 +14,19 @@ const initialState = {
 export default function(state = initialState, action) {
 
     switch (action.type) {
+
+        case CHAT.subscribe:
+            return {
+                ...state,
+                ws: new WebSocket(action.payload)
+            }
+
+        case CHAT.unsubscribe:
+            if (state.ws !== null) {
+                state.ws.onclose = () => {}
+                state.ws.close();
+            }
+            return { ...initialState }
 
         case CHAT.setUserInfo:
             return {
@@ -31,15 +45,16 @@ export default function(state = initialState, action) {
          * Sets the user passed as the first one in the array
          */
         case CHAT.setUserToFirst:
-            if ( ! Number.isInteger(action.payload.user.id)) {
+            if ( ! Number.isInteger(action.payload.id)) {
                 throw new Error("Invalid User ID passed");
             }
 
+            action.payload.new = true;
             // Remove user from list if he is in the list
             let newUsers = state.users.filter(user => {
-                return user.id !== action.payload.user.id
+                return Number(user.id) !== Number(action.payload.id)
             })
-            newUsers = [action.payload.user, ...newUsers];
+            newUsers = [action.payload, ...newUsers];
 
             return {
                 ...state,

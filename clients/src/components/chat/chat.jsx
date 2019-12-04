@@ -7,10 +7,15 @@ import { useDispatch, useSelector } from 'react-redux';
 
 /** Redux */
 import {
+    addMessageToFirst,
+    setUserToFirst,
     fetchUsersToChatAPI,
     fetchMessagesAPI,
-    addMessageAPI
+    addMessageAPI,
+    subscribeToChatAPI,
+    unsubscribeToChatAPI,
 } from '../../store/actions/chatActions';
+import { CHAT } from '../../store/types';
 
 /** HOC */
 import withNavbar from '../hoc/with-navbar';
@@ -19,12 +24,14 @@ const Users = ({ history }) => {
     const dispatch = useDispatch();
     const { users } = useSelector(state => state.chat);
     const [page, setPage] = useState(1);
-    const [isLast, setIsLast] = useState(false);
+    // const [isLast, setIsLast] = useState(false);
     const [isError, setError] = useState(false);
 
     const handleClick = useCallback(async (id) => {
+        history.push(`/chat`);
         history.push(`/chat?id=${id}`);
-    });
+        // eslint-disable-next-line
+    }, []);
 
     const fetchHandler = useCallback(async () => {
         try {
@@ -32,10 +39,12 @@ const Users = ({ history }) => {
         } catch (e) {
             setError(true);
         }
+        // eslint-disable-next-line
     }, [page])
 
     useEffect(() => {
         fetchHandler()
+        setPage(1);
     }, [fetchHandler]);
 
     if (isError) {
@@ -47,12 +56,16 @@ const Users = ({ history }) => {
             <div className={styles.searchUser}>Search</div>
             <div className={styles.users}>
                 {users.map((item, i) => (
-                    <div className={styles.user}
+                    <div className={classnames(styles.user, {
+                        [styles.new]: !!item.new
+                    })}
                         key={i}
-                        onClick={() => handleClick(item.user_id)}
+                        onClick={() => handleClick(item.id)}
                     >
-                        {item.user.username}
-                        {/* {`${user.first_name} ${user.last_name}`} */}
+                        {item.username}
+                        <div className="disabled">
+                            {item.message}
+                        </div>
                     </div>
                 ))}
             </div>
@@ -62,9 +75,33 @@ const Users = ({ history }) => {
 
 const Messages = () => {
     const dispatch = useDispatch();
-    const { userInfo, messages } = useSelector(state => state.chat);
+    const { userInfo, messages, ws } = useSelector(state => state.chat);
     const { user } = useSelector(state => state.auth);
     const [message, setMessage] = useState('');
+
+    useEffect(() => {
+        if (ws === null) return;
+        if ( ! userInfo) return;
+
+        ws.onmessage = e => {
+            const data = JSON.parse(e.data);
+            dispatch(setUserToFirst(data.user));
+            if (Number(data.user_id) === Number(userInfo.id)) {
+                dispatch(addMessageToFirst(data));
+            }
+        }
+
+        ws.onclose = (e) => {
+            setTimeout(() => {
+                subscribeToChatAPI(user.id);
+            }, 1000);
+        };
+
+        ws.onerror = (err) => {
+            dispatch({ type: CHAT.unsubscribe });
+            dispatch({ type: CHAT.setError });
+        };
+    }, [ws, userInfo])
 
     const handleSubmit = useCallback(async e => {
         if (e) {
@@ -79,10 +116,18 @@ const Messages = () => {
         setMessage('');
         try {
             await dispatch(addMessageAPI(data));
+            if (ws !== null) {
+                const messageData = {
+                    ...data,
+                    user
+                }
+                ws.send(JSON.stringify(messageData));
+            }
         } catch (e) {
         }
 
-    }, [message]);
+        // eslint-disable-next-line
+    }, [message, userInfo]);
 
     if ( ! userInfo) {
         return <div className={styles.messagesWrapper}></div>
@@ -119,14 +164,24 @@ const Messages = () => {
 }
 
 const Chat = ({ history, location }) => {
-    const { error } = useSelector(state => state.chat);
+    const { ws, error } = useSelector(state => state.chat);
+    const { user } = useSelector(state => state.auth);
     const dispatch = useDispatch();
+
+    useEffect(() => {
+        dispatch(subscribeToChatAPI(user.id))
+        return () => {
+            dispatch(unsubscribeToChatAPI(user.id))
+        };
+        // eslint-disable-next-line
+    }, [])
 
     useEffect(() => {
         const id = queryString.parse(location.search).id;
         if (id) {
             dispatch(fetchMessagesAPI(id));
         }
+        // eslint-disable-next-line
     }, [location.search])
 
     if (error) {
@@ -135,6 +190,10 @@ const Chat = ({ history, location }) => {
                 <div className="disabled">Oops something went wrong</div>
             </div>
         )
+    }
+
+    if (ws === null) {
+        return <div className={styles.chat}/>
     }
 
     return (

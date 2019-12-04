@@ -81,8 +81,12 @@
     text-align: left;
 }
 
+.new {
+    font-weight: 600;
+}
+
 .theirMessage span {
-    background-color: #999999;
+    background-color: var(--secondary);
 }
 
 @media screen and (min-width: 600px) {

@@ -21,19 +21,20 @@ export const addMessageToFirst = (message) => dispatch => {
     dispatch({ type: CHAT.addMessageToFirst, payload: message });
 }
 
-export const subscribeToChatAPI = (userId) => async dispatch => {
+export const subscribeToChatAPI = (userId) => async (dispatch, getState) => {
     try {
-        const websocket = new WebSocket(`ws://127.0.0.1:4567/chat?id=${userId}`);
-        return Promise.resolve(websocket);
+        const url = `ws://127.0.0.1:4567/chat?id=${userId}`;
+        dispatch({ type: CHAT.subscribe, payload: url })
+        return Promise.resolve();
     } catch (e) {
         return Promise.reject(e);
     }
 }
 
-export const unsubscribeToChatAPI = (userId) => async dispatch => {
+export const unsubscribeToChatAPI = () => async dispatch => {
     try {
-        const websocket = new WebSocket(`ws://127.0.0.1:4567/chat?id=${userId}`);
-        return Promise.resolve(websocket);
+        dispatch({ type: CHAT.unsubscribe });
+        return Promise.resolve();
     } catch (e) {
         return Promise.reject(e);
     }

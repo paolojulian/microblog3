@@ -67,6 +67,7 @@ const VNotification = () => {
             websocket.onclose = () => {}
             websocket.close();
         }
+        websocket = null;
     }
 
     const showNotification = (data) => {
