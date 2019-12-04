@@ -81,7 +81,7 @@ const Messages = () => {
 
     useEffect(() => {
         if (ws === null) return;
-        if ( ! userInfo) return;
+        if (Object.entries(userInfo).length === 0 && userInfo.constructor === Object) return;
 
         ws.onmessage = e => {
             const data = JSON.parse(e.data);
@@ -129,7 +129,7 @@ const Messages = () => {
         // eslint-disable-next-line
     }, [message, userInfo]);
 
-    if ( ! userInfo) {
+    if (Object.entries(userInfo).length === 0 && userInfo.constructor === Object) {
         return <div className={styles.messagesWrapper}></div>
     }
 
