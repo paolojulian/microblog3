@@ -111,4 +111,8 @@ class AuthsController extends AppController
         $user->birthdate = $user->birthdate->format('Y-m-d');
         return $this->responseData($user);
     }
+
+    /**
+     * Refreshes the token
+     */
 }
