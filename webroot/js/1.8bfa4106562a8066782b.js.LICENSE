@@ -1,0 +1,19 @@
+/*!********************************************************!*\
+  !*** ./clients/src/components/post/edit/post-edit.jsx ***!
+  \********************************************************/
+
+/*! exports provided: default */
+
+/*!************************************************************************!*\
+  !*** ./clients/src/components/widgets/form/textarea/form-textarea.jsx ***!
+  \************************************************************************/
+
+/*!***************************************************************!*\
+  !*** ./clients/src/components/widgets/form/textarea/index.js ***!
+  \***************************************************************/
+
+/*!**************************************************!*\
+  !*** ./clients/src/store/actions/postActions.js ***!
+  \**************************************************/
+
+/*! exports provided: getPostById, getPostsForLanding, getCommentsByPost, getUserPosts, addPost, updatePost, deletePost, sharePost, likePost, addComment, deleteComment, fetchLikesByPost, countCommentByPost */

@@ -46,7 +46,28 @@ let notifClients = {};
 let chatClients = {};
 global.clients = {}; // store the connections
 
-const wssNotif = new WebSocket.Server({ noServer: true });
+const wssNotif = new WebSocket.Server({
+    noServer: true,
+    perMessageDeflate: {
+        zlibDeflateOptions: {
+        // See zlib defaults.
+        chunkSize: 1024,
+        memLevel: 7,
+        level: 3
+        },
+        zlibInflateOptions: {
+        chunkSize: 10 * 1024
+        },
+        // Other options settable:
+        clientNoContextTakeover: true, // Defaults to negotiated value.
+        serverNoContextTakeover: true, // Defaults to negotiated value.
+        serverMaxWindowBits: 10, // Defaults to negotiated value.
+        // Below options specified as default values.
+        concurrencyLimit: 10, // Limits zlib concurrency for perf.
+        threshold: 1024 // Size (in bytes) below which messages
+        // should not be compressed.
+    }
+});
 const wssChat = new WebSocket.Server({
     noServer: true,
     perMessageDeflate: {
@@ -72,6 +93,12 @@ const wssChat = new WebSocket.Server({
 
 wssNotif.on('connection', (ws, request, { id }) => {
     notifClients[Number(id)] = ws;
+    ws.on('close', () => {
+        delete notifClients.receiver_id;
+    })
+    ws.on('error', () => {
+        delete notifClients.receiver_id;
+    })
 })
 
 wssChat.on('connection', (ws, request, { id }) => {
@@ -113,35 +140,15 @@ server.listen(WebSocketServerPort, () => {
     if (err.code === 'EADDRINUSE') console.log('Port is already in use.')
 });
 
-// var websocketServer = new WebSocketServer({
-//     httpServer: server
-// });
-
-// const websocketRequest = request => {
-//     // start the connection
-//     try {
-//         const { query: { id }} = url.parse(request.resource, true);
-//         let connection = request.accept(null, request.origin);
-//         console.log(`New Connection ${id}`)
-//         // save the connection for future reference
-//         clients[Number(id)] = connection;
-
-//         connection.on('close', function(reasonCode, description) {
-//             console.log((new Date()) + ' Peer ' + connection.remoteAddress + ' disconnected.');
-//         });
-//     } catch (e) {
-//         console.log('Unable to start a connection');
-//         console.error(e);
-//     }
-// }
-
-// websocketServer.on("request", websocketRequest);
-
 const notifyUser = (data) => {
-    console.log(data.receiverId);
-	if (notifClients[Number(data.receiverId)]) {
-		notifClients[Number(data.receiverId)].send(JSON.stringify(data))
+    const receiver_id = Number(data.receiverId)
+	if ( ! notifClients[receiver_id]) {
+        return
 	}
+    if (notifClients[receiver_id].readyState !== notifClients[receiver_id].OPEN) {
+        return;
+    }
+    notifClients[receiver_id].send(JSON.stringify(data))
 }
 
 const messageUser = (data) => {
@@ -149,7 +156,6 @@ const messageUser = (data) => {
     if ( ! chatClients[receiver_id]) return;
 
     if (chatClients[receiver_id].readyState !== chatClients[receiver_id].OPEN) {
-        delete chatClients.receiver_id;
         return;
     }
     chatClients[receiver_id].send(JSON.stringify(data));

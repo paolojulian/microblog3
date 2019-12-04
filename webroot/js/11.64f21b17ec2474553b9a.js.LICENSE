@@ -1,0 +1,29 @@
+/*!**********************************************!*\
+  !*** ./clients/src/components/chat/chat.jsx ***!
+  \**********************************************/
+
+/*! exports provided: default */
+
+/*!*****************************************************!*\
+  !*** ./clients/src/components/chat/chat.module.css ***!
+  \*****************************************************/
+
+/*! no static exports found */
+
+/*!**********************************************!*\
+  !*** ./clients/src/components/chat/index.js ***!
+  \**********************************************/
+
+/*!****************************************************!*\
+  !*** ./clients/src/components/hoc/with-navbar.jsx ***!
+  \****************************************************/
+
+/*!**************************************************!*\
+  !*** ./clients/src/store/actions/chatActions.js ***!
+  \**************************************************/
+
+/*! exports provided: setUsers, setUserToFirst, setMessages, addMessages, addMessageToFirst, subscribeToChatAPI, unsubscribeToChatAPI, fetchUsersToChatAPI, fetchMessagesAPI, addMessageAPI */
+
+/*!*****************************************************************************************************!*\
+  !*** ./node_modules/css-loader/dist/cjs.js??ref--6-1!./clients/src/components/chat/chat.module.css ***!
+  \*****************************************************************************************************/
