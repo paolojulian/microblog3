@@ -34,8 +34,8 @@ class ChatsController extends AppController
     public function index()
     {
         $this->request->allowMethod('get');
-        $query = $this->Chats->fetchUsersToMessage($this->Auth->user('id'));
-        $result = $query->disableHydration()->toArray();
+        $result = $this->Chats->fetchUsersToMessage($this->Auth->user('id'));
+        // $result = $query->disableHydration()->toArray();
         return $this->responseData($result);
     }
 
@@ -45,16 +45,23 @@ class ChatsController extends AppController
      *
      * Fetches all messages with the given user
      *
-     * @return array - App\Model\Entity\Chat
+     * @return object -
+     *  App\Model\Entity\Chat
+     *  App\Model\Entity\User
      */
     public function view()
     {
         $this->request->allowMethod('get');
+        $receiverId = $this->request->getParam('id');
         $messages = $this->paginate($this->Chats->fetchMessages(
-            $this->Auth->user('id'),
-            $this->request->getParam('id')
+            $receiverId,
+            $this->Auth->user('id')
         ));
-        return $this->responseData($messages);
+        $user = $this->Chats->Users->get($receiverId);
+        return $this->responseData([
+            'messages' => $messages,
+            'userInfo' => $user
+        ]);
     }
 
     /**
@@ -71,7 +78,6 @@ class ChatsController extends AppController
         $id = $this->request->getParam('id');
         $requestData = $this->request->getData();
         $requestData['user_id'] = $this->Auth->user('id');
-        $requestData['receiver_id'] = $id;
         $chat = $this->Chats->addMessage($requestData);
         return $this->responseData($chat);
     }

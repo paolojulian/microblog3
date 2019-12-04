@@ -42,7 +42,7 @@ export const unsubscribeToChatAPI = (userId) => async dispatch => {
 export const fetchUsersToChatAPI = (page = 1) => async dispatch => {
     try {
         const params = { page };
-        const res = axios.get(`/api/chat`, { params });
+        const res = await axios.get(`/api/chats`, { params });
         if (res.data.status !== 200) {
             throw new Error('Invalid Status');
         }
@@ -61,15 +61,17 @@ export const fetchUsersToChatAPI = (page = 1) => async dispatch => {
 export const fetchMessagesAPI = (userId, page = 1) => async dispatch => {
     try {
         const params = { page };
-        const res = axios.get(`/api/chat/${userId}`, { params });
+        const res = await axios.get(`/api/chats/${userId}`, { params });
+        const { data } = res.data;
         if (res.data.status !== 200) {
             throw new Error('Invalid Status');
         }
-        if ( ! Array.isArray(res.data.data)) {
+        if ( ! Array.isArray(data.messages)) {
             throw new Error('Invalid Data');
         }
-        dispatch(setMessages(res.data.data))
-        return Promise.resolve(res.data.data);
+        dispatch(setMessages(data.messages))
+        dispatch({ type: CHAT.setUserInfo, payload: data.userInfo });
+        return Promise.resolve(data);
     } catch (e) {
         dispatch({ type: CHAT.setError });
         // TODO on error display message as error
@@ -80,7 +82,7 @@ export const fetchMessagesAPI = (userId, page = 1) => async dispatch => {
 export const addMessageAPI = (data) => async dispatch => {
     try {
         dispatch(addMessageToFirst(data));
-        const res = axios.post('/api/chat', data);
+        const res = await axios.post('/api/chats', data);
         if (res.data.status !== 200) {
             throw new Error('Invalid Status');
         }

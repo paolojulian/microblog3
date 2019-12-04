@@ -64,7 +64,8 @@ export const CHAT = {
     setMessages: "SET_CHAT_MESSAGES",
     addMessages: "SET_CHAT_ADD_MESSAGE",
     addMessageToFirst: "SET_CHAT_ADD_MESSAGE_TO_FIRST",
-    setError: "SET_CHAT_ERROR"
+    setError: "SET_CHAT_ERROR",
+    setUserInfo: "SET_CHAT_USER_INFO"
 }
 
 /** Refresh */

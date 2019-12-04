@@ -265,13 +265,13 @@ Router::prefix('api', function (RouteBuilder $routes) {
     /************************
      * CHAT
      */
-    $routes->connect('/chats', ['controller' => 'Search', 'action' => 'index']);
-    $routes->connect('/chats/:id', ['controller' => 'Search', 'action' => 'view'])
+    $routes->connect('/chats', ['controller' => 'Chats', 'action' => 'index'])
+        ->setMethods(['GET']);
+    $routes->connect('/chats', ['controller' => 'Chats', 'action' => 'add'])
+        ->setMethods(['POST']);
+    $routes->connect('/chats/:id', ['controller' => 'Chats', 'action' => 'view'])
         ->setPatterns(['id' => '\d+'])
         ->setMethods(['GET']);
-    $routes->connect('/chats/:id', ['controller' => 'Search', 'action' => 'add'])
-        ->setPatterns(['id' => '\d+'])
-        ->setMethods(['POST']);
 });
 
 Router::scope('/', function (RouteBuilder $routes) {

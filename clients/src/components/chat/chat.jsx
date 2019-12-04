@@ -1,6 +1,8 @@
 import React, { useEffect, useCallback, useState } from 'react';
 import styles from './chat.module.css';
 import classnames from 'classnames';
+import queryString from 'query-string'
+import { withRouter } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux';
 
 /** Redux */
@@ -13,15 +15,15 @@ import {
 /** HOC */
 import withNavbar from '../hoc/with-navbar';
 
-const Users = () => {
+const Users = ({ history }) => {
     const dispatch = useDispatch();
     const { users } = useSelector(state => state.chat);
     const [page, setPage] = useState(1);
     const [isLast, setIsLast] = useState(false);
     const [isError, setError] = useState(false);
 
-    const handleClick = useCallback(async (userId) => {
-        dispatch(fetchMessagesAPI(userId));
+    const handleClick = useCallback(async (id) => {
+        history.push(`/chat?id=${id}`);
     });
 
     const fetchHandler = useCallback(async () => {
@@ -68,21 +70,24 @@ const Messages = () => {
         if (e) {
             e.preventDefault();
         }
+
         const data = {
             message,
             user_id: user.id,
-            receiver_id: userInfo.user.id
+            receiver_id: userInfo.id
         }
+        setMessage('');
         try {
             await dispatch(addMessageAPI(data));
         } catch (e) {
-
         }
+
     }, [message]);
 
     if ( ! userInfo) {
         return <div className={styles.messagesWrapper}></div>
     }
+
     return (
         <div className={styles.messagesWrapper}>
             <div className={styles.userInfo}></div>
@@ -90,8 +95,8 @@ const Messages = () => {
                 {messages.map((item, i) => (
                     <div
                         className={classnames(styles.message, {
-                            [styles.mineMessage]: user.id === item.userId,
-                            [styles.theirMessage]: user.id !== item.userId
+                            [styles.mineMessage]: user.id === item.user_id,
+                            [styles.theirMessage]: user.id !== item.user_id
                         })}
                         key={i}
                     >
@@ -113,8 +118,16 @@ const Messages = () => {
     )
 }
 
-const Chat = () => {
+const Chat = ({ history, location }) => {
     const { error } = useSelector(state => state.chat);
+    const dispatch = useDispatch();
+
+    useEffect(() => {
+        const id = queryString.parse(location.search).id;
+        if (id) {
+            dispatch(fetchMessagesAPI(id));
+        }
+    }, [location.search])
 
     if (error) {
         return (
@@ -126,10 +139,10 @@ const Chat = () => {
 
     return (
         <div className={styles.chat}>
-            <Users></Users>
+            <Users history={history}/>
             <Messages></Messages>
         </div>
     );
 }
 
-export default withNavbar(Chat);
+export default withRouter(withNavbar(Chat));

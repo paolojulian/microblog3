@@ -115,8 +115,10 @@ class ChatsTable extends Table
     public function fetchMessages(int $userId, int $receiverId) {
         return $this->find()
             ->where([
-                'user_id' => $userId,
-                'receiver_id' => $receiverId
+                'OR' => [
+                    'user_id' => $userId,
+                    'receiver_id' => $userId
+                ]
             ]);
     }
 
@@ -131,25 +133,31 @@ class ChatsTable extends Table
         /**
          * SELECT users
          * FROM users
-         * INNER JOIN chats
+         * LEFT JOIN chats
          * ON (users.id = chats.user_id OR users.id = chats.receiver_id)
          * ORDER BY chats.created DESC
          */
-        return $this->find()
+        return $this->Users->Followers->fetchFollowers($userId);
+        return $this->Users->find()
             ->select([
-                'Chats.id',
-                'Chats.message',
-                'Chats.user_id',
-                'Chats.receiver_id',
+                'Users.id',
+                'Users.username',
+                'Users.avatar_url',
             ])
-            ->where([
-                'OR' => [
-                    'user_id' => $userId,
-                    'receiver_id' => $userId
-                ]
+            ->leftJoinWith('Chats', function ($q) use ($userId) {
+                return $q
+                    ->select(['message', 'receiver_id', 'user_id'])
+                    ->where([
+                        'OR' => [
+                            'user_id' => $userId,
+                            'receiver_id' => $userId
+                        ]
+                    ]);
+            })
+            ->order([
+                'Chats.created' => 'desc',
+                'Users.created' => 'desc'
             ])
-            ->contain(['Receivers' => function ($q) {
-                return $q->select(['username', 'avatar_url']);
-            }]);
+            ->group(['Users.id']);
     }
 }

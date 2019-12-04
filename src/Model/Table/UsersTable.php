@@ -70,6 +70,15 @@ class UsersTable extends Table
         $this->hasMany('Posts', [
             'foreignKey' => 'user_id'
         ]);
+
+        $this->hasMany('Chats', [
+            'foreignKey' => 'user_id'
+        ]);
+
+        $this->hasMany('Messages', [
+            'className' => 'Chats',
+            'foreignKey' => 'receiver_id'
+        ]);
     }
 
     /**

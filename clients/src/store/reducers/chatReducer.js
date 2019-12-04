@@ -1,25 +1,9 @@
 import { CHAT } from '../types';
 
 const initialState = {
-    users: [
-        {id: 1, user: {username: 'chefpipz'}},
-        {id: 2, user: {username: 'chefclaire'}},
-        {id: 3, user: {username: 'jhonnamae'}},
-        {id: 4, user: {username: 'paolovincent'}},
-    ],
-    userInfo: {
-        id: 2,
-        user: {
-            username: 'chefclaire'
-        }
-    },
-    messages: [
-        {id: 5, userId: 26, receiverId: 2, message: 'Akin'},
-        {id: 4, userId: 2, receiverId: 26, message: 'Sayo'},
-        {id: 3, userId: 26, receiverId: 2, message: 'Mine Again'},
-        {id: 2, userId: 2, receiverId: 26, message: 'Yours'},
-        {id: 1, userId: 2, receiverId: 26, message: 'Bobo'},
-    ],
+    users: [],
+    userInfo: {},
+    messages: [],
     newMessagesCount: 0,
 
     messageLoading: false,
@@ -30,6 +14,11 @@ export default function(state = initialState, action) {
 
     switch (action.type) {
 
+        case CHAT.setUserInfo:
+            return {
+                ...state,
+                userInfo: action.payload
+            }
         /**
          * Sets the users to be displayed
          */
