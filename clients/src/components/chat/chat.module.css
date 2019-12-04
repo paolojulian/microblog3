@@ -85,6 +85,10 @@
     font-weight: 600;
 }
 
+.active {
+    background-color: #eaeaea;
+}
+
 .theirMessage span {
     background-color: var(--secondary);
 }

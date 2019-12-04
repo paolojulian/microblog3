@@ -20,16 +20,16 @@ import { CHAT } from '../../store/types';
 /** HOC */
 import withNavbar from '../hoc/with-navbar';
 
-const Users = ({ history }) => {
+const Users = (props) => {
     const dispatch = useDispatch();
-    const { users } = useSelector(state => state.chat);
+    const { users, userInfo } = useSelector(state => state.chat);
     const [page, setPage] = useState(1);
     // const [isLast, setIsLast] = useState(false);
     const [isError, setError] = useState(false);
 
     const handleClick = useCallback(async (id) => {
-        history.push(`/chat`);
-        history.push(`/chat?id=${id}`);
+        props.history.push(`/chat`);
+        props.history.push(`/chat?id=${id}`);
         // eslint-disable-next-line
     }, []);
 
@@ -55,19 +55,22 @@ const Users = ({ history }) => {
         <div className={styles.usersWrapper}>
             <div className={styles.searchUser}>Search</div>
             <div className={styles.users}>
-                {users.map((item, i) => (
-                    <div className={classnames(styles.user, {
-                        [styles.new]: !!item.new
-                    })}
-                        key={i}
-                        onClick={() => handleClick(item.id)}
-                    >
-                        {item.username}
-                        <div className="disabled">
-                            {item.message}
+                {users.map((item, i) => {
+                    return (
+                        <div className={classnames(styles.user, {
+                            [styles.new]: !!item.new && userInfo.id !== item.id,
+                            [styles.active]: !!userInfo.id && userInfo.id == item.id
+                        })}
+                            key={i}
+                            onClick={() => handleClick(item.id)}
+                        >
+                            {item.username}
+                            <div className="disabled">
+                                {item.message}
+                            </div>
                         </div>
-                    </div>
-                ))}
+                    )
+                })}
             </div>
         </div>
     )
@@ -163,7 +166,7 @@ const Messages = () => {
     )
 }
 
-const Chat = ({ history, location }) => {
+const Chat = (props) => {
     const { ws, error } = useSelector(state => state.chat);
     const { user } = useSelector(state => state.auth);
     const dispatch = useDispatch();
@@ -177,12 +180,12 @@ const Chat = ({ history, location }) => {
     }, [])
 
     useEffect(() => {
-        const id = queryString.parse(location.search).id;
+        const id = queryString.parse(props.location.search).id;
         if (id) {
             dispatch(fetchMessagesAPI(id));
         }
         // eslint-disable-next-line
-    }, [location.search])
+    }, [props.location.search])
 
     if (error) {
         return (
@@ -198,8 +201,8 @@ const Chat = ({ history, location }) => {
 
     return (
         <div className={styles.chat}>
-            <Users history={history}/>
-            <Messages></Messages>
+            <Users {...props}/>
+            <Messages/>
         </div>
     );
 }

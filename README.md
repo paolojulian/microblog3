@@ -10,17 +10,16 @@ ___
 ## What's New
 
 1. UI
-    - Create Posts now becomes focused (Modal-like)
     - HTTP Request Polling and pagination for 'People you may know'
-    - Improvements
+    - Create Posts now becomes focused (Modal-like)
+    - UI Improvements
+    - Chat (BETA)
 
 2. Code
     - React Code Splitting (React.Lazy)
         - for better initial loading
     - React Redux
         - to handle global states
-    - Cake 2 to Cake 3
-
 ___
 ## Dependencies and Libraries
 
