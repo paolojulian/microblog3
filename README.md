@@ -11,14 +11,15 @@ ___
 
 1. UI
     - HTTP Request Polling and pagination for 'People you may know'
-    - Create Posts now becomes focused (Modal-like)
     - UI Improvements
+        - Create Posts now becomes focused (Modal-like)
+        - Comment section removed button to submit comment (New - Shift + Enter)
     - Chat (BETA)
 
-2. Code
+2. Libraries
     - React Code Splitting (React.Lazy)
         - for better initial loading
-    - React Redux
+    - Redux
         - to handle global states
 ___
 ## Dependencies and Libraries
@@ -28,6 +29,7 @@ ___
     - [SoftDelete](https://github.com/PGBI/cakephp3-soft-delete)
 
 2. Node
+    - [FontAwesome](https://fontawesome.com/)
     - [WebSocket](https://github.com/websockets/ws)
     - [React](https://reactjs.org/)
     - [React Hooks](https://reactjs.org/docs/hooks-intro.html)
@@ -225,3 +227,30 @@ Prefix: `/api`
         - Permission
             - can only read owned notification
         - `RETURN` 200
+    
+6. Chat - `/chats`
+    - `/` GET - PRIVATE
+        - Fetches Followers to message
+        - Prioritizes the one with un read messages and date of message
+        - `RETURN` Array: User Entity
+
+    - `/` POST - PRIVATE
+        - Adds a new message entity
+        - `RETURN` Object: Message Entity
+    
+    - `/chats/:id` GET - PRIVATE
+        - Fetches paginated messages of the given user
+        - `RETURN`
+            - Array: Message Entity
+            - Object: User Entity
+
+___
+## TODO
+1. Lower Expiration of JWTokens and add refresh tokens
+2. Maximize Websockets
+    - Hard on Front end part
+3. Some API links are bad
+
+
+
+
