@@ -52,6 +52,7 @@ export const fetchUsersToChatAPI = (page = 1) => async dispatch => {
         dispatch(setUsers(res.data.data));
         return Promise.resolve(res.data.data);
     } catch (e) {
+        dispatch({ type: CHAT.setError });
         // TODO on error display message as error
         return Promise.reject(e);
     }
@@ -70,6 +71,7 @@ export const fetchMessagesAPI = (userId, page = 1) => async dispatch => {
         dispatch(setMessages(res.data.data))
         return Promise.resolve(res.data.data);
     } catch (e) {
+        dispatch({ type: CHAT.setError });
         // TODO on error display message as error
         return Promise.reject(e);
     }

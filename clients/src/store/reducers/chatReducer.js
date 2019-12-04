@@ -20,7 +20,10 @@ const initialState = {
         {id: 2, userId: 2, receiverId: 26, message: 'Yours'},
         {id: 1, userId: 2, receiverId: 26, message: 'Bobo'},
     ],
-    newMessagesCount: 0
+    newMessagesCount: 0,
+
+    messageLoading: false,
+    error: false
 }
 
 export default function(state = initialState, action) {
@@ -85,6 +88,12 @@ export default function(state = initialState, action) {
             return {
                 ...state,
                 messages: [action.payload, ...state.messages]
+            }
+        
+        case CHAT.setError:
+            return {
+                ...state,
+                error: true
             }
 
         default:

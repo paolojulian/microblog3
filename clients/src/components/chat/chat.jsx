@@ -18,14 +18,27 @@ const Users = () => {
     const { users } = useSelector(state => state.chat);
     const [page, setPage] = useState(1);
     const [isLast, setIsLast] = useState(false);
+    const [isError, setError] = useState(false);
 
     const handleClick = useCallback(async (userId) => {
         dispatch(fetchMessagesAPI(userId));
     });
 
+    const fetchHandler = useCallback(async () => {
+        try {
+            await dispatch(fetchUsersToChatAPI(page))
+        } catch (e) {
+            setError(true);
+        }
+    }, [page])
+
     useEffect(() => {
-        dispatch(fetchUsersToChatAPI(page));
-    }, [page]);
+        fetchHandler()
+    }, [fetchHandler]);
+
+    if (isError) {
+        return ''
+    }
 
     return (
         <div className={styles.usersWrapper}>
@@ -101,6 +114,16 @@ const Messages = () => {
 }
 
 const Chat = () => {
+    const { error } = useSelector(state => state.chat);
+
+    if (error) {
+        return (
+            <div className={styles.chat}>
+                <div className="disabled">Oops something went wrong</div>
+            </div>
+        )
+    }
+
     return (
         <div className={styles.chat}>
             <Users></Users>
