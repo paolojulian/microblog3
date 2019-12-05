@@ -42,11 +42,14 @@ let server = http.createServer((request, response) => {
     }
 });
 
+global.postClients = {
+
+}
 let notifClients = {};
 let chatClients = {};
 global.clients = {}; // store the connections
 
-const wssNotif = new WebSocket.Server({
+const wssConfig = {
     noServer: true,
     perMessageDeflate: {
         zlibDeflateOptions: {
@@ -67,29 +70,10 @@ const wssNotif = new WebSocket.Server({
         threshold: 1024 // Size (in bytes) below which messages
         // should not be compressed.
     }
-});
-const wssChat = new WebSocket.Server({
-    noServer: true,
-    perMessageDeflate: {
-        zlibDeflateOptions: {
-        // See zlib defaults.
-        chunkSize: 1024,
-        memLevel: 7,
-        level: 3
-        },
-        zlibInflateOptions: {
-        chunkSize: 10 * 1024
-        },
-        // Other options settable:
-        clientNoContextTakeover: true, // Defaults to negotiated value.
-        serverNoContextTakeover: true, // Defaults to negotiated value.
-        serverMaxWindowBits: 10, // Defaults to negotiated value.
-        // Below options specified as default values.
-        concurrencyLimit: 10, // Limits zlib concurrency for perf.
-        threshold: 1024 // Size (in bytes) below which messages
-        // should not be compressed.
-    }
-});
+}
+const wssNotif = new WebSocket.Server({ ...wssConfig });
+const wssChat = new WebSocket.Server({ ...wssConfig });
+const wssPost = new WebSocket.Server({ ...wssConfig });
 
 wssNotif.on('connection', (ws, request, { id }) => {
     notifClients[Number(id)] = ws;
@@ -115,20 +99,41 @@ wssChat.on('connection', (ws, request, { id }) => {
     })
 })
 
+wssPost.on('connection', (ws, request, { post_id }) => {
+    post_id = Number(post_id);
+    if (global.clients.post_id) {
+        global.clients.post_id = [...global.clients.post_id, ws];
+    } else {
+        global.clients.post_id = [ws];
+    }
+    ws.on('message', data => {
+        broadcastPost(postId, data);
+    })
+})
+
 server.on('upgrade', function upgrade(request, socket, head) {
     const pathname = url.parse(request.url).pathname;
     const { query } = queryString.parseUrl(request.url);
 
-    if (pathname === '/') {
-        wssNotif.handleUpgrade(request, socket, head, function done(ws) {
-            wssNotif.emit('connection', ws, request, query);
-        });
-    } else if (pathname === '/chat') {
-        wssChat.handleUpgrade(request, socket, head, function done(ws) {
-            wssChat.emit('connection', ws, request, query);
-        });
-    } else {
-        socket.destroy();
+    switch (pathname) {
+        case '/':
+            wssNotif.handleUpgrade(request, socket, head, function done(ws) {
+                wssNotif.emit('connection', ws, request, query);
+            });
+            break;
+        case '/chat':
+            wssChat.handleUpgrade(request, socket, head, function done(ws) {
+                wssChat.emit('connection', ws, request, query);
+            });
+            break;
+        case '/post':
+            wssPost.handleUpgrade(request, socket, head, function done(ws) {
+                wssPost.emit('connection', ws, request, query);
+            });
+            break;
+        default:
+            socket.destroy();
+            break;
     }
 });
 
@@ -159,4 +164,13 @@ const messageUser = (data) => {
         return;
     }
     chatClients[receiver_id].send(JSON.stringify(data));
+}
+
+const broadcastPost = (post_id, data) => {
+    for (let i = 0, l = global.clients[post_id].length; i < l; i ++) {
+        let client = global.clients[post_id][i];
+        if (client.readyState === WebSocket.OPEN) {
+            client.send(JSON.stringify(data));
+        }
+    }
 }

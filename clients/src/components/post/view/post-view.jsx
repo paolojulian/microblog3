@@ -13,6 +13,8 @@ import WithNavbar from '../../hoc/with-navbar';
 import InitialStatus from '../../utils/initial-status.js';
 import PostItemWireframe from '../item/post-item-wireframe';
 
+let ws;
+
 const PostView = (props) => {
     const { id } = props.match.params;
     const dispatch = useDispatch();
@@ -26,8 +28,15 @@ const PostView = (props) => {
 
     useEffect(() => {
         reloadPost();
+
+        let ws = new WebSocket(`ws://127.0.0.1:4567/post?post_id=${props.match.params.id}`)
+        ws.onmessage = e => {
+            const data = JSON.parse(e.data);
+            console.log(data);
+            // Set comments to first
+        }
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [props.match.params]);
+    }, [props.match.params.id]);
 
     const reloadPost = async () => {
         try {

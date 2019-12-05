@@ -37,6 +37,16 @@ ___
     - [Redux](https://redux.js.org/)
 
 ___
+## Improvements
+1. Lower Expiration of JWTokens and add refresh tokens
+2. Shared post should only be displayed once
+    - just display who shared the post
+2. Maximize Websockets
+    - Hard on Front end part
+    - On Viewing Post, should receive comments of followed people
+3. Some API links are bad
+
+___
 ## API
 
 Prefix: `/api`
@@ -245,12 +255,6 @@ Prefix: `/api`
             - Array: Message Entity
             - Object: User Entity
 
-___
-## TODO
-1. Lower Expiration of JWTokens and add refresh tokens
-2. Maximize Websockets
-    - Hard on Front end part
-3. Some API links are bad
 
 
 
