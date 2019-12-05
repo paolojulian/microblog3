@@ -3,8 +3,7 @@
 ## Installation
 
 1. Download [Composer](https://getcomposer.org/doc/00-intro.md) or update `composer self-update`.
-2. Run `composer install`.
-3. Client `npm run dev`.
+2. Client `npm run dev`.
 3. Client for Production `npm run build`.
 ___
 ## What's New
