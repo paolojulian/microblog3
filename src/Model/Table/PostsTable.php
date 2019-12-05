@@ -247,17 +247,18 @@ class PostsTable extends Table
 
         $this->populateWithLikesAndComments($results);
         $followedUsersQuery = $this->Users->Followers->fetchFollowedByUser($userId);
-        $this->test($results, $followedUsersQuery);
+        $this->test($results, $followedUsersQuery, $userId);
         return $results;
     }
 
-    public function test(array &$results, $query)
+    public function test(array &$results, $query, $userId)
     {
         foreach ($results as $key => $post) {
             if ($post['retweet_post_id']) {
                 $results[$key]['users_who_shared'] = $this
                     ->fetchUsersWhoSharedPostQuery(
                         $post,
+                        $userId,
                         $query
                     )
                     ->disableHydration()
@@ -274,16 +275,18 @@ class PostsTable extends Table
      * 
      * @return object App\ORM\Query
      */
-    public function fetchUsersWhoSharedPostQuery(array $post, object $query)
+    public function fetchUsersWhoSharedPostQuery(array $post, int $userId, object $query)
     {
         return $this->find()
             ->contain(['Users' => function ($q) {
                 return $q->select(['id', 'username', 'first_name', 'last_name', 'avatar_url']);
             }])
             ->where([
-                'Posts.id <>' => $post['id'],
                 'Posts.retweet_post_id' => $post['retweet_post_id'],
-                'Posts.user_id IN' => $query,
+                'OR' => [
+                    'Posts.user_id IN' => $query,
+                    'Posts.user_id' => $userId
+                ]
             ])
             ->order(['Posts.created' => 'DESC'])
             ->limit(3);
