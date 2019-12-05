@@ -16,6 +16,7 @@ const FormInput = ({
     disabled,
     theme,
     isRequired,
+    max,
     ...props
 }) => {
 
@@ -26,6 +27,9 @@ const FormInput = ({
     }, [error]);
 
     const handleKeyPress = e => {
+        if (max !== -1 && e.target.value.length > max) {
+            return setError(`Maximum of ${max} characters only`);
+        }
         if (stateError) {
             return setError(false);
         }
@@ -48,7 +52,7 @@ const FormInput = ({
                 placeholder={placeholder}
                 ref={refs}
                 disabled={disabled}
-                onKeyPress={handleKeyPress}
+                onKeyUp={handleKeyPress}
                 {...props}
                 />
             {info && <div className={styles.formInfo}>{info}</div>}
@@ -66,6 +70,8 @@ FormInput.propTypes = {
     error: PropTypes.any,
     disabled: PropTypes.bool,
     theme: PropTypes.string,
+
+    max: PropTypes.number
 }
 
 FormInput.defaultProps = {
@@ -73,7 +79,8 @@ FormInput.defaultProps = {
     theme: 'default',
     refs: null,
     disabled: false,
-    isRequired: false
+    isRequired: false,
+    max: -1
 }
 
 export default FormInput;

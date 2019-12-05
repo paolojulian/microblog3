@@ -126,6 +126,7 @@ const PostCreate = ({
                         refs={title}
                         info="The title of your post (Optional)"
                         error={errors.title}
+                        max={30}
                     />
                     
                     <FormTextarea
@@ -135,6 +136,7 @@ const PostCreate = ({
                         info="What's on your mind?"
                         error={errors.body}
                         isRequired={true}
+                        max={140}
                     />
 
                     <FormImage

@@ -16,6 +16,7 @@ const FormTextArea = ({
     rows,
     isRequired,
     submitOnEnter,
+    max,
     ...props
 }) => {
 
@@ -30,6 +31,11 @@ const FormTextArea = ({
             e.preventDefault();
             e.stopPropagation();
             submitOnEnter();
+        }
+    }
+    const handleKeyUp = e => {
+        if (max !== -1 && e.target.value.length > max) {
+            return setError(`Maximum of ${max} characters only`);
         }
         if (stateError) {
             return setError(false);
@@ -53,6 +59,7 @@ const FormTextArea = ({
                 ref={refs}
                 rows={rows}
                 onKeyPress={handleKeyPress}
+                onKeyUp={handleKeyUp}
                 {...props}
             ></textarea>
             {!!submitOnEnter && <div className={styles.enterToSubmit}>Press Shift + Enter to submit</div>}
@@ -72,7 +79,8 @@ FormTextArea.propTypes = {
     disabled: PropTypes.bool,
     theme: PropTypes.string,
     rows: PropTypes.number,
-    submitOnEnter: PropTypes.any
+    submitOnEnter: PropTypes.any,
+    max: PropTypes.number
 }
 
 FormTextArea.defaultProps = {
@@ -82,6 +90,7 @@ FormTextArea.defaultProps = {
     rows: 4,
     isRequired: false,
     submitOnEnter: false,
+    max: -1
 }
 
 export default FormTextArea;
