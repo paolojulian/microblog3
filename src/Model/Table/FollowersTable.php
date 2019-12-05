@@ -151,6 +151,23 @@ class FollowersTable extends Table
     }
 
     /**
+     * Fetches the users being followed by the given user
+     * 
+     * @param int $userId - users.id
+     * @param int $userId - users.id
+     * @param int $page - page number
+     * @param int $perPage - max data per page
+     * 
+     * @return array of users
+     */
+    public function fetchFollowedByUser(int $userId)
+    {
+        return $this->find()
+            ->select(['Followers.following_id'])
+            ->where(['user_id' => $userId]);
+    }
+
+    /**
      * Counts the followers of the given user
      * 
      * @param int $userId - users.id

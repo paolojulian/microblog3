@@ -23,6 +23,7 @@ import PostActions from '../actions'
 const PostItem = ({
     openCommentOnStart,
     sharedPost,
+    usersWhoShared,
     id,
     avatarUrl,
     body,
@@ -89,6 +90,20 @@ const PostItem = ({
                 onSuccessDelete={redirectOnSuccess ? redirectOnSuccess : successHandler}
                 onSuccessShare={successHandler}
             />
+
+            {isShared && usersWhoShared.map((post, i) => {
+                return <SharedPost
+                    key={i}
+                    postId={post.id}
+                    userId={post.user.id}
+                    originalUserId={user_id}
+                    body={post.body}
+                    avatarUrl={post.user.avatar_url}
+                    username={post.user.username}
+                    created={post.created}
+                />
+            })}
+
             {isShared && <SharedPost
                 postId={id}
                 userId={sharedPost.userId}
@@ -158,6 +173,7 @@ const PostItem = ({
 
 PostItem.propTypes = {
     openCommentOnStart: PropTypes.bool,
+    usersWhoShared: PropTypes.array,
     title: PropTypes.string,
     body: PropTypes.string,
     user_id: PropTypes.number,
@@ -175,7 +191,8 @@ PostItem.defaultProps = {
     comments: 0,
     isShared: false,
     openCommentOnStart: false,
-    redirectOnSuccess: null
+    redirectOnSuccess: null,
+    usersWhoShared: [],
 }
 
 export default PostItem

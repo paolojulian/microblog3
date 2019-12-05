@@ -50,7 +50,9 @@ class PostsTable extends Table
         $this->addBehavior('Trimmer');
 
         $this->belongsTo('RetweetPosts', [
-            'foreignKey' => 'retweet_post_id'
+            'foreignKey' => 'retweet_post_id',
+            'className' => 'Posts',
+            'propertyName' => 'original_post',
         ]);
 
         $this->belongsTo('Users', [
@@ -184,6 +186,58 @@ class PostsTable extends Table
      */
     public function fetchPostsForLanding($userId, $pageNo = 1, $perPage = 5)
     {
+        // $followedUsersQuery = $this->Users->Followers->fetchFollowedByUser($userId);
+
+        // $result = $this->find()
+        //     ->where([
+        //         'Posts.retweet_post_id IS NOT NULL',
+        //         'OR' => [
+        //             'Posts.user_id IN' => $followedUsersQuery,
+        //             'Posts.user_id' => $userId
+        //         ]
+        //     ])
+        //     ->contain([
+        //         'RetweetPosts',
+        //         'Users' => function ($q) {
+        //             return $q->select(['id', 'username', 'first_name', 'last_name', 'avatar_url']);
+        //         }
+        //     ])
+        //     ->group(['Posts.retweet_post_id']);
+
+        // $result2 = $this->find()
+        //     ->where([
+        //         'OR' => [
+        //             'Posts.user_id IN' => $followedUsersQuery,
+        //             'Posts.user_id' => $userId
+        //         ]
+        //     ])
+        //     ->contain([
+        //         'RetweetPosts',
+        //         'Users' => function ($q) {
+        //             return $q->select(['id', 'username', 'first_name', 'last_name', 'avatar_url']);
+        //         }
+        //     ]);
+        
+        // $resultQuery = $result->union($result2);
+        // $test = $this->find()
+        //         ->from([$this->alias() => $resultQuery])
+        //         ->order(['posts.created' => 'desc'])
+        //         ->disableHydration();
+        
+        // return $test->toArray();
+        // foreach ($result as $key => $post) {
+        //     if ($post['retweet_post_id']) {
+        //         $result[$key]['users_who_shared'] = $this
+        //             ->fetchUsersWhoSharedPostQuery(
+        //                 $post,
+        //                 $followedUsersQuery
+        //             )
+        //             ->disableHydration()
+        //             ->toArray();
+        //     }
+        // }
+        // return $result;
+
         $this->connection = ConnectionManager::get('default');
         $offset = ($pageNo - 1) * $perPage;
         $results = $this->connection->execute(
@@ -192,7 +246,47 @@ class PostsTable extends Table
         )->fetchAll('assoc');
 
         $this->populateWithLikesAndComments($results);
+        $followedUsersQuery = $this->Users->Followers->fetchFollowedByUser($userId);
+        $this->test($results, $followedUsersQuery);
         return $results;
+    }
+
+    public function test(array &$results, $query)
+    {
+        foreach ($results as $key => $post) {
+            if ($post['retweet_post_id']) {
+                $results[$key]['users_who_shared'] = $this
+                    ->fetchUsersWhoSharedPostQuery(
+                        $post,
+                        $query
+                    )
+                    ->disableHydration()
+                    ->toArray();
+            }
+        }
+    }
+
+    /**
+     * Fetch Followed Users who shared the same post given
+     * 
+     * @param array $post - The shared post
+     * @param object App\ORM\Query - Followed users
+     * 
+     * @return object App\ORM\Query
+     */
+    public function fetchUsersWhoSharedPostQuery(array $post, object $query)
+    {
+        return $this->find()
+            ->contain(['Users' => function ($q) {
+                return $q->select(['id', 'username', 'first_name', 'last_name', 'avatar_url']);
+            }])
+            ->where([
+                'Posts.id <>' => $post['id'],
+                'Posts.retweet_post_id' => $post['retweet_post_id'],
+                'Posts.user_id IN' => $query,
+            ])
+            ->order(['Posts.created' => 'DESC'])
+            ->limit(3);
     }
 
     /**

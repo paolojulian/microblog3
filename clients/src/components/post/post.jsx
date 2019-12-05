@@ -25,6 +25,7 @@ const Post = ({ fetchHandler }) => {
             <div key={post.id}>
                 <PostItem
                     isShared={!!post.is_shared}
+                    usersWhoShared={!!post.is_shared ? post.users_who_shared : []}
                     sharedPost={sharedPost}
                     id={Number(post.id)}
                     avatarUrl={post.avatar_url}

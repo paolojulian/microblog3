@@ -15,7 +15,9 @@ ___
         - Can follow user on followers
         - Create Posts now becomes focused (Modal-like)
         - Comment section removed button to submit comment (New - Shift + Enter)
-    - Chat (BETA)
+    - Chat (DEV)
+    - Shared post should only be displayed once (DEV)
+        - just display who shared the post
 
 2. Libraries
     - React Code Splitting (React.Lazy)
@@ -38,15 +40,13 @@ ___
 ___
 ## Improvements
 1. Lower Expiration of JWTokens and add refresh tokens
-2. Shared post should only be displayed once
-    - just display who shared the post
-3. Maximize Websockets
+2. Maximize Websockets
     - Hard on Front end part
     - On Viewing Post, should receive comments of followed people
-4. Some API links are bad
-5. Post should contain number of shares
-6. Post should contain at least 3 comments by followed user
-7. Investigate non cached queries
+3. Some API links are bad
+4. Post should contain number of shares
+5. Post should contain at least 3 comments by followed user
+6. Investigate non cached queries
 
 ___
 ## API
