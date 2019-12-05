@@ -26,6 +26,6 @@
 <body>
 	<div id="app"></div>
     <?=$this->Html->css('app.min')?>
-	<script type="module" src="/js/bundle.min.js?2"></script>
+	<script type="module" src="/js/bundle.min.js?3"></script>
 </body>
 </html>

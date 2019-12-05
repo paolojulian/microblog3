@@ -67,7 +67,7 @@ const PFollowModal = ({
                 {users.map(({ user, ...item }, i) => {
                     let isFollowing = true;
                     if (type === 'follower') {
-                        isFollowing = !!item.isFollowing && !!item.isFollowing.id;
+                        isFollowing = !!item.isFollowing
                     }
                     return <UserItem
                         key={i}

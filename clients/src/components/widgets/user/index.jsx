@@ -55,7 +55,10 @@ const UserItem = ({
                     </div>
                 </div>
                 {showFollow && ! stateIsFollowing && <div className={styles.follow}
-                    onClick={() => handleFollow(user.id)}
+                    onClick={e => {
+                        e.stopPropagation();
+                        handleFollow(user.id)
+                    }}
                 >
                     <i className="fa fa-heart"></i>
                 </div>}

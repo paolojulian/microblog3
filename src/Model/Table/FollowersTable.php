@@ -100,10 +100,9 @@ class FollowersTable extends Table
      */
     public function fetchFollowers(int $userId, int $page = 1, int $perPage = 10)
     {
-        return $this->find()
+        $followers = $this->find()
             ->select([
                 'Followers.user_id',
-                'isFollowing.id'
             ])
             ->where(['Followers.following_id' => $userId])
             ->contain([
@@ -111,19 +110,19 @@ class FollowersTable extends Table
                     return $q->select(['id', 'username', 'avatar_url', 'first_name', 'last_name']);
                 },
             ])
-            ->join([
-                'isFollowing' => [
-                    'table' => 'followers',
-                    'type' => 'LEFT',
-                    'conditions' => [
-                        'isFollowing.following_id = followers.user_id',
-                        "isFollowing.user_id = $userId"
-                    ]
-                ]
-            ])
             ->limit($perPage)
             ->page($page)
-            ->toList();
+            ->disableHydration()
+            ->toArray();
+
+        foreach ($followers as $key => $follower) {
+            $followers[$key]['isFollowing'] = $this->isFollowing(
+                $userId,
+                $follower['user']['id']
+            );
+        }
+
+        return $followers;
     }
 
     /**

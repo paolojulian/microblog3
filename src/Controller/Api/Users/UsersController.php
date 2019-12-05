@@ -109,9 +109,8 @@ class UsersController extends AppController
         $this->request->allowMethod('get');
         $id = $this->request->getParam('id');
         $page = $this->request->getQuery('page', 1);
-        return $this->responseData(
-            $this->Users->Followers->fetchFollowers($id, $page)
-        );
+        $followers = $this->Users->Followers->fetchFollowers($id, $page);
+        return $this->responseData($followers);
     }
 
     /**
