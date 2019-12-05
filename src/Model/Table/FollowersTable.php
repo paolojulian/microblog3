@@ -109,14 +109,14 @@ class FollowersTable extends Table
             ->contain([
                 'Users' => function ($q) {
                     return $q->select(['id', 'username', 'avatar_url', 'first_name', 'last_name']);
-                }
+                },
             ])
             ->join([
                 'isFollowing' => [
-                    'table' => 'Followers',
+                    'table' => 'followers',
                     'type' => 'LEFT',
                     'conditions' => [
-                        'isFollowing.following_id = Followers.user_id',
+                        'isFollowing.following_id = followers.user_id',
                         "isFollowing.user_id = $userId"
                     ]
                 ]
