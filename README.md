@@ -12,6 +12,7 @@ ___
 1. UI
     - HTTP Request Polling and pagination for 'People you may know'
     - UI Improvements
+        - Can follow user on followers
         - Create Posts now becomes focused (Modal-like)
         - Comment section removed button to submit comment (New - Shift + Enter)
     - Chat (BETA)
