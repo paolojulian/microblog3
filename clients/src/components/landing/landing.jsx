@@ -35,7 +35,7 @@ const Landing = () => {
         const init = async () => {
             try {
                 setLoading(true);
-                dispatch(fetchNotFollowed());
+                await dispatch(fetchNotFollowed());
                 await fetchHandler();
                 const user = await dispatch(getProfile());
                 dispatch(fetchFollowCount(user.username));
