@@ -30,7 +30,6 @@ ___
     - [SoftDelete](https://github.com/PGBI/cakephp3-soft-delete)
 
 2. Node
-    - [FontAwesome](https://fontawesome.com/)
     - [WebSocket](https://github.com/websockets/ws)
     - [React](https://reactjs.org/)
     - [React Hooks](https://reactjs.org/docs/hooks-intro.html)
@@ -41,10 +40,13 @@ ___
 1. Lower Expiration of JWTokens and add refresh tokens
 2. Shared post should only be displayed once
     - just display who shared the post
-2. Maximize Websockets
+3. Maximize Websockets
     - Hard on Front end part
     - On Viewing Post, should receive comments of followed people
-3. Some API links are bad
+4. Some API links are bad
+5. Post should contain number of shares
+6. Post should contain at least 3 comments by followed user
+7. Investigate non cached queries
 
 ___
 ## API
