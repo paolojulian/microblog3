@@ -37,18 +37,14 @@ const PostEdit = ({
         title: props.title,
         body: props.body
     });
+    const [title, setTitle] = useState(props.title);
+    const [body, setBody] = useState(props.body);
     useEffect(() => {
         return () => {
             dispatch({ type: CLEAR_ERRORS })
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
-
-    const { title, body } = state;
-
-    const onChange = e => {
-        setState({ [e.target.name]: e.target.value });
-    }
 
     const handleSubmit = async (e) => {
         if (e) {
@@ -110,7 +106,7 @@ const PostEdit = ({
                 info="The title of your post (Optional)"
                 error={errors.title}
                 value={title}
-                onChange={onChange}
+                onChange={e => setTitle(e.target.value)}
                 max={30}
                 autoComplete="off"
             />}
@@ -120,7 +116,7 @@ const PostEdit = ({
                 info="What's on your mind?"
                 error={errors.body}
                 value={body}
-                onChange={onChange}
+                onChange={e => setBody(e.target.value)}
                 isRequired={true}
                 max={140}
             />

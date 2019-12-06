@@ -19,7 +19,7 @@ import FormImage from '../../widgets/form/image'
 /** Context */
 import { ModalContext } from '../../widgets/p-modal/p-modal-context'
 
-const initialError = {
+const initialState = {
     title: '',
     body: ''
 }
@@ -35,11 +35,10 @@ const PostCreate = ({
      * a button that will open a create post card
      */
     const [willCreate, setWillCreate] = useState(false)
-    const [errors, setErrors] = useState({ ...initialError })
+    const [errors, setErrors] = useState(initialState)
+    const [state, setState] = useState(initialState)
     const [isLoading, setLoading] = useState(false)
     const form = useRef('')
-    const title = useRef('')
-    const body = useRef('')
     const img = useRef('')
 
     useEffect(() => {
@@ -52,22 +51,27 @@ const PostCreate = ({
     useEffect(() => {
         if (false === willCreate) {
             setWillCreate(false)
-            setErrors({ ...initialError })
+            setErrors({ ...initialState });
+            setState({ ...initialState });
             dispatch({ type: CLEAR_ERRORS })
             return;
         }
 
     }, [willCreate, dispatch])
 
+    const onChange = e => {
+        setState({ ...state, [e.target.name]: e.target.value });
+    }
+
     const handleSubmit = e => {
         if (e) {
             e.preventDefault();
         }
-        setErrors({ ...initialError })
+        setErrors({ ...initialState })
         setLoading(true)
         const form = {
-            title: title.current.value,
-            body: body.current.value,
+            title: state.title,
+            body: state.body,
             img: img.current.files[0]
         }
         // 10mb
@@ -123,7 +127,8 @@ const PostCreate = ({
                     <FormInput
                         placeholder="Title"
                         name="title"
-                        refs={title}
+                        value={state.title}
+                        onChange={onChange}
                         info="The title of your post (Optional)"
                         error={errors.title}
                         max={30}
@@ -133,7 +138,8 @@ const PostCreate = ({
                     <FormTextarea
                         placeholder="Body"
                         name="body"
-                        refs={body}
+                        value={state.body}
+                        onChange={onChange}
                         info="What's on your mind?"
                         error={errors.body}
                         isRequired={true}

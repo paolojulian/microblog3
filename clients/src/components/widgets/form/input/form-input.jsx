@@ -55,6 +55,9 @@ const FormInput = ({
                 onKeyUp={handleKeyPress}
                 {...props}
                 />
+            {max !== -1 && props.value &&
+                <div className={styles.characterCount}>{props.value.length}/{max}</div>
+            }
             {info && <div className={styles.formInfo}>{info}</div>}
             <ErrorMsg error={stateError}/>
         </div>
