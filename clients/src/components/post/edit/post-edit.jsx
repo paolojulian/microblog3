@@ -33,9 +33,12 @@ const PostEdit = ({
     const imgRef = useRef()
     const [didChangeImg, setDidChangeImg] = useState(false);
     const [status, setStatus] = useState(InitialStatus)
+    const [state, setState] = useState({
+        title: props.title,
+        body: props.body
+    });
     const [title, setTitle] = useState(props.title);
     const [body, setBody] = useState(props.body);
-
     useEffect(() => {
         return () => {
             dispatch({ type: CLEAR_ERRORS })
@@ -100,16 +103,22 @@ const PostEdit = ({
             { ! isShared && <FormInput
                 placeholder="Title"
                 name="title"
+                info="The title of your post (Optional)"
                 error={errors.title}
                 value={title}
                 onChange={e => setTitle(e.target.value)}
+                max={30}
+                autoComplete="off"
             />}
             <FormTextarea
                 placeholder="Body"
                 name="body"
+                info="What's on your mind?"
                 error={errors.body}
                 value={body}
                 onChange={e => setBody(e.target.value)}
+                isRequired={true}
+                max={140}
             />
 
             { ! isShared && <FormImage

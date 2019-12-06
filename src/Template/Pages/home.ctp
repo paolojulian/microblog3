@@ -21,6 +21,6 @@
 </head>
 <body>
 	<div id="app"></div>
-	<script type="module" src="/js/bundle.min.js?3"></script>
+	<script type="module" src="/js/bundle.min.js?4"></script>
 </body>
 </html>

@@ -95,10 +95,10 @@ const PeopleYouMayKnow = () => {
     }, [page]);
 
     /**
-     * Next page every 5 seconds
+     * Next page every interval
      */
     useEffect(() => {
-        let timeout = setTimeout(nextPage, 5000);
+        let timeout = setTimeout(nextPage, 10000);
         return () => {
             clearTimeout(timeout)
         }
