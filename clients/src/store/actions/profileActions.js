@@ -185,6 +185,7 @@ export const fetchNotFollowed = (page = 1) => async dispatch => {
         if (res.data.status !== 200) {
             throw new Error();
         }
+        dispatch({ type: RECOMMENDED.clearList });
         dispatch({
             type: RECOMMENDED.setList,
             payload: res.data.data.list

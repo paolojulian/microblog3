@@ -107,7 +107,6 @@
 .characterCount {
     float: right;
     font-size: 0.9rem;
-    line-height: 0.75rem;
     padding-left: 0.1rem;
     color: var(--black-disabled);
 }

@@ -37,6 +37,7 @@ export const FOLLOW = {
 }
 
 export const RECOMMENDED = {
+    clearList: "SET_RECOMMENDED_CLEAR_LIST",
     setList: "SET_RECOMMENDED_LIST",
     setTotalCount: "SET_RECOMMENDED_TOTALCOUNT"
 }

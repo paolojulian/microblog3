@@ -10,6 +10,11 @@ const initialState = {
 export default (state = initialState, action) => {
 
     switch (action.type) {
+        case RECOMMENDED.clearList:
+            return {
+                ...state,
+                list: []
+            }
         case RECOMMENDED.setList:
             return {
                 ...state,
