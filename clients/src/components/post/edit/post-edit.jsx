@@ -33,15 +33,22 @@ const PostEdit = ({
     const imgRef = useRef()
     const [didChangeImg, setDidChangeImg] = useState(false);
     const [status, setStatus] = useState(InitialStatus)
-    const [title, setTitle] = useState(props.title);
-    const [body, setBody] = useState(props.body);
-
+    const [state, setState] = useState({
+        title: props.title,
+        body: props.body
+    });
     useEffect(() => {
         return () => {
             dispatch({ type: CLEAR_ERRORS })
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
+
+    const { title, body } = state;
+
+    const onChange = e => {
+        setState({ [e.target.name]: e.target.value });
+    }
 
     const handleSubmit = async (e) => {
         if (e) {
@@ -100,16 +107,22 @@ const PostEdit = ({
             { ! isShared && <FormInput
                 placeholder="Title"
                 name="title"
+                info="The title of your post (Optional)"
                 error={errors.title}
                 value={title}
-                onChange={e => setTitle(e.target.value)}
+                onChange={onChange}
+                max={30}
+                autoComplete="off"
             />}
             <FormTextarea
                 placeholder="Body"
                 name="body"
+                info="What's on your mind?"
                 error={errors.body}
                 value={body}
-                onChange={e => setBody(e.target.value)}
+                onChange={onChange}
+                isRequired={true}
+                max={140}
             />
 
             { ! isShared && <FormImage
