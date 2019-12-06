@@ -72,6 +72,7 @@ const CommentCreate = ({
                     error={errors.body}
                     rows={2}
                     isRequired={true}
+                    maxLength={140}
                     submitOnEnter={handleSubmit}
                 />
             </form>

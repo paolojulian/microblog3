@@ -99,6 +99,7 @@ const PostShare = ({
                 value={state.body}
                 onChange={onChange}
                 max={140}
+                maxLength={140}
             />
         </PModal>
     )

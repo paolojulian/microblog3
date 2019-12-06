@@ -132,6 +132,7 @@ const PostCreate = ({
                         info="The title of your post (Optional)"
                         error={errors.title}
                         max={30}
+                        maxLength={30}
                         autoComplete="off"
                     />
                     
@@ -144,6 +145,7 @@ const PostCreate = ({
                         error={errors.body}
                         isRequired={true}
                         max={140}
+                        maxLength={140}
                     />
 
                     <FormImage
