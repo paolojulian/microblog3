@@ -12,18 +12,21 @@ import InitialStatus from '../../utils/initial-status';
 import PModal from '../../widgets/p-modal';
 import FormTextArea from '../../widgets/form/textarea/form-textarea';
 
+const initialState = {
+    body: ''
+};
+
 const PostShare = ({
     id,
     creator,
     onRequestClose,
     onSuccess,
-    ...props
 }) => {
 
     const [status, setStatus] = useState(InitialStatus);
     const { user } = useSelector(state => state.auth);
     const errors = useSelector(state => state.errors);
-    const bodyRef = useRef(null);
+    const [state, setState] = useState(initialState);
     const dispatch = useDispatch();
 
     // Check if post is yours
@@ -36,6 +39,10 @@ const PostShare = ({
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
+    const onChange = e => {
+        setState({ ...state, [e.target.name]: e.target.value });
+    }
+
     const handleShare = async (e) => {
         if (e) {
             e.preventDefault();
@@ -43,7 +50,7 @@ const PostShare = ({
         if (status.loading) return false;
         try {
             setStatus({ ...InitialStatus, loading: true });
-            await dispatch(sharePost(id, bodyRef.current.value))
+            await dispatch(sharePost(id, state.body))
             onSuccess();
             setStatus({ ...InitialStatus, post: true });
         } catch (e) {
@@ -87,9 +94,11 @@ const PostShare = ({
             <FormTextArea 
                 placeholder="Body"
                 name="body"
-                refs={bodyRef}
                 info="Say something about the post (Optional)"
                 error={errors.body}
+                value={state.body}
+                onChange={onChange}
+                max={140}
             />
         </PModal>
     )
